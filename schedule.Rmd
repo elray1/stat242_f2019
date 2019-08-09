@@ -1,0 +1,298 @@
+---
+  title: "Schedule"
+---
+  
+  **Click on the text like "Week 1: Sep 5 -- 7" to expand or collapse the items we covered in that week.**
+  
+  I will fill in more detail and provide links to lecture notes and labs as we go along.  Items for future dates are tentative and subject to change.
+
+```{r, echo = FALSE}
+make_week_box <- function(id, open, title, contents) {
+  cat('
+<div class="panel panel-default">
+<div class="panel-heading" role="tab" id="headingOne">
+<h5 class="mb-0">
+<a data-toggle="collapse" href="#',
+id,
+'" aria-expanded="true" aria-controls="collapseOne">
+',
+title,
+'</a>
+</h5>
+</div>
+
+<div id="',
+id,
+'" class="collapse',
+ifelse(open, " in", ""),
+'">
+<div class="panel-body">
+',
+contents,
+'
+</div>
+</div>
+</div>',
+      sep = "")
+}
+```
+
+```{r, echo = FALSE, results='asis'}
+make_week_box("week1", TRUE, "Week 1: Sep 02 -- Sep 06", "
+
+#### Wed, Sep 04
+ * **In class**, we will work on:
+ * **After class**, please:
+
+
+#### Fri, Sep 06
+ * **In class**, we will work on:
+ * **After class**, please:
+")
+```
+
+```{r, echo = FALSE, results='asis'}
+make_week_box("week2", TRUE, "Week 2: Sep 09 -- Sep 13", "
+#### Mon, Sep 09
+ * **In class**, we will work on:
+ * **After class**, please:
+
+
+#### Wed, Sep 11
+ * **In class**, we will work on:
+ * **After class**, please:
+
+
+#### Fri, Sep 13
+ * **In class**, we will work on:
+ * **After class**, please:
+")
+```
+
+```{r, echo = FALSE, results='asis'}
+make_week_box("week3", TRUE, "Week 3: Sep 16 -- Sep 20", "
+#### Mon, Sep 16
+ * **In class**, we will work on:
+ * **After class**, please:
+
+
+#### Wed, Sep 18
+ * **In class**, we will work on:
+ * **After class**, please:
+
+
+#### Fri, Sep 20
+ * **In class**, we will work on:
+ * **After class**, please:
+")
+```
+
+```{r, echo = FALSE, results='asis'}
+make_week_box("week4", TRUE, "Week 4: Sep 23 -- Sep 27", "
+#### Mon, Sep 23
+ * **In class**, we will work on:
+ * **After class**, please:
+
+
+#### Wed, Sep 25
+ * **In class**, we will work on:
+ * **After class**, please:
+
+
+#### Fri, Sep 27
+ * **In class**, we will work on:
+ * **After class**, please:
+")
+```
+
+```{r, echo = FALSE, results='asis'}
+make_week_box("week5", TRUE, "Week 5: Sep 30 -- Oct 04", "
+#### Mon, Sep 30
+ * **In class**, we will work on:
+ * **After class**, please:
+
+
+#### Wed, Oct 02
+ * **In class**, we will work on:
+ * **After class**, please:
+
+
+#### Fri, Oct 04
+ * **In class**, we will work on:
+ * **After class**, please:
+")
+```
+
+```{r, echo = FALSE, results='asis'}
+make_week_box("week6", TRUE, "Week 6: Oct 07 -- Oct 11", "
+#### Mon, Oct 07
+ * **In class**, we will work on:
+ * **After class**, please:
+
+
+#### Wed, Oct 09
+ * **In class**, we will work on:
+ * **After class**, please:
+
+
+#### Fri, Oct 11
+ * **In class**, we will work on:
+ * **After class**, please:
+")
+```
+
+```{r, echo = FALSE, results='asis'}
+make_week_box("week7", TRUE, "Week 7: Oct 14 -- Oct 18", "
+#### Mon, Oct 14
+ * **No Class**: Midsemester Break.  Safe travels!
+
+
+#### Wed, Oct 16
+ * **In class**, we will work on:
+ * **After class**, please:
+
+
+#### Fri, Oct 18
+ * **In class**, we will work on:
+ * **After class**, please:
+")
+```
+
+```{r, echo = FALSE, results='asis'}
+make_week_box("week8", TRUE, "Week 8: Oct 21 -- Oct 25", "
+#### Mon, Oct 21
+ * **In class**, we will work on:
+ * **After class**, please:
+
+
+#### Wed, Oct 23
+ * **In class**, we will work on:
+ * **After class**, please:
+
+
+#### Fri, Oct 25
+ * **In class**, we will work on:
+ * **After class**, please:
+")
+```
+
+```{r, echo = FALSE, results='asis'}
+make_week_box("week9", TRUE, "Week 9: Oct 28 -- Nov 01", "
+#### Mon, Oct 28
+ * **In class**, we will work on:
+ * **After class**, please:
+
+
+#### Wed, Oct 30
+ * **In class**, we will work on:
+ * **After class**, please:
+
+
+#### Fri, Nov 01
+ * **In class**, we will work on:
+ * **After class**, please:
+")
+```
+
+```{r, echo = FALSE, results='asis'}
+make_week_box("week10", TRUE, "Week 10: Nov 04 -- Nov 08", "
+#### Mon, Nov 04
+ * **In class**, we will work on:
+ * **After class**, please:
+
+
+#### Wed, Nov 06
+ * **In class**, we will work on:
+ * **After class**, please:
+
+
+#### Fri, Nov 08
+ * **In class**, we will work on:
+ * **After class**, please:
+")
+```
+
+```{r, echo = FALSE, results='asis'}
+make_week_box("week11", TRUE, "Week 11: Nov 11 -- Nov 15", "
+#### Mon, Nov 11
+ * **In class**, we will work on:
+ * **After class**, please:
+
+
+#### Wed, Nov 13
+ * **In class**, we will work on:
+ * **After class**, please:
+
+
+#### Fri, Nov 15
+ * **In class**, we will work on:
+ * **After class**, please:
+")
+```
+
+```{r, echo = FALSE, results='asis'}
+make_week_box("week12", TRUE, "Week 12: Nov 18 -- Nov 22", "
+#### Mon, Nov 18
+ * **In class**, we will work on:
+ * **After class**, please:
+
+
+#### Wed, Nov 20
+ * **In class**, we will work on:
+ * **After class**, please:
+
+
+#### Fri, Nov 22
+ * **In class**, we will work on:
+ * **After class**, please:
+")
+```
+
+```{r, echo = FALSE, results='asis'}
+make_week_box("week13", TRUE, "Week 13: Nov 25 -- Nov 29", "
+#### Mon, Nov 25
+ * **In class**, we will work on:
+ * **After class**, please:
+
+
+#### Wed, Nov 27
+ * **No Class**: Thanksgiving Break.  Safe travels!
+
+
+#### Fri, Nov 29
+ * **No Class**: Thanksgiving Break.  Safe travels!
+")
+```
+
+```{r, echo = FALSE, results='asis'}
+make_week_box("week14", TRUE, "Week 14: Dec 02 -- Dec 06", "
+#### Mon, Dec 02
+ * **In class**, we will work on:
+ * **After class**, please:
+
+
+#### Wed, Dec 04
+ * **In class**, we will work on:
+ * **After class**, please:
+
+
+#### Fri, Dec 06
+ * **In class**, we will work on:
+ * **After class**, please:
+")
+```
+
+```{r, echo = FALSE, results='asis'}
+make_week_box("week15", TRUE, "Week 15: Dec 09 -- Dec 13", "
+#### Mon, Dec 09
+ * **In class**, we will work on:
+ * **After class**, please:
+
+
+")
+```
+
+```{r, echo = FALSE, results='asis'}
+make_week_box("finals", TRUE, "Final Exams: Dec 16 -- Dec 20", "We will have a cumulative final exam.")
+```
+

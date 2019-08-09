@@ -1,0 +1,11 @@
+---
+title: "Resources"
+---
+
+ * R
+    * [dplyr cheatsheet (pdf)](https://github.com/rstudio/cheatsheets/raw/master/data-transformation.pdf)
+    * [Summary of some R commands, focusing on the dplyr package (pdf)](resources/R/r_overview.pdf)
+    * [ggplot2 cheatsheet (pdf)](https://github.com/rstudio/cheatsheets/raw/master/data-visualization-2.1.pdf)
+    * [Overview of ggplot2](resources/R/ggplot2_overview.pdf)
+ * R Markdown
+    * [How to type common math expressions in R Markdown documents (html)](resources/R/MathinRmd.html)

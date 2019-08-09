@@ -1,0 +1,15 @@
+---
+title: "Quizzes and Exams"
+---
+
+Review materials and solutions to quizzes and exams will be posted here.
+
++------+----------------------------------------------------------+---------------------------------------------------------------+
+| Type | Description/Review Materials                             | Solutions                                                     |
++======+==========================================================+===============================================================+
+| Quiz | Chapter 1: [pdf](exams/ch1/stat242_quizzes.pdf)          | Solutions: [pdf](exams/ch1/stat242_quiz_solutions.pdf)        |
+|      |                                                          |                                                               |
+|      | The are several other topics from Chapter 1 that are also|                                                               |
+|      | important, but that didn't make it onto quizzes. Please  |                                                               |
+|      | also read the book and review in-class materials.        |                                                               |
++------+----------------------------------------------------------+---------------------------------------------------------------+

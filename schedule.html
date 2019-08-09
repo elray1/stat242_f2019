@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+
+
+<title>Schedule</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/paper.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 64px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 69px;
+  margin-top: -69px;
+}
+.section h2 {
+  padding-top: 69px;
+  margin-top: -69px;
+}
+.section h3 {
+  padding-top: 69px;
+  margin-top: -69px;
+}
+.section h4 {
+  padding-top: 69px;
+  margin-top: -69px;
+}
+.section h5 {
+  padding-top: 69px;
+  margin-top: -69px;
+}
+.section h6 {
+  padding-top: 69px;
+  margin-top: -69px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<div class="container-fluid main-container">
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Stat 242</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="schedule.html">Schedule</a>
+</li>
+<li>
+  <a href="homework.html">Homework</a>
+</li>
+<li>
+  <a href="resources.html">Resources</a>
+</li>
+<li>
+  <a href="exams.html">Quizzes/Exams</a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Schedule</h1>
+
+</div>
+
+
+<p><strong>Click on the text like “Week 1: Sep 5 – 7” to expand or collapse the items we covered in that week.</strong></p>
+<p>I will fill in more detail and provide links to lecture notes and labs as we go along. Items for future dates are tentative and subject to change.</p>
+<div class="panel panel-default">
+<div id="headingOne" class="panel-heading" role="tab">
+<h5 class="mb-0">
+<a data-toggle="collapse" href="#week1" aria-expanded="true" aria-controls="collapseOne"> Week 1: Sep 02 – Sep 06</a>
+</h5>
+</div>
+<div id="week1" class="collapse in">
+<div class="panel-body">
+<h4 id="wed-sep-04">Wed, Sep 04</h4>
+<ul>
+<li><strong>In class</strong>, we will work on:</li>
+<li><strong>After class</strong>, please:</li>
+</ul>
+<h4 id="fri-sep-06">Fri, Sep 06</h4>
+<ul>
+<li><strong>In class</strong>, we will work on:</li>
+<li><strong>After class</strong>, please:</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div id="headingOne" class="panel-heading" role="tab">
+<h5 class="mb-0">
+<a data-toggle="collapse" href="#week2" aria-expanded="true" aria-controls="collapseOne"> Week 2: Sep 09 – Sep 13</a>
+</h5>
+</div>
+<div id="week2" class="collapse in">
+<div class="panel-body">
+<h4 id="mon-sep-09">Mon, Sep 09</h4>
+<ul>
+<li><strong>In class</strong>, we will work on:</li>
+<li><strong>After class</strong>, please:</li>
+</ul>
+<h4 id="wed-sep-11">Wed, Sep 11</h4>
+<ul>
+<li><strong>In class</strong>, we will work on:</li>
+<li><strong>After class</strong>, please:</li>
+</ul>
+<h4 id="fri-sep-13">Fri, Sep 13</h4>
+<ul>
+<li><strong>In class</strong>, we will work on:</li>
+<li><strong>After class</strong>, please:</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div id="headingOne" class="panel-heading" role="tab">
+<h5 class="mb-0">
+<a data-toggle="collapse" href="#week3" aria-expanded="true" aria-controls="collapseOne"> Week 3: Sep 16 – Sep 20</a>
+</h5>
+</div>
+<div id="week3" class="collapse in">
+<div class="panel-body">
+<h4 id="mon-sep-16">Mon, Sep 16</h4>
+<ul>
+<li><strong>In class</strong>, we will work on:</li>
+<li><strong>After class</strong>, please:</li>
+</ul>
+<h4 id="wed-sep-18">Wed, Sep 18</h4>
+<ul>
+<li><strong>In class</strong>, we will work on:</li>
+<li><strong>After class</strong>, please:</li>
+</ul>
+<h4 id="fri-sep-20">Fri, Sep 20</h4>
+<ul>
+<li><strong>In class</strong>, we will work on:</li>
+<li><strong>After class</strong>, please:</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div id="headingOne" class="panel-heading" role="tab">
+<h5 class="mb-0">
+<a data-toggle="collapse" href="#week4" aria-expanded="true" aria-controls="collapseOne"> Week 4: Sep 23 – Sep 27</a>
+</h5>
+</div>
+<div id="week4" class="collapse in">
+<div class="panel-body">
+<h4 id="mon-sep-23">Mon, Sep 23</h4>
+<ul>
+<li><strong>In class</strong>, we will work on:</li>
+<li><strong>After class</strong>, please:</li>
+</ul>
+<h4 id="wed-sep-25">Wed, Sep 25</h4>
+<ul>
+<li><strong>In class</strong>, we will work on:</li>
+<li><strong>After class</strong>, please:</li>
+</ul>
+<h4 id="fri-sep-27">Fri, Sep 27</h4>
+<ul>
+<li><strong>In class</strong>, we will work on:</li>
+<li><strong>After class</strong>, please:</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div id="headingOne" class="panel-heading" role="tab">
+<h5 class="mb-0">
+<a data-toggle="collapse" href="#week5" aria-expanded="true" aria-controls="collapseOne"> Week 5: Sep 30 – Oct 04</a>
+</h5>
+</div>
+<div id="week5" class="collapse in">
+<div class="panel-body">
+<h4 id="mon-sep-30">Mon, Sep 30</h4>
+<ul>
+<li><strong>In class</strong>, we will work on:</li>
+<li><strong>After class</strong>, please:</li>
+</ul>
+<h4 id="wed-oct-02">Wed, Oct 02</h4>
+<ul>
+<li><strong>In class</strong>, we will work on:</li>
+<li><strong>After class</strong>, please:</li>
+</ul>
+<h4 id="fri-oct-04">Fri, Oct 04</h4>
+<ul>
+<li><strong>In class</strong>, we will work on:</li>
+<li><strong>After class</strong>, please:</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div id="headingOne" class="panel-heading" role="tab">
+<h5 class="mb-0">
+<a data-toggle="collapse" href="#week6" aria-expanded="true" aria-controls="collapseOne"> Week 6: Oct 07 – Oct 11</a>
+</h5>
+</div>
+<div id="week6" class="collapse in">
+<div class="panel-body">
+<h4 id="mon-oct-07">Mon, Oct 07</h4>
+<ul>
+<li><strong>In class</strong>, we will work on:</li>
+<li><strong>After class</strong>, please:</li>
+</ul>
+<h4 id="wed-oct-09">Wed, Oct 09</h4>
+<ul>
+<li><strong>In class</strong>, we will work on:</li>
+<li><strong>After class</strong>, please:</li>
+</ul>
+<h4 id="fri-oct-11">Fri, Oct 11</h4>
+<ul>
+<li><strong>In class</strong>, we will work on:</li>
+<li><strong>After class</strong>, please:</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div id="headingOne" class="panel-heading" role="tab">
+<h5 class="mb-0">
+<a data-toggle="collapse" href="#week7" aria-expanded="true" aria-controls="collapseOne"> Week 7: Oct 14 – Oct 18</a>
+</h5>
+</div>
+<div id="week7" class="collapse in">
+<div class="panel-body">
+<h4 id="mon-oct-14">Mon, Oct 14</h4>
+<ul>
+<li><strong>No Class</strong>: Midsemester Break. Safe travels!</li>
+</ul>
+<h4 id="wed-oct-16">Wed, Oct 16</h4>
+<ul>
+<li><strong>In class</strong>, we will work on:</li>
+<li><strong>After class</strong>, please:</li>
+</ul>
+<h4 id="fri-oct-18">Fri, Oct 18</h4>
+<ul>
+<li><strong>In class</strong>, we will work on:</li>
+<li><strong>After class</strong>, please:</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div id="headingOne" class="panel-heading" role="tab">
+<h5 class="mb-0">
+<a data-toggle="collapse" href="#week8" aria-expanded="true" aria-controls="collapseOne"> Week 8: Oct 21 – Oct 25</a>
+</h5>
+</div>
+<div id="week8" class="collapse in">
+<div class="panel-body">
+<h4 id="mon-oct-21">Mon, Oct 21</h4>
+<ul>
+<li><strong>In class</strong>, we will work on:</li>
+<li><strong>After class</strong>, please:</li>
+</ul>
+<h4 id="wed-oct-23">Wed, Oct 23</h4>
+<ul>
+<li><strong>In class</strong>, we will work on:</li>
+<li><strong>After class</strong>, please:</li>
+</ul>
+<h4 id="fri-oct-25">Fri, Oct 25</h4>
+<ul>
+<li><strong>In class</strong>, we will work on:</li>
+<li><strong>After class</strong>, please:</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div id="headingOne" class="panel-heading" role="tab">
+<h5 class="mb-0">
+<a data-toggle="collapse" href="#week9" aria-expanded="true" aria-controls="collapseOne"> Week 9: Oct 28 – Nov 01</a>
+</h5>
+</div>
+<div id="week9" class="collapse in">
+<div class="panel-body">
+<h4 id="mon-oct-28">Mon, Oct 28</h4>
+<ul>
+<li><strong>In class</strong>, we will work on:</li>
+<li><strong>After class</strong>, please:</li>
+</ul>
+<h4 id="wed-oct-30">Wed, Oct 30</h4>
+<ul>
+<li><strong>In class</strong>, we will work on:</li>
+<li><strong>After class</strong>, please:</li>
+</ul>
+<h4 id="fri-nov-01">Fri, Nov 01</h4>
+<ul>
+<li><strong>In class</strong>, we will work on:</li>
+<li><strong>After class</strong>, please:</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div id="headingOne" class="panel-heading" role="tab">
+<h5 class="mb-0">
+<a data-toggle="collapse" href="#week10" aria-expanded="true" aria-controls="collapseOne"> Week 10: Nov 04 – Nov 08</a>
+</h5>
+</div>
+<div id="week10" class="collapse in">
+<div class="panel-body">
+<h4 id="mon-nov-04">Mon, Nov 04</h4>
+<ul>
+<li><strong>In class</strong>, we will work on:</li>
+<li><strong>After class</strong>, please:</li>
+</ul>
+<h4 id="wed-nov-06">Wed, Nov 06</h4>
+<ul>
+<li><strong>In class</strong>, we will work on:</li>
+<li><strong>After class</strong>, please:</li>
+</ul>
+<h4 id="fri-nov-08">Fri, Nov 08</h4>
+<ul>
+<li><strong>In class</strong>, we will work on:</li>
+<li><strong>After class</strong>, please:</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div id="headingOne" class="panel-heading" role="tab">
+<h5 class="mb-0">
+<a data-toggle="collapse" href="#week11" aria-expanded="true" aria-controls="collapseOne"> Week 11: Nov 11 – Nov 15</a>
+</h5>
+</div>
+<div id="week11" class="collapse in">
+<div class="panel-body">
+<h4 id="mon-nov-11">Mon, Nov 11</h4>
+<ul>
+<li><strong>In class</strong>, we will work on:</li>
+<li><strong>After class</strong>, please:</li>
+</ul>
+<h4 id="wed-nov-13">Wed, Nov 13</h4>
+<ul>
+<li><strong>In class</strong>, we will work on:</li>
+<li><strong>After class</strong>, please:</li>
+</ul>
+<h4 id="fri-nov-15">Fri, Nov 15</h4>
+<ul>
+<li><strong>In class</strong>, we will work on:</li>
+<li><strong>After class</strong>, please:</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div id="headingOne" class="panel-heading" role="tab">
+<h5 class="mb-0">
+<a data-toggle="collapse" href="#week12" aria-expanded="true" aria-controls="collapseOne"> Week 12: Nov 18 – Nov 22</a>
+</h5>
+</div>
+<div id="week12" class="collapse in">
+<div class="panel-body">
+<h4 id="mon-nov-18">Mon, Nov 18</h4>
+<ul>
+<li><strong>In class</strong>, we will work on:</li>
+<li><strong>After class</strong>, please:</li>
+</ul>
+<h4 id="wed-nov-20">Wed, Nov 20</h4>
+<ul>
+<li><strong>In class</strong>, we will work on:</li>
+<li><strong>After class</strong>, please:</li>
+</ul>
+<h4 id="fri-nov-22">Fri, Nov 22</h4>
+<ul>
+<li><strong>In class</strong>, we will work on:</li>
+<li><strong>After class</strong>, please:</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div id="headingOne" class="panel-heading" role="tab">
+<h5 class="mb-0">
+<a data-toggle="collapse" href="#week13" aria-expanded="true" aria-controls="collapseOne"> Week 13: Nov 25 – Nov 29</a>
+</h5>
+</div>
+<div id="week13" class="collapse in">
+<div class="panel-body">
+<h4 id="mon-nov-25">Mon, Nov 25</h4>
+<ul>
+<li><strong>In class</strong>, we will work on:</li>
+<li><strong>After class</strong>, please:</li>
+</ul>
+<h4 id="wed-nov-27">Wed, Nov 27</h4>
+<ul>
+<li><strong>No Class</strong>: Thanksgiving Break. Safe travels!</li>
+</ul>
+<h4 id="fri-nov-29">Fri, Nov 29</h4>
+<ul>
+<li><strong>No Class</strong>: Thanksgiving Break. Safe travels!</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div id="headingOne" class="panel-heading" role="tab">
+<h5 class="mb-0">
+<a data-toggle="collapse" href="#week14" aria-expanded="true" aria-controls="collapseOne"> Week 14: Dec 02 – Dec 06</a>
+</h5>
+</div>
+<div id="week14" class="collapse in">
+<div class="panel-body">
+<h4 id="mon-dec-02">Mon, Dec 02</h4>
+<ul>
+<li><strong>In class</strong>, we will work on:</li>
+<li><strong>After class</strong>, please:</li>
+</ul>
+<h4 id="wed-dec-04">Wed, Dec 04</h4>
+<ul>
+<li><strong>In class</strong>, we will work on:</li>
+<li><strong>After class</strong>, please:</li>
+</ul>
+<h4 id="fri-dec-06">Fri, Dec 06</h4>
+<ul>
+<li><strong>In class</strong>, we will work on:</li>
+<li><strong>After class</strong>, please:</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div id="headingOne" class="panel-heading" role="tab">
+<h5 class="mb-0">
+<a data-toggle="collapse" href="#week15" aria-expanded="true" aria-controls="collapseOne"> Week 15: Dec 09 – Dec 13</a>
+</h5>
+</div>
+<div id="week15" class="collapse in">
+<div class="panel-body">
+<h4 id="mon-dec-09">Mon, Dec 09</h4>
+<ul>
+<li><strong>In class</strong>, we will work on:</li>
+<li><strong>After class</strong>, please:</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div id="headingOne" class="panel-heading" role="tab">
+<h5 class="mb-0">
+<a data-toggle="collapse" href="#finals" aria-expanded="true" aria-controls="collapseOne"> Final Exams: Dec 16 – Dec 20</a>
+</h5>
+</div>
+<div id="finals" class="collapse in">
+<div class="panel-body">
+<p>We will have a cumulative final exam.</p>
+</div>
+</div>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

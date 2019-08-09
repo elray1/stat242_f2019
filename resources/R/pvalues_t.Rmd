@@ -1,0 +1,281 @@
+---
+title: "p-values for t tests using the pt function in R"
+output: pdf_document
+geometry: margin=0.6in
+---
+
+## Two things `pt` can calculate:
+
+Suppose our calculated t statistic is -2, and the degrees of freedom is 5.
+
+#### We can calculate the probability of obtaining a t statistic less than or equal to -2 as follows:
+
+```{r}
+pt(-2, df = 5)
+```
+
+This is the area under the $t$ distribution density curve to the left of -2.
+
+```{r, echo = FALSE, message=FALSE, fig.height=2}
+library(ggplot2)
+library(grid)
+
+x_grid_1 <- seq(from = -4, to = -2, length = 101)
+
+region_to_shade1 <- data.frame(
+  x = c(-4, x_grid_1, -2),
+  y = c(0, dt(x_grid_1, df = 14, log = FALSE), 0)
+)
+
+ggplot(data = data.frame(x = c(-4, 4)), mapping = aes(x = x)) +
+  stat_function(fun = dt, args = list(df = 14)) +
+  geom_polygon(
+    mapping = aes(x = x, y = y),
+    fill = "cornflowerblue",
+    data = region_to_shade1) +
+  geom_vline(xintercept = -2) +
+  coord_cartesian(xlim = c(-4, 4), ylim = c(0, 0.4), expand = FALSE) +
+  theme_bw() +
+  xlab("t") +
+  ylab("t distribution density") +
+  ggtitle(expression(paste("Shaded area is ", P(t <= -2))))
+```
+
+#### We can calculate the probability of obtaining a t statistic greater than or equal to -2 as follows:
+
+```{r}
+pt(-2, df = 5, lower.tail = FALSE)
+```
+
+This is the area under the $t$ distribution density curve to the right of -2.
+
+```{r, echo = FALSE, message=FALSE, cache = TRUE, fig.height=2}
+x_grid_1 <- seq(from = -2, to = 4, length = 101)
+
+region_to_shade1 <- data.frame(
+  x = c(-2, x_grid_1, 4),
+  y = c(0, dt(x_grid_1, df = 14, log = FALSE), 0)
+)
+
+ggplot(data = data.frame(x = c(-4, 4)), mapping = aes(x = x)) +
+  stat_function(fun = dt, args = list(df = 14)) +
+  geom_polygon(
+    mapping = aes(x = x, y = y),
+    fill = "cornflowerblue",
+    data = region_to_shade1) +
+  geom_vline(xintercept = -2) +
+  coord_cartesian(xlim = c(-4, 4), ylim = c(0, 0.4), expand = FALSE) +
+  theme_bw() +
+  xlab("t") +
+  ylab("t distribution density") +
+  ggtitle(expression(paste("Shaded area is ", P(t >= -2))))
+```
+
+\newpage
+
+The calculation of p-values depends on the value of the test statistic and the form of the alternative hypothesis.
+
+```{r, echo = FALSE}
+make_plot <- function(t, alt) {
+  if(alt == ">") {
+    x_grid_1 <- seq(from = t, to = 4, length = 101)
+
+    region_to_shade1 <- data.frame(
+      x = c(t, x_grid_1, 4),
+      y = c(0, dt(x_grid_1, df = 14, log = FALSE), 0)
+    )
+    
+    ggplot(data = data.frame(x = c(-4, 4)), mapping = aes(x = x)) +
+      stat_function(fun = dt, args = list(df = 14)) +
+      geom_polygon(
+        mapping = aes(x = x, y = y),
+        fill = "cornflowerblue",
+        data = region_to_shade1) +
+      geom_vline(xintercept = t) +
+      coord_cartesian(xlim = c(-4, 4), ylim = c(0, 0.4), expand = FALSE) +
+      theme_bw() +
+      xlab("t") +
+      ylab("")
+  } else if(alt == "<") {
+    x_grid_1 <- seq(from = -4, to = t, length = 101)
+
+    region_to_shade1 <- data.frame(
+      x = c(-4, x_grid_1, t),
+      y = c(0, dt(x_grid_1, df = 14, log = FALSE), 0)
+    )
+    
+    ggplot(data = data.frame(x = c(-4, 4)), mapping = aes(x = x)) +
+      stat_function(fun = dt, args = list(df = 14)) +
+      geom_polygon(
+        mapping = aes(x = x, y = y),
+        fill = "cornflowerblue",
+        data = region_to_shade1) +
+      geom_vline(xintercept = t) +
+      coord_cartesian(xlim = c(-4, 4), ylim = c(0, 0.4), expand = FALSE) +
+      theme_bw() +
+      xlab("t") +
+      ylab("")
+  } else if(alt == "neq") {
+    x_grid_1 <- seq(from = -4, to = -1 * abs(t), length = 101)
+
+    region_to_shade1 <- data.frame(
+      x = c(-4, x_grid_1, -1 * abs(t)),
+      y = c(0, dt(x_grid_1, df = 14, log = FALSE), 0)
+    )
+
+    x_grid_2 <- seq(from = abs(t), to = 4, length = 101)
+
+    region_to_shade2 <- data.frame(
+      x = c(abs(t), x_grid_2, 4),
+      y = c(0, dt(x_grid_2, df = 14, log = FALSE), 0)
+    )
+    
+    ggplot(data = data.frame(x = c(-4, 4)), mapping = aes(x = x)) +
+      stat_function(fun = dt, args = list(df = 14)) +
+      geom_polygon(
+        mapping = aes(x = x, y = y),
+        fill = "cornflowerblue",
+        data = region_to_shade1) +
+      geom_polygon(
+        mapping = aes(x = x, y = y),
+        fill = "cornflowerblue",
+        data = region_to_shade2) +
+      geom_vline(xintercept = t) +
+      geom_vline(xintercept = -t) +
+      coord_cartesian(xlim = c(-4, 4), ylim = c(0, 0.4), expand = FALSE) +
+      theme_bw() +
+      xlab("t") +
+      ylab("")
+  }
+}
+```
+
+```{r, echo = FALSE, warning=FALSE, fig.height = 7.5, fig.width = 7.3}
+grid.newpage()
+layout <- grid.layout(nrow = 6, ncol = 4,
+  heights = unit(c(2, rep_len(1, 5)), units = c("lines", rep_len("null", 5))),
+  widths = unit(c(1, 0.5, 1.5, 1.5), units = rep_len("null", 4))
+)
+pushViewport(viewport(layout = layout))
+
+grid.text("Alternative\nHypothesis",
+  vp = viewport(layout.pos.row = 1, layout.pos.col = 1))
+
+grid.text("t\nStatistic",
+  vp = viewport(layout.pos.row = 1, layout.pos.col = 2))
+
+grid.text("R Code",
+  vp = viewport(layout.pos.row = 1, layout.pos.col = 3))
+
+grid.text("Picture",
+  vp = viewport(layout.pos.row = 1, layout.pos.col = 4))
+
+## H_A: parameter < null
+grid.text(expression(paste(H[A]: mu < mu^{null})),
+  vp = viewport(layout.pos.row = 2, layout.pos.col = 1))
+
+grid.text("-2",
+  vp = viewport(layout.pos.row = 2, layout.pos.col = 2),
+  x = unit(0.5, "npc"),
+  gp = gpar(fontsize = 11),
+  just = c("center", "center"))
+
+grid.text("pt(-2, df = 5)",
+  vp = viewport(layout.pos.row = 2, layout.pos.col = 3),
+  x = unit(0, "npc"),
+  gp = gpar(fontsize = 11),
+  just = c("left", "center"))
+
+p <- make_plot(t = -2, alt = "<")
+print(p,
+  vp = viewport(layout.pos.row = 2, layout.pos.col = 4))
+
+
+
+grid.text(expression(paste(H[A]: mu < mu^{null})),
+  vp = viewport(layout.pos.row = 3, layout.pos.col = 1))
+
+grid.text("2",
+  vp = viewport(layout.pos.row = 3, layout.pos.col = 2),
+  x = unit(0.5, "npc"),
+  gp = gpar(fontsize = 11),
+  just = c("center", "center"))
+
+grid.text("pt(2, df = 5)",
+  vp = viewport(layout.pos.row = 3, layout.pos.col = 3),
+  x = unit(0, "npc"),
+  gp = gpar(fontsize = 11),
+  just = c("left", "center"))
+
+p <- make_plot(t = 2, alt = "<")
+print(p,
+  vp = viewport(layout.pos.row = 3, layout.pos.col = 4))
+
+
+
+## H_A: parameter > null
+grid.text(expression(paste(H[A]: mu > mu^{null})),
+  vp = viewport(layout.pos.row = 4, layout.pos.col = 1))
+
+grid.text("-2",
+  vp = viewport(layout.pos.row = 4, layout.pos.col = 2),
+  x = unit(0.5, "npc"),
+  gp = gpar(fontsize = 11),
+  just = c("center", "center"))
+
+grid.text("pt(-2, df = 5, lower.tail = FALSE)",
+  vp = viewport(layout.pos.row = 4, layout.pos.col = 3),
+  x = unit(0, "npc"),
+  gp = gpar(fontsize = 11),
+  just = c("left", "center"))
+
+p <- make_plot(t = -2, alt = ">")
+print(p,
+  vp = viewport(layout.pos.row = 4, layout.pos.col = 4))
+
+
+
+grid.text(expression(paste(H[A]: mu > mu^{null})),
+  vp = viewport(layout.pos.row = 5, layout.pos.col = 1))
+
+grid.text("2",
+  vp = viewport(layout.pos.row = 5, layout.pos.col = 2),
+  x = unit(0.5, "npc"),
+  gp = gpar(fontsize = 11),
+  just = c("center", "center"))
+
+grid.text("pt(2, df = 5, lower.tail = FALSE)",
+  vp = viewport(layout.pos.row = 5, layout.pos.col = 3),
+  x = unit(0, "npc"),
+  gp = gpar(fontsize = 11),
+  just = c("left", "center"))
+
+p <- make_plot(t = 2, alt = ">")
+print(p,
+  vp = viewport(layout.pos.row = 5, layout.pos.col = 4))
+
+
+
+## H_A: parameter not equal to null
+grid.text(expression(paste(H[A]: mu != mu^{null})),
+  vp = viewport(layout.pos.row = 6, layout.pos.col = 1))
+
+grid.text("-2 or 2",
+  vp = viewport(layout.pos.row = 6, layout.pos.col = 2),
+  x = unit(0.5, "npc"),
+  gp = gpar(fontsize = 11),
+  just = c("center", "center"))
+
+grid.text("pt(-2, df = 5) +\n  pt(2, df = 5, lower.tail = FALSE)",
+  vp = viewport(layout.pos.row = 6, layout.pos.col = 3),
+  x = unit(0, "npc"),
+  gp = gpar(fontsize = 11),
+  just = c("left", "center"))
+
+p <- make_plot(t = -2, alt = "neq")
+print(p,
+  vp = viewport(layout.pos.row = 6, layout.pos.col = 4))
+
+```
+
+

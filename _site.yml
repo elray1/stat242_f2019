@@ -1,0 +1,17 @@
+name: "MHC-Stat242-s2019-website"
+output_dir: "."
+output:
+  html_document:
+    theme: paper
+navbar:
+  type: default
+  title: "Stat 242"
+  right:
+    - text: "Schedule"
+      href: schedule.html
+    - text: "Homework"
+      href: homework.html
+    - text: "Resources"
+      href: resources.html
+    - text: "Quizzes/Exams"
+      href: exams.html
