@@ -2,7 +2,7 @@
   title: "Schedule"
 ---
   
-  **Click on the text like "Week 1: Sep 5 -- 7" to expand or collapse the items we covered in that week.**
+  **Click on the text like "Week 1: Sep 02 -- Sep 06" to expand or collapse the items we covered in that week.**
   
   I will fill in more detail and provide links to lecture notes and labs as we go along.  Items for future dates are tentative and subject to change.
 
@@ -42,12 +42,21 @@ make_week_box("week1", TRUE, "Week 1: Sep 02 -- Sep 06", "
 
 #### Wed, Sep 04
  * **In class**, we will work on:
+    * Overview of course and syllabus (syllabus linked to from main course website landing page)
+    * Introductory activity/lab: [pdf](20190904_intro/foundations_inference.pdf)
  * **After class**, please:
-
+    * Fill out this poll about when my office hours should be held: [http://whenisgood.net/4gx9jzb](http://whenisgood.net/4gx9jzb)
+    * Sign up for our class at Piazza (anonymous question and answer forum): [https://piazza.com/mtholyoke/fall2019/stat242](https://piazza.com/mtholyoke/fall2019/stat242)
+    * Read Chapter 1 of The Statistical Sleuth 3rd Edition.
 
 #### Fri, Sep 06
  * **In class**, we will work on:
+    * Finish R lab on permutation tests
+    * Review quizzes on material from Chapter 1 (possible quizzes and their solutions are posted on the Quizzes/Exams page on the course website)
  * **After class**, please:
+    * Read Sections 2.1, 2.2, and 2.5 of The Statistical Sleuth 3rd Edition
+    * Do optional Homework 0; I won't be checking for completion but you should do this if you're less comfortable with R.
+    * Start on Homework 1; due Wed, Sep 11
 ")
 ```
 
@@ -55,16 +64,24 @@ make_week_box("week1", TRUE, "Week 1: Sep 02 -- Sep 06", "
 make_week_box("week2", TRUE, "Week 2: Sep 09 -- Sep 13", "
 #### Mon, Sep 09
  * **In class**, we will work on:
+    * Quiz on material from Chapter 1
+    * Review of t-based tests and confidence intervals
  * **After class**, please:
+    * Work on Homework 1; due Wed, Sep 11
+    * Read Sections 2.3, 5.2, and 6.2 of The Statistical Sleuth 3rd Edition
 
 
 #### Wed, Sep 11
  * **In class**, we will work on:
+    * Quiz on material from Chapter 1
+    * Either finish examples about t-based inference or start on ANOVA
  * **After class**, please:
 
 
 #### Fri, Sep 13
  * **In class**, we will work on:
+    * Review quizzes on material from Chapter 2 (possible quizzes and their solutions are posted on the Quizzes/Exams page on the course website)
+    * t-based inference for ANOVA
  * **After class**, please:
 ")
 ```
@@ -73,11 +90,13 @@ make_week_box("week2", TRUE, "Week 2: Sep 09 -- Sep 13", "
 make_week_box("week3", TRUE, "Week 3: Sep 16 -- Sep 20", "
 #### Mon, Sep 16
  * **In class**, we will work on:
+    * Quiz on material from Chapter 2
  * **After class**, please:
 
 
 #### Wed, Sep 18
  * **In class**, we will work on:
+    * Quiz on material from Chapter 1 or Chapter 2
  * **After class**, please:
 
 
@@ -273,11 +292,15 @@ make_week_box("week14", TRUE, "Week 14: Dec 02 -- Dec 06", "
 
 #### Wed, Dec 04
  * **In class**, we will work on:
+    * **Evan is away at a conference.**
+    * Time to work on your projects in groups.
  * **After class**, please:
 
 
 #### Fri, Dec 06
  * **In class**, we will work on:
+    * **Evan is away at a conference.**
+    * Time to work on your projects in groups.
  * **After class**, please:
 ")
 ```

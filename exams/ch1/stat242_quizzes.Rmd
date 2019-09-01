@@ -1,0 +1,123 @@
+---
+title: ""
+subtitle: ""
+output:
+  pdf_document:
+    fig_height: 2.8
+    fig_width: 6
+  html_document:
+    fig_height: 3
+    fig_width: 5
+  word_document:
+    fig_height: 3
+    fig_width: 5
+header-includes:
+  - \usepackage{booktabs}
+geometry: margin=0.6in
+---
+
+## Stat 242 Quiz -- Topics Drawn from Chapter 1
+
+## What's Your Name? ____________________
+
+## 1. A study enrolled a group of individuals born at a Copenhagen hospital between 1959 and 1961 and followed them for 40 years.  Among other variables, they recorded each individual's cholesterol level, the number of glasses of wine they drank, their education level, and their income.  Their primary interest was in whether there was an association between the number of glasses of wine someone drank and their cholesterol level.  Identify whether the researchers are thinking of each variable as an *explanatory variable*, *response variable*, or a potential *confounding variable*.  Write a brief sentence for each explaining why.
+
+**Cholesterol level** is a (circle one): \hspace{1cm} explanatory variable \hspace{1cm} response variable \hspace{1cm} potential confounder
+
+Briefly, explain why:
+
+\vspace{3cm}
+
+**Wine consumption** is a (circle one): \hspace{1cm} explanatory variable \hspace{1cm} response variable \hspace{1cm} potential confounder
+
+Briefly, explain why:
+
+\vspace{3cm}
+
+**Education level** is a (circle one): \hspace{1cm} explanatory variable \hspace{1cm} response variable \hspace{1cm} potential confounder
+
+Briefly, explain why:
+
+\vspace{3cm}
+
+**Income** is a (circle one): \hspace{1cm} explanatory variable \hspace{1cm} response variable \hspace{1cm} potential confounder
+
+Briefly, explain why:
+
+
+
+\newpage
+
+(this page left blank intentionally)
+
+\newpage
+
+## Stat 242 Quiz -- Topics Drawn from Chapter 1
+
+## What's Your Name? ____________________
+
+## 1. In each of the following studies, identify the *scope of conclusions* that can be drawn from the study design.  This should include a description of whether the findings from the study can be applied to any particular population (and if so, describe the population), and whether a claim of a causal association can be made.
+
+#### (a) Researchers at a university enrolled a sample of children in the metropolitan area where their university was located.  They found statistically significant evidence that children who watch more than two hours of television each day tend to have higher cholestorol levels than children who watch less than two hours of television each day.
+
+Inference to population (and if so, what is the population)?
+
+\vspace{3cm}
+
+Evidence of causal association?
+
+\vspace{3cm}
+
+#### (b) Researchers conducted a poll of randomly selected elderly American adults to investigate the relationship between education levels and emotional well-being; the sample was nationally representative in terms of gender, race and ethnicity, and socio-economic status.  The study found that on average, elderly adults with a college degree or higher scored higher on the Emotional Health Index than elderly adults without a college degree.
+
+Inference to population (and if so, what is the population)?
+
+\vspace{3cm}
+
+Evidence of causal association?
+
+\vspace{3cm}
+
+\newpage
+
+#### (c) Researchers used 7 red and 7 black playing cards to randomly assign 14 volunteer males with high blood pressure to one of two diets for four weeks: a fish oil diet and a standard oil diet.  After four weeks, the study subjects assigned to the fish oil diet had a larger average reduction in blood pressure than the subjects assigned to the standard oil diet.
+
+Inference to population (and if so, what is the population)?
+
+\vspace{3cm}
+
+Evidence of causal association?
+
+\vspace{3cm}
+
+\newpage
+
+## Stat 242 Quiz -- Topics Drawn from Chapter 1
+
+## What's Your Name? ____________________
+
+## 1. Give the formal definition of a *sampling distribution*.
+
+\vspace{4cm}
+
+## 2. Radon is a radioactive gas that is found in some homes, and can cause cancer.  A county health department wants to estimate the average concentration of radon for homes in the county.  They randomly select 25 homes from the local property tax list and measure the radon concentration in each home in the sample; they summarize the results by calculating the sample mean concentration.  Explain, in the context of this example, what the sampling distribution of the sample mean is.
+
+\newpage
+
+(this page left blank intentionally)
+
+\newpage
+
+## Stat 242 Quiz -- Topics Drawn from Chapter 1
+
+## What's Your Name? ____________________
+
+## 1. Give the formal definition of a *p-value*.
+
+\vspace{4cm}
+
+## 2. A study found that the use of bed nets was associated with a lower prevalence of malarial infections in the Gambia.  Their test statistic measured the difference in prevalence of malarial infections when using bed nets and when not using bed nets.  A report of the study stated that the p-value was 0.00043.  Explain what this means in a way that could be understood by someone who has not studied statistics.
+
+\newpage
+
+(this page left blank intentionally)
