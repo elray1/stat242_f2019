@@ -1,0 +1,81 @@
+---
+title: 'Stat 242: Submitting Homework'
+output:
+  pdf_document:
+    fig_height: 2.5
+    fig_width: 6.5
+  html_document:
+    fig_height: 3
+    fig_width: 5
+  word_document:
+    fig_height: 3
+    fig_width: 5
+---
+
+
+```{r, include=FALSE}
+# Don't delete this chunk if you are using the mosaic package
+# This loads the mosaic and dplyr packages
+require(mosaic)
+require(tidyr)
+options(digits=3)
+```
+
+```{r, include=FALSE}
+# Some customization.  You can alter or delete as desired (if you know what you are doing).
+
+# This changes the default colors in lattice plots.
+trellis.par.set(theme=theme.mosaic())  
+
+# knitr settings to control how R chunks work.
+require(knitr)
+opts_chunk$set(
+  tidy=FALSE,     # display code as typed
+  size="small"    # slightly smaller font for code
+)
+# This loads the mosaic data sets.  (Could be deleted if you are not using them.)
+require(mosaicData)                
+```
+
+I'm going to ask us to submit homework assignments on Gradescope.  They'll go right to our grader there, and you'll have one place where you can find your grades and comments for all homework assignments, quizzes, and midterms.
+
+The process has two big steps, each with multiple sub-steps to take:
+
+1. Get the homework assignment off of RStudio server in pdf format.
+2. Upload the assignment to Gradescope and submit it.
+
+### Step 1: Get the homework assignment off of RStudio server in pdf format.
+
+a) Sign into RStudio and open up the .Rmd file for the assignment.
+
+b) Click 'Knit' to knit the file.  If it doesn't knit because of an error in your R code, don't panic!  Send me an email and we'll sort out the issue.  (In homework assignments after HW1 I will set it up so you can still knit the document even if your R code isn't working perfectly.)
+
+\includegraphics{rstudio_knit.png}
+
+c) In the file browser in the lower right hand corner of RStudio, browse to the folder where the assignment is saved.
+
+d) Click the checkbox next to the pdf file.  (You will submit the knitted pdf, not the Rmd file.)
+
+e) Click on the "More" button with a gear icon, and then on "Export..." and on "Download".
+
+\includegraphics{rstudio_download.png}
+
+The file will be downloaded to your computer, probably in your downloads folder.  If you want, you could move it to a folder on your computer with work for this class.
+
+### Step 2: Upload the assignment to Gradescope and submit it.
+
+a) Sign into Gradescope
+
+b) Click on Stat 242
+
+c) Click on the name of the assignment you want to submit (HW1 in this case)
+
+d) Select "Submit PDF"
+
+e) Click on "Select PDF" and find the file you downloaded from RStudio above.
+
+f) Click on "Upload PDF"
+
+g) Select each question in the panel on the left side of the screen, and then click on the page(s) for that question.  You can click on the magnifying glass in the lower right of each page to see what's on it.  You may need to scroll down to see all the pages in your submission.
+
+\includegraphics{gradescope.png}
