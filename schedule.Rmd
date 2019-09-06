@@ -43,7 +43,7 @@ make_week_box("week1", TRUE, "Week 1: Sep 02 -- Sep 06", "
 #### Wed, Sep 04
  * **In class**, we will work on:
     * Overview of course and syllabus (syllabus linked to from main course website landing page)
-    * Introductory activity/lab: [pdf](20190904_intro/foundations_inference.pdf)
+    * Introductory activity/lab: [pdf](materials/20190904_intro/foundations_inference.pdf)
  * **After class**, please:
     * Fill out this poll about when my office hours should be held: [http://whenisgood.net/4gx9jzb](http://whenisgood.net/4gx9jzb)
     * Sign up for our class at Piazza (anonymous question and answer forum): [https://piazza.com/mtholyoke/fall2019/stat242](https://piazza.com/mtholyoke/fall2019/stat242)
@@ -67,7 +67,7 @@ make_week_box("week2", TRUE, "Week 2: Sep 09 -- Sep 13", "
     * Quiz on material from Chapter 1
     * Review of t-based tests and confidence intervals
  * **After class**, please:
-    * Work on Homework 1; due Wed, Sep 11
+    * Work on Homework 1; due Fri, Sep 13
     * Read Sections 2.3, 5.2, and 6.2 of The Statistical Sleuth 3rd Edition
 
 
@@ -76,6 +76,7 @@ make_week_box("week2", TRUE, "Week 2: Sep 09 -- Sep 13", "
     * Quiz on material from Chapter 1
     * Either finish examples about t-based inference or start on ANOVA
  * **After class**, please:
+    * Work on Homework 1; due Fri, Sep 13
 
 
 #### Fri, Sep 13
@@ -83,6 +84,7 @@ make_week_box("week2", TRUE, "Week 2: Sep 09 -- Sep 13", "
     * Review quizzes on material from Chapter 2 (possible quizzes and their solutions are posted on the Quizzes/Exams page on the course website)
     * t-based inference for ANOVA
  * **After class**, please:
+    * Work on Homework 2; due Fri, Sep 20
 ")
 ```
 

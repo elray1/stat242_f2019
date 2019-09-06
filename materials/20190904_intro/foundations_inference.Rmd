@@ -255,11 +255,11 @@ Your goal for today is just to sign in and run a few commands in RStudio.  I won
 1. Open a web browser and go to rstudio.mtholyoke.edu
 2. Your user name is your email address, **without the `@mtholyoke.edu`** part, and your password is your MHC password.
 3. Click on `File`, `New Project`; `Version Control`; `Git`
-4. Type in the repository URL: https://github.com/mhc-stat242-s2019/Lab0.git
+4. Type in the repository URL: https://github.com/mhc-stat242-f2019/Lab0.git
 5. Press the Tab key to fill in the project directory name
 6. Change the "Create project as subdirectory of" value from "~" (home folder) to "~/stat242" by clicking "Browse" then creating a "stat242" folder and clicking "Choose". (I recommend this as a place to put all of your github repos for this class)
 7. Click on `Create Project`
 8. The first time you connect to github from the RStudio server, it may prompt you with a forbidding  "authenticity can't be established" message.  You should type "yes" into the box to trust this host and click "Okay".
-9. Click on the file named `lab00_intro.Rmd` in the File browser pane on the lower right corner of the screen.
+9. Click on the file named `Lab0_intro.Rmd` in the File browser pane on the lower right corner of the screen.
 
 That will guide you through the document and the process of running code to do the simulations above.
