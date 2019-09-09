@@ -1,0 +1,263 @@
+---
+title: "Examples: $t$-based Inference for One Sample or Paired Samples"
+subtitle: "Statistical Sleuth Sections 2.1, 2.2, 2.5"
+output:
+  pdf_document:
+    fig_height: 2.8
+    fig_width: 6
+  html_document:
+    fig_height: 3
+    fig_width: 5
+  word_document:
+    fig_height: 3
+    fig_width: 5
+header-includes:
+  - \usepackage{booktabs}
+geometry: margin=0.6in
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(cache = TRUE)
+```
+
+## Introduction and Goals
+
+The goals for this handout are:
+
+1. to practice calculations and interpretations of $t$-based inferences (confidence intervals and hypothesis tests) for either:
+    * a single mean; or
+    * a difference in means with *paired* data
+2. to see how those calculations can be done using the `t.test` function in R
+
+We will work with two example studies that look different on the surface, but where the same statistical tools can be used.
+
+## Example Studies
+
+### Study 1 (Body Temperatures)
+
+It's generally believed that the average body temperature is 98.6 degrees Farenheit (37 degrees Celsius - but we will work in units of degrees Farenheit).  Let's investigate whether this is true using measurements of the temperatures of 130 adults.  These data are derived from a 1992 study
+published in the Journal of the American Medical Association [1].  The study describes the study participants as volunteers who were "healthy men and women aged 18 through 40 years".  The researchers recorded each subject's body temperature (by an oral thermometer) and heart rate.
+
+### Study 2 (Twins Study on Schizophrenia)
+
+Description taken from the Statistical Sleuth [2]:
+
+"In a 1990 article, researchers reported the results of a study tht controlled for genetic and socioeconomic differences by examining 15 pairs of monozygotic ["identical"] twins, where one of the twins was schizophrenic and the other was not [3].  The twins were located through an intensive search throughout Canada and the United States. ... The researchers used magnetic resonance imaging to measure the volumes (in cm$^3$) of several regions and subregions inside the twins' brains."
+
+We will examine whether the data provide evidence of a difference in volumes of the left hippocampus between the unaffected and the affected individuals.
+
+## First Thing To Do: Get Familiar with the Data
+
+First we need to load a few R packages to extend R's functionality
+
+```{r, message = FALSE}
+library(readr)
+library(dplyr)
+library(ggplot2)
+library(mosaic)
+```
+
+### Study 1 (Body Temperatures)
+
+```{r, fig.height = 2}
+body_temps <- read_csv("http://www.evanlray.com/data/jse/normtemp/bodytemp.csv")
+
+head(body_temps)
+dim(body_temps)
+
+body_temps %>%
+  summarize(
+    mean_temp = mean(temp),
+    median_temp = median(temp),
+    sd_temp = sd(temp)
+  )
+
+ggplot(data = body_temps, mapping = aes(x = temp)) +
+  geom_histogram(bins = 20)
+```
+
+#### Things to think about:
+
+Is the distribution of values in the sample approximately symmetric and unimodal?
+
+Are there any outliers?  If so, how serious are they?
+
+\newpage
+
+### Study 2 (Twins Study on Schizophrenia)
+
+I'm going to ask you to repeat these steps in R in groups, so you have some practice working in R.
+
+So that we can refer to them later and you can check your work in R, here are the results:
+
+```{r, echo = FALSE, message = FALSE}
+twins <- read_csv("http://www.evanlray.com/data/sleuth3/ex0202_twins_schizophrenia.csv")
+
+twins <- twins %>% mutate(
+  difference = Unaffected - Affected
+)
+```
+
+Here's the first 6 rows of the data set:
+
+```{r, echo = FALSE, message = FALSE}
+head(twins)
+```
+
+Here's the number of rows (observational units) and columns (variables) in the full data set:
+
+```{r, echo = FALSE, message = FALSE}
+dim(twins)
+```
+
+Summaries of differences in volume of the left hippocampus (unaffected - affected):
+
+```{r, echo = FALSE, message = FALSE}
+twins %>%
+  summarize(
+    mean_difference = mean(difference),
+    median_difference = median(difference),
+    sd_difference = sd(difference)
+  )
+```
+
+A histogram of differences in volume of the left hippocampus (unaffected - affected):
+
+```{r, echo = FALSE, message = FALSE, fig.height = 2}
+ggplot(data = twins, mapping = aes(x = difference)) +
+  geom_histogram(bins = 10)
+```
+
+#### Things to think about:
+
+Is the distribution of values in the sample approximately symmetric and unimodal?
+
+Are there any outliers?  If so, how serious are they?
+
+\newpage
+
+## Hypothesis Test: How much evidence that the parameter is not equal to a given value?
+
+### Study 1 (Body Temperatures)
+
+What is/are the population parameter(s) of interest?
+
+\vspace{1.5cm}
+
+What would the null and alternative hypotheses be for a relevant hypothesis test?
+
+\vspace{1.5cm}
+
+What is the sample statistic to use for the test, and its interpretation?
+
+\vspace{1.5cm}
+
+If the null hypothesis is true, what is the sampling distribution of the statistic above?
+
+\vspace{1.5cm}
+
+What is the p-value for the test?
+
+```{r}
+t.test(~ temp, mu = 98.6, data = body_temps)
+```
+
+What is the interpretation of this p-value in context (interpret the definition of the p-value in this context)?
+
+\vspace{1.5cm}
+
+What is the strength of evidence against the null hypothesis provided by the data?  Use this scale (See Section 2.5):
+
+\begin{table}[!h]
+\centering
+\begin{tabular}{rll}
+\toprule
+$p$-value & Strength of evidence against $H_0$ & Compare to... \\
+\midrule
+0.10 or less & Some evidence; not conclusive & Probability of 4 heads in a row is 0.0625 \\
+0.05 or less & Moderate amount of evidence & Probability of 5 heads in a row is 0.03125 \\
+0.01 or less & Strong evidence & Probability of 7 heads in a row is 0.007813 \\
+0.001 or less & Very strong evidence & Probability of 10 heads in a row is 0.0009766 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+What is the scope of the conclusions for the results above?
+
+\newpage
+
+### Study 2 (Twins Study on Schizophrenia)
+
+What is/are the population parameter(s)?
+
+\vspace{2cm}
+
+What would the Null and Alternative hypotheses be for a relevant hypothesis test?
+
+\vspace{2cm}
+
+What is the sample statistic to use for the test, and its interpretation?
+
+\vspace{2cm}
+
+If the null hypothesis is true, what is the sampling distribution of the statistic above?
+
+\vspace{2cm}
+
+What is the p-value for the test?  Use R to find it; your result should be 0.006062.
+
+\vspace{2cm}
+
+What is the interpretation of this p-value in context (interpret the definition of the p-value in this context)?
+
+\vspace{2cm}
+
+What is the strength of evidence against the null hypothesis provided by the data?  Use the scale from the previous page.
+
+\vspace{2cm}
+
+What is the scope of the conclusions for the results above?
+
+\newpage
+
+## Confidence Interval: What is a range of plausible values for the parameter?
+
+### Study 1 (Body Temperatures)
+
+Find a 95% confidence interval for the population mean body temperature using `t.test`
+
+```{r}
+t.test(~ temp, data = body_temps)
+```
+
+Find a 95% confidence interval for the population mean body temperature using the formula.  The critical value $t^*$ can be found with `qt`.
+
+```{r, fig.height = 2}
+qt(0.975, df = 130)
+```
+
+\vspace{4cm}
+
+What is the interpretation of your confidence interval?
+
+
+\newpage
+
+
+### Study 2 (Twins Study on Schizophrenia)
+
+Find a 95% confidence interval for the mean difference in volume of the left hippocampus for twins who are unaffected by schizophrenia and who are affected by schizophrenia using `t.test`.  (You can use the same R output as for the hypothesis test above.)
+
+\vspace{3cm}
+
+Find a 95% confidence interval for the population mean body temperature using the formula.  The critical value $t^*$ can be found in R with `qt`.
+
+\vspace{13cm}
+
+## References
+
+1. Mackowiak, P. A., Wasserman, S. S., and Levine, M. M. (1992), "A Critical Appraisal of 98.6 Degrees F, the Upper Limit of the Normal Body Temperature, and Other Legacies of Carl Reinhold August Wunderlich," Journal of the American Medical Association, 268, 1578-1580.
+
+2. Ramsey, F., and Schafer, D. (2012). The statistical sleuth: a course in methods of data analysis. Cengage Learning.
+
+3. Suddath, Richard L., et al. (1990), "Anatomical abnormalities in the brains of monozygotic twins discordant for schizophrenia," New England Journal of Medicine 322.12, 789-794.

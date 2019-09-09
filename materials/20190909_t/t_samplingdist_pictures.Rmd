@@ -1,0 +1,153 @@
+---
+title: "Concepts: $t$-based Inference for One Sample or Paired Samples"
+subtitle: "Statistical Sleuth Sections 2.1, 2.2, 2.5"
+output:
+  pdf_document:
+    fig_height: 2.8
+    fig_width: 6
+  html_document:
+    fig_height: 3
+    fig_width: 5
+  word_document:
+    fig_height: 3
+    fig_width: 5
+header-includes:
+  - \usepackage{booktabs}
+geometry: margin=0.6in
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(cache = TRUE)
+```
+
+```{r}
+library(readr)
+library(dplyr)
+library(ggplot2)
+library(mosaic)
+
+babies <- read_csv("http://www.evanlray.com/data/misc/babies1998/babies_dec_1998.csv")
+babies <- babies %>%
+  filter(!is.na(gestation))
+
+setwd("materials/20190128_t/")
+
+```
+
+```{r}
+pop_mean <- mean(babies$gestation)
+pop_sd <- sd(babies$gestation)
+
+pdf("babies_pop.pdf", width = 4, height = 2)
+p <- ggplot(data = babies, mapping = aes(x = gestation)) + 
+  geom_histogram() +
+  geom_vline(xintercept = pop_mean, color = "red", linetype = 2) +
+  ggtitle("Population: 330,717 babies\nmean 38.8 weeks, sd 2.61 weeks")
+print(p)
+dev.off()
+```
+
+```{r}
+set.seed(987)
+babies_sample <- babies %>%
+  sample_n(size = 50)
+
+sample_mean <- mean(babies_sample$gestation)
+sample_sd <- sd(babies_sample$gestation)
+
+pdf("babies_sample.pdf", width = 4, height = 2)
+p <- ggplot(data = babies_sample, mapping = aes(x = gestation)) + 
+  geom_histogram() +
+  geom_vline(xintercept = pop_mean, color = "red", linetype = 2) +
+  ggtitle("Sample: 50 babies\nmean 39.08 weeks, sd 3.28 weeks")
+print(p)
+dev.off()
+
+```
+
+```{r}
+n <- 50
+
+simulation_results <- do(10000) * {
+  babies_sample <- sample_n(babies, size = n, replace = FALSE)
+  
+  babies_sample %>%
+    summarize(sample_mean_gestation = mean(gestation))
+}
+
+pdf("babies_sample_means.pdf", width = 4, height = 2)
+p <- ggplot(data = simulation_results, mapping = aes(x = sample_mean_gestation)) +
+  geom_histogram(binwidth = 0.1) +
+  geom_vline(mapping = aes(xintercept = mean(babies$gestation)), color = "red") +
+  xlim(c(10, 50)) +
+  ggtitle("Sample Means from 10000 samples\nEach sample of size n = 50")
+print(p)
+dev.off()
+```
+
+
+```{r}
+n <- 50
+
+simulation_results <- do(10000) * {
+  babies_sample <- sample_n(babies, size = n, replace = FALSE)
+  
+  babies_sample %>%
+    summarize(sample_z_score = (mean(gestation) - pop_mean)/(pop_sd/sqrt(50)))
+}
+
+pdf("babies_sample_zs.pdf", width = 4, height = 2)
+p <- ggplot(data = simulation_results, mapping = aes(x = sample_z_score)) +
+  geom_histogram(mapping = aes(y = ..density..), binwidth = 0.3) +
+  stat_function(fun = dnorm, color = "red") +
+  ggtitle("Sample Z-scores from 10000 samples\nEach sample of size n = 50")
+print(p)
+dev.off()
+```
+
+
+
+```{r}
+n <- 50
+
+simulation_results <- do(10000) * {
+  babies_sample <- sample_n(babies, size = n, replace = FALSE)
+  
+  babies_sample %>%
+    summarize(sample_t_statistic = (mean(gestation) - pop_mean)/(sd(gestation)/sqrt(50)))
+}
+
+pdf("babies_sample_ts.pdf", width = 4, height = 2)
+p <- ggplot(data = simulation_results, mapping = aes(x = sample_t_statistic)) +
+  geom_histogram(mapping = aes(y = ..density..), binwidth = 0.3) +
+  stat_function(fun = dt, args = list(df = 49), color = "red") +
+  ggtitle("Sample t statistics from 10000 samples\nEach sample of size n = 50")
+print(p)
+dev.off()
+```
+
+```{r}
+n <- 50
+
+simulation_results <- do(100) * {
+  babies_sample <- sample_n(babies, size = n, replace = FALSE)
+  
+  confint(t.test(~ gestation, data = babies_sample))[, c(2, 3)]
+}
+
+simulation_results <- simulation_results %>%
+  mutate(
+    CI_contains_population_mean = ifelse((lower <= pop_mean & upper >= pop_mean), "Yes", "No")
+  )
+
+pdf("babies_sample_ci_coverage.pdf", width = 7.5, height = 2)
+p <- ggplot() + 
+  geom_hline(yintercept = pop_mean) +
+  geom_errorbar(data = simulation_results, mapping = aes(x = .index, ymin = lower, ymax = upper, color = CI_contains_population_mean)) +
+  scale_color_manual("CI contains\npopulation\nmean?", values = c("orange", "cornflowerblue")) +
+  xlab("Sample Number") +
+  ylab("Gestation Time (weeks)")
+print(p)
+dev.off()
+```
+

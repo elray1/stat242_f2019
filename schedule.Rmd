@@ -38,7 +38,7 @@ contents,
 ```
 
 ```{r, echo = FALSE, results='asis'}
-make_week_box("week1", TRUE, "Week 1: Sep 02 -- Sep 06", "
+make_week_box("week1", FALSE, "Week 1: Sep 02 -- Sep 06", "
 
 #### Wed, Sep 04
  * **In class**, we will work on:
@@ -65,7 +65,9 @@ make_week_box("week2", TRUE, "Week 2: Sep 09 -- Sep 13", "
 #### Mon, Sep 09
  * **In class**, we will work on:
     * Quiz on material from Chapter 1
-    * Review of t-based tests and confidence intervals
+    * Review of t-based tests and confidence intervals:
+        * Concepts overview: [pdf](materials/20190909_t/t_summary.pdf)
+        * Examples (corrected version): [pdf](materials/20190909_t/t.pdf)
  * **After class**, please:
     * Work on Homework 1; due Fri, Sep 13
     * Read Sections 2.3, 5.2, and 6.2 of The Statistical Sleuth 3rd Edition
@@ -74,17 +76,17 @@ make_week_box("week2", TRUE, "Week 2: Sep 09 -- Sep 13", "
 #### Wed, Sep 11
  * **In class**, we will work on:
     * Quiz on material from Chapter 1
-    * Either finish examples about t-based inference or start on ANOVA
+    * Lab about t-based inference
  * **After class**, please:
     * Work on Homework 1; due Fri, Sep 13
 
 
 #### Fri, Sep 13
  * **In class**, we will work on:
-    * Review quizzes on material from Chapter 2 (possible quizzes and their solutions are posted on the Quizzes/Exams page on the course website)
-    * t-based inference for ANOVA
+    * ANOVA
  * **After class**, please:
     * Work on Homework 2; due Fri, Sep 20
+    * Review quizzes on material from Chapter 2 (possible quizzes and their solutions will be posted on the Quizzes/Exams page on the course website)
 ")
 ```
 

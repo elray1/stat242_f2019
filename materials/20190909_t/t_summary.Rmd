@@ -1,0 +1,219 @@
+---
+title: "Concepts: $t$-based Inference for One Sample or Paired Samples"
+subtitle: "Statistical Sleuth Sections 2.1, 2.2, 2.5"
+output:
+  pdf_document:
+    fig_height: 2.8
+    fig_width: 6
+  html_document:
+    fig_height: 3
+    fig_width: 5
+  word_document:
+    fig_height: 3
+    fig_width: 5
+header-includes:
+  - \usepackage{booktabs}
+geometry: margin=0.6in
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(cache = TRUE)
+```
+
+## Overview
+
+Our goal is to review $t$-based tools for inference about either:
+
+ * a single mean $\mu$; or
+ * a difference $\delta$ between two means, with *paired* data.
+
+Hypothesis tests/p-values and confidence intervals answer two related but different questions about a parameter:
+
+1. How much evidence do the data provide that a parameter is *different from a specified value*?  (answer with hypothesis tests/p-values)
+
+2. What is a *range of plausible values* for a parameter?  (answer with confidence intervals)
+
+## Hypothesis Test: How much evidence that the parameter is not equal to a given value?
+
+#### Reminder of what we did for the creative writing study:
+
+ * **Sample statistic** is difference in group means: 19.883 - 15.739 = 4.144
+
+ * $p$-value: if $H_0: \delta = 0$ is true, what is the probability of obtaining a difference at least as extreme as 4.144?
+    * Small $p$-value is evidence against $H_0$.
+
+ * Based on the **sampling distribution** of difference in group means if $\delta = 0$
+    * Look at differences in group means that would be obtained from every possible assignment of people to groups
+
+```{r, echo = FALSE, message=FALSE, cache = TRUE, fig.height = 2.5}
+library(mosaic)
+library(dplyr)
+library(ggplot2)
+
+set.seed(68323)
+
+creativity <- read.csv("http://www.evanlray.com/data/sleuth3/case0101_creativity.csv")
+
+simulation_results <- do(10000) * {
+  creativity_shuffled_treatments <- creativity %>%
+    mutate(
+      Treatment = shuffle(Treatment)
+    )
+
+  shuffled_group_means <- creativity_shuffled_treatments %>%
+    group_by(Treatment) %>%
+    summarize(
+      mean_score = mean(Score)
+    )
+  
+  shuffled_group_means$mean_score[2] - shuffled_group_means$mean_score[1]
+}
+
+ggplot(data = simulation_results, mapping = aes(x = result)) +
+  geom_histogram() +
+  geom_vline(xintercept = 4.144) +
+  geom_vline(xintercept = -4.144)
+```
+
+$p$-value is the proportion of these hypothetical samples that result in a difference in means that is greater than or equal to 4.144, or less than or equal to -4.144.
+
+#### $t$-based hypothesis tests - the short version
+
+Consider a test of $H_0: \mu = \mu^{null}$ vs. $H_A: \mu \neq \mu^{null}$, where $\mu$ is a population mean.
+
+We need 3 ingredients for our test:
+
+1. A **statistic**:  $t = \frac{\bar{Y} - \mu^{null}}{SE(\bar{Y})} = \frac{\bar{Y} - \mu^{null}}{s / \sqrt{n}}$.  How many standard errors away from $\mu^{null}$ is $\bar{Y}$?
+
+2. The **sampling distribution** of the statistic, assuming $H_0$ is true: $t \sim t_{n-1}$
+
+3. The **p-value** is the probability of getting a $t$ statistic at least as extreme as the value we calculate based on our observed sample, assuming $H_0$ is true.
+
+\newpage
+
+#### Example: Mean baby gestation time
+
+We have a data set with a record of every baby born in December 1998 in the United States, including the baby's gestation time in weeks (how many weeks pregnant the mother was when she gave birth), birth weight, and so on.
+
+Let's explore what would happen if we used a sample from this population to estimate the population mean gestation time $\mu$.
+
+\includegraphics[width=0.9\textwidth]{t_stat.pdf}
+
+\newpage
+
+#### A few more details
+
+**Sample statistic** is a $t$ ratio.
+
+ * In general:
+    * $t = \frac{\text{Estimate} - \text{Parameter}}{\text{SE}(\text{Estimate})}$
+    * $\text{SE}(\text{Estimate})$ measures the average distance of the estimate from the parameter
+    * $t$ measures: "How many standard errors from the parameter was the estimate?"
+    * The *degrees of freedom* is the sample size $n$ minus the number of parameters used to specify the mean
+* In the case of one parameter, $\mu$:
+    * $t = \frac{\bar{Y} - \mu^{null}}{\text{SE}(\bar{Y})}$
+    * $\text{SE}(\bar{Y}) = \frac{s}{\sqrt{n}}$, where $s = \sqrt{\frac{\sum_{i = 1}^n (Y_i - \bar{Y})^2}{n - 1}}$ is the sample standard deviation
+    * The *degrees of freedom* for $\text{SE}(\bar{Y})$ is $n - 1$
+
+$p$-value: if $H_0: \mu = \mu^{null}$ is true, what is the probability of obtaining a $t$ statistic at least as extreme?
+
+Based on the **sampling distribution** of $t$ if $\mu = \mu^{null}$
+
+ * Look at $t$ statistics that would be obtained from every possible sample of size $n$
+ * If the following conditions are satisfied, then $t \sim t_{n - 1}$:
+    * Distribution of values in the population is normally distributed
+    * Observational units are independent (knowing one is above the mean doesn't give you information about whether or not another is above the mean)
+
+$p$-value is the proportion of samples that result in $t$ statistics that are more extreme than the $t$ statistic obtained from our actual sample.
+
+```{r, echo = FALSE, message=FALSE, cache = TRUE}
+x_grid_1 <- seq(from = -4, to = -1.7, length = 101)
+x_grid_2 <- seq(from = 1.7, to = 4, length = 101)
+
+region_to_shade1 <- data.frame(
+  x = c(-4, x_grid_1, -1.7),
+  y = c(0, dt(x_grid_1, df = 14, log = FALSE), 0)
+)
+
+region_to_shade2 <- data.frame(
+  x = c(1.7, x_grid_2, 4),
+  y = c(0, dt(x_grid_2, df = 14, log = FALSE), 0)
+)
+
+ggplot(data = data.frame(x = c(-4, 4)), mapping = aes(x = x)) +
+  stat_function(fun = dt, args = list(df = 14)) +
+  geom_polygon(
+    mapping = aes(x = x, y = y),
+    fill = "cornflowerblue",
+    data = region_to_shade1) +
+  geom_polygon(
+    mapping = aes(x = x, y = y),
+    fill = "cornflowerblue",
+    data = region_to_shade2) +
+  geom_vline(xintercept = 1.7) +
+  geom_vline(xintercept = -1.7) +
+  coord_cartesian(xlim = c(-4, 4), ylim = c(0, 0.4), expand = FALSE) +
+  theme_bw()
+```
+
+A small $p$-value means one of two things:
+
+1. $H_0$ is correct, and you got a "weird"/unusual sample; or
+2. $H_0$ is incorrect
+
+The smaller the $p$-value, the stronger the evidence against the null hypothesis.  Use this scale (See Section 2.5):
+
+\begin{table}[!h]
+\centering
+\begin{tabular}{rll}
+\toprule
+$p$-value & Strength of evidence against $H_0$ & Compare to... \\
+\midrule
+0.10 or less & Some evidence; not conclusive & Probability of 4 heads in a row is 0.0625 \\
+0.05 or less & Moderate amount of evidence & Probability of 5 heads in a row is 0.03125 \\
+0.01 or less & Strong evidence & Probability of 7 heads in a row is 0.007813 \\
+0.001 or less & Very strong evidence & Probability of 10 heads in a row is 0.0009766 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+
+\newpage
+
+## Confidence Interval: What is a range of plausible values for the parameter?
+
+ * General formula for a confidence interval: [Estimate - $t^*$ SE(Estimate), Estimate + $t^*$ SE(Estimate)]
+ 
+ * In the case of estimating a mean $\mu$:
+
+$$[\bar{Y} - t^* SE(\text{Estimate}), \bar{Y} + t^* SE(\text{Estimate})]$$
+
+For a 95\% confidence interval, $t^*$ is the 97.5th percentile of the $t_{n-1}$ distribution.  Why?
+
+\vspace{12cm}
+
+Interpretation: For 95% of samples, an interval calculated using this procedure will contain the parameter we are estimating.
+
+Here is a picture of confidence intervals for the mean gestation time based on 100 different samples from the population, color coded by whether or not the interval contains the mean.
+
+Out of these 100 samples, 92 produced confidence intervals that actually contained the population mean.
+
+\includegraphics{babies_sample_ci_coverage.pdf}
+
+\newpage
+
+## Here's an example of confidence intervals from Section 2.5.2 of Sleuth 3.
+
+One of the papers Albert Einstein published in 1915 about relativity made predictions about the arc of deflection of light around the sun.  The predictions were that the deflection of light would be given by the equation
+
+$\frac{1}{2}(1 + \gamma)\frac{1.75}{d}$
+
+Here $d$ is the distance of the closest approach of the light ray to the sun.  The parameter $\gamma$ captures the effect on the deflection due to the sun's gravity curving space-time.  According to Newtonian physics, $\gamma$ would have the value 0; according to Einstein's theory, $\gamma$ would have the value 1.
+
+Over the years, many different experiments have been conducted to test the predictions by the theory, resulting in different estimates and confidence intervals for $\gamma$; these are displayed in the figure (which comes from Sleuth3).
+
+\includegraphics{sleuth3_relativity_ci.png}
+
+## References
+
+1. Ramsey, F., and Schafer, D. (2012). The statistical sleuth: a course in methods of data analysis. Cengage Learning.
