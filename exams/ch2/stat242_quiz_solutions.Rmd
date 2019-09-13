@@ -1,0 +1,195 @@
+---
+title: ""
+subtitle: ""
+output:
+  pdf_document:
+    fig_height: 2.8
+    fig_width: 6
+  html_document:
+    fig_height: 3
+    fig_width: 5
+  word_document:
+    fig_height: 3
+    fig_width: 5
+header-includes:
+  - \usepackage{booktabs}
+geometry: margin=0.6in
+---
+
+## Stat 242 Quiz -- Topics Drawn from Chapter 2
+
+## What's Your Name? ____________________
+
+## 1. To study the effect of cigarette smoking on platelet aggregation, Levine (1973) drew blood samples from 11 individuals before and after they smoked a cigarette and measured the extent to which the blood platelets aggregated. Platelets are involved in the formation of blood clots, and it is known that smokers suffer more often from disorders involving blood clots than do nonsmokers. The data give the difference in percentage of platelets that are aggregated before and after being exposed to a stimulus, for each individual.  The parameter of interest, $\delta$, is the mean difference in platelet counts before and after exposure in a population of people like those who were included in this study.
+
+Use the R output that follows in answering the question below.
+
+```{r, echo = FALSE, message=FALSE, warning=FALSE}
+library(tidyverse)
+platelets <- read_csv("http://www.evanlray.com/data/rice/Chapter%2011/platelet.txt")
+colnames(platelets) <- c("before", "after")
+platelets <- platelets %>%
+  mutate(difference = after - before)
+```
+
+```{r}
+platelets %>%
+  summarize(
+    mean_difference = mean(difference),
+    sd_difference = sd(difference))
+```
+
+```{r}
+qt(0.975, df = 11)
+qt(0.975, df = 10)
+
+qt(0.95, df = 11)
+qt(0.95, df = 10)
+```
+
+You may use the fact that $SE(\bar{Y}) = \frac{s}{\sqrt{n}}$.
+
+#### (a) Show the set up for finding a 95% confidence interval for $\delta$.  Plug in all numbers, but no need to simplify to find the actual interval.  You will need the output from just one of the calls to `qt` above.
+
+$$\left[10.27 - 2.23 \times \frac{7.98}{\sqrt{11}}, 10.27 + 2.23 \times \frac{7.98}{\sqrt{11}}\right]$$
+
+\vspace{2cm}
+
+#### (b) Suppose your confidence interval worked out to [5, 15].  What would be the interpretation of this confidence interval?  Include a statement of what it means to be "95% confident".
+
+We are 95% confident that the mean difference in platelet counts before and after exposure in a population of people like those who were included in this study is between 5 and 15.  For 95% of samples, an interval computed in this way would contain that population parameter.
+
+\newpage
+
+(this page left blank intentionally)
+
+\newpage
+
+## Stat 242 Quiz -- Topics Drawn from Chapter 2
+
+## What's Your Name? ____________________
+
+## 1. To study the effect of cigarette smoking on platelet aggregation, Levine (1973) drew blood samples from 11 individuals before and after they smoked a cigarette and measured the extent to which the blood platelets aggregated. Platelets are involved in the formation of blood clots, and it is known that smokers suffer more often from disorders involving blood clots than do nonsmokers. The data give the difference in percentage of platelets that are aggregated before and after being exposed to a stimulus, for each individual.  The parameter of interest, $\delta$, is the mean difference in platelet counts before and after exposure in a population of people like those who were included in this study.  A positive value indicates an increase in platelet counts.
+
+Use the R output that follows in answering the questions below.
+
+```{r, echo = FALSE, message=FALSE, warning=FALSE}
+library(tidyverse)
+platelets <- read_csv("http://www.evanlray.com/data/rice/Chapter%2011/platelet.txt")
+colnames(platelets) <- c("before", "after")
+platelets <- platelets %>%
+  mutate(difference = after - before)
+```
+
+```{r}
+platelets %>%
+  summarize(
+    mean_difference = mean(difference),
+    sd_difference = sd(difference))
+```
+
+You may use the fact that $SE(\bar{Y}) = \frac{s}{\sqrt{n}}$.
+
+#### (a) State the null and alternative hypotheses for a test of the claim that exposure to the stimulus has no effect on platelet aggregation.
+
+$H_0: \delta = 0$.  In a population of people like those in this study, the mean difference in platelet counts before and after exposure is 0.
+
+$H_A: \delta \neq 0$.  In a population of people like those in this study, the mean difference in platelet counts before and after exposure is 0.
+
+(I would also accept a one-sided alternative of $\delta > 0$.)
+
+\vspace{2cm}
+
+#### (b) Show the set up for calculating the t statistic you could use to conduct the test you set up in part (a).  Plug in all numbers, but no need to simplify to find the actual numeric value of the t statistic.
+
+$$t = \frac{10.27}{7.98/\sqrt{11}}$$
+
+\vspace{2cm}
+
+#### (c) What are the degrees of freedom for this t statistic?
+
+10
+
+\newpage
+
+(this page left blank intentionally)
+
+\newpage
+
+## Stat 242 Quiz -- Topics Drawn from Chapter 2
+
+## What's Your Name? ____________________
+
+## 1. To study the effect of cigarette smoking on platelet aggregation, Levine (1973) drew blood samples from 11 individuals before and after they smoked a cigarette and measured the extent to which the blood platelets aggregated. Platelets are involved in the formation of blood clots, and it is known that smokers suffer more often from disorders involving blood clots than do nonsmokers. The data give the difference in percentage of platelets that are aggregated before and after being exposed to a stimulus, for each individual.  The parameter of interest, $\delta$, is the mean difference in platelet counts before and after exposure in a population of people like those who were included in this study.
+
+We use the experimental data to conduct a test of the following hypotheses:
+
+$H_0: \delta = 0$
+
+$H_A: \delta \neq 0$
+
+#### (a) Suppose your t statistic worked out to be 2.  Draw a picture of an appropriate t distribution (what is its degrees of freedom?), label it with the value of the t statistic, and shade in the area corresponding to the p-value for the test.
+
+The below is a picture of a $t$ distribution with 10 degrees of freedom.
+
+```{r, echo = FALSE, message=FALSE, cache = TRUE, fig.height = 2}
+tval <- 2
+x_grid_1 <- seq(from = -4, to = -tval, length = 101)
+x_grid_2 <- seq(from = tval, to = 4, length = 101)
+
+region_to_shade1 <- data.frame(
+  x = c(-4, x_grid_1, -tval),
+  y = c(0, dt(x_grid_1, df = 14, log = FALSE), 0)
+)
+
+region_to_shade2 <- data.frame(
+  x = c(tval, x_grid_2, 4),
+  y = c(0, dt(x_grid_2, df = 14, log = FALSE), 0)
+)
+
+ggplot(data = data.frame(x = c(-4, 4)), mapping = aes(x = x)) +
+  stat_function(fun = dt, args = list(df = 14)) +
+  geom_polygon(
+    mapping = aes(x = x, y = y),
+    fill = "cornflowerblue",
+    data = region_to_shade1) +
+  geom_polygon(
+    mapping = aes(x = x, y = y),
+    fill = "cornflowerblue",
+    data = region_to_shade2) +
+  geom_vline(xintercept = tval) +
+  geom_vline(xintercept = -tval) +
+  coord_cartesian(xlim = c(-4, 4), ylim = c(0, 0.4), expand = FALSE) +
+  theme_bw()
+```
+
+
+
+#### (b) What would change in your picture from part (a) if the alternative hypothesis were specified as $H_A: \delta > 0$ (after all, we have reason to believe platelet aggregation will be larger after exposure to the stimulus)?
+
+We would shade in only the upper tail (right side) instead of both tails.
+
+#### (c) Suppose your p-value works out to be 0.002.  Does that prove definitively that the population mean change in platelet aggregation after exposure to the stimulus is different from 0?  Explain.
+
+No.  There are two possibilities:
+
+ * The population mean change in platelet aggregation after exposure to the stimulus is different from 0.
+ * The population mean change in platelet aggregation after exposure to the stimulus is 0, but we got an unusual sample just by chance.  About 0.2% of samples would have t statistics at least as extreme as 2 if the mean change was 0.
+
+\newpage
+
+(this page left blank intentionally)
+
+\newpage
+
+## Stat 242 Quiz -- Topics Drawn from Chapter 2
+
+## What's Your Name? ____________________
+
+## 1. What is the standard error of a statistic?
+
+The standard error of a statistic is an estimate of the standard deviation of the sampling distribution of that statistic.
+
+\newpage
+
+(this page left blank intentionally)

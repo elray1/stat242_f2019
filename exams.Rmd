@@ -13,3 +13,5 @@ Review materials and solutions to quizzes and exams will be posted here.
 |      | important, but that didn't make it onto quizzes. Please  |                                                               |
 |      | also read the book and review in-class materials.        |                                                               |
 +------+----------------------------------------------------------+---------------------------------------------------------------+
+| Quiz | Chapter 2: [pdf](exams/ch2/stat242_quizzes.pdf)          | Solutions: [pdf](exams/ch2/stat242_quiz_solutions.pdf)        |
++------+----------------------------------------------------------+---------------------------------------------------------------+
