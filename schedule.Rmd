@@ -83,10 +83,13 @@ make_week_box("week2", TRUE, "Week 2: Sep 09 -- Sep 13", "
 
 #### Fri, Sep 13
  * **In class**, we will work on:
-    * ANOVA
+    * Overview of degrees of freedom: [pdf](materials/20190913_anova/degrees_of_freedom.pdf)
+        * All you really need to know is that the degrees of freedom is the sample size minus the number of parameters for means.
+    * ANOVA: [pdf](materials/20190913_anova/anova_pairwise.pdf)
+        * We only talked about the set up and plots
  * **After class**, please:
     * Work on Homework 2; due Fri, Sep 20
-    * Review quizzes on material from Chapter 2 (possible quizzes and their solutions will be posted on the Quizzes/Exams page on the course website)
+    * Review quizzes on material from Chapter 2 (possible quizzes and their solutions are posted on the Quizzes/Exams page on the course website)
 ")
 ```
 
@@ -95,17 +98,26 @@ make_week_box("week3", TRUE, "Week 3: Sep 16 -- Sep 20", "
 #### Mon, Sep 16
  * **In class**, we will work on:
     * Quiz on material from Chapter 2
+    * Continue ANOVA:
+        * Based on the handout from Fri, Sep 13:
+            * Discuss formulating hypothesis tests in terms of the means $\\mu_1, \\mu_2, \\ldots, \\mu_I$ for each group.
+            * Discuss using `fit.contrasts` to conduct the test or find a confidence interval
+        * Discuss another way of setting up the ANOVA model in terms of $\\beta$'s: [pdf](materials/20190916_lm_summary/lm_summary.pdf)
  * **After class**, please:
+    * Work on Homework 2; due Fri, Sep 20
 
 
 #### Wed, Sep 18
  * **In class**, we will work on:
     * Quiz on material from Chapter 1 or Chapter 2
+    * More on $t$ tests for ANOVA
  * **After class**, please:
+    * Work on Homework 2; due Fri, Sep 20
 
 
 #### Fri, Sep 20
  * **In class**, we will work on:
+    * F tests for ANOVA
  * **After class**, please:
 ")
 ```

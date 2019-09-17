@@ -1,0 +1,204 @@
+---
+title: "ANOVA"
+output:
+  pdf_document:
+    fig_height: 2.8
+    fig_width: 6
+  html_document:
+    fig_height: 3
+    fig_width: 5
+  word_document:
+    fig_height: 3
+    fig_width: 5
+header-includes:
+  - \usepackage{booktabs}
+geometry: margin=0.6in
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(cache = TRUE)
+```
+
+# Comparing mean of a quantitative variable across multiple groups
+
+## Example 1: Teaching reading
+
+#### Study Overview
+
+Baumann et al. (1992) conducted a study to compare effectiveness of three different strategies for teaching reading comprehension skill to elementary school children.  Here's a quote from the article:
+
+"This study investigated the effectiveness of explicit instruction in think aloud as a means to promote elementary students' comprehension monitoring abilities.  Sixty-six fourth-grade students were randomly assigned to one of three experimental groups: (a) a Think-Aloud (TA) group, in which students were taught various comprehension monitoring strategies for reading stories (e.g., self-questioning, prediction, retelling, rereading) through the medium of thinking aloud; (b) a Directed Reading-Thinking Activity (DRTA) group, in which students were taught a predict-verify strategy for reading and responding to stories; or (c) a Directed Reading Activity (DRA) group, an instructed control, in which
+students engaged in a noninteractive, guided reading of stories."
+
+The students in the study were co-taught in one open classroom in "an elementary school in a rural midwestern community" by three teachers.  After randomly assigning the students to the three instruction groups, two pre-tests of reading comprehension where conducted and performance was similar across all three groups.  After instruction in the reading techniques (instruction was done by the same researcher for all groups), post-tests of reading comprehension were administered.  We will examine results for just the third of these post-tests, in which a student is presented with a sentence that is missing a word and they have to select the best word to fill in from a list of 5 options.  The score is the number of correct choices out of 56 questions.
+
+#### Look at the Data:
+
+```{r, message = FALSE}
+library(readr)
+library(dplyr)
+library(ggplot2)
+library(gridExtra)
+
+reading <- read_csv("http://www.evanlray.com/data/fox/Baumann_reading.csv")
+head(reading)
+dim(reading)
+
+reading %>%
+  count(group)
+```
+
+\newpage
+
+Box plots:
+```{r}
+plot_combined <- ggplot(data = reading, mapping = aes(y = post.test.3)) +
+  geom_boxplot() +
+  xlab("All groups combined")
+
+plot_bygroup <- ggplot(data = reading, mapping = aes(y = post.test.3, x = group)) +
+  geom_boxplot()
+
+grid.arrange(plot_combined, plot_bygroup, ncol = 2)
+```
+
+```{r}
+# Calculate overall sample mean
+reading %>%
+  summarize(
+    mean = mean(post.test.3),
+    sd = sd(post.test.3)
+  )
+
+# Calculate sample means separately for each group
+reading %>%
+  group_by(group) %>%
+  summarize(
+    mean = mean(post.test.3),
+    sd = sd(post.test.3)
+  )
+```
+
+```{r}
+Sleuth3::ex0525 %>%
+  summarize(
+    mean = mean(Income2005),
+    sd = sd(Income2005)
+  )
+
+Sleuth3::ex0525 %>%
+  group_by(Educ) %>%
+  summarize(
+    mean = mean(Income2005),
+    sd = sd(Income2005)
+  )
+```
+
+
+```{r}
+Olives <- read.csv("http://www.stat2.org/datasets/Olives.csv")
+
+
+iris %>%
+  summarize(
+    mean = mean(Fenthion),
+    sd = sd(Fenthion)
+  )
+
+Olives %>%
+  group_by(Time) %>%
+  summarize(
+    mean = mean(Fenthion),
+    sd = sd(Fenthion)
+  )
+```
+
+```{r}
+ggplot(data = Olives, mapping = aes(x = Fenthion, color = factor(Time))) +
+  geom_density()
+```
+
+#### Parameters:
+
+$\mu_{TA}$ = Hypothetical average post-test score for all children in this classroom if they were assigned to the TA group (or, maybe, average in some larger "population")
+
+$\mu_{DRTA}$ = Hypothetical average post-test score for all children in this classroom if they were assigned to the DRTA group (or, maybe, average in some larger "population")
+
+$\mu_{Control}$ = Hypothetical average post-test score for all children in this classroom if they were assigned to the Control group (or, maybe, average in some larger "population")
+
+#### Research Questions:
+
+ * Overall, is there a difference in mean post-test scores for the three groups?
+    * $H_0: \mu_{TA} = \mu_{DRTA} = \mu_{Control}$
+ * Does specific instruction in interactive reading help?  Is the average score across both treatment groups the same as the average score for the control group?
+    * $H_0: \frac{1}{2}(\mu_{TA} + \mu_{DRTA}) = \mu_{Control}$
+ * Is there a difference between the two types of instruction?
+    * $H_0: \mu_{TA} = \mu_{DRTA}$
+
+## Example 2: Women underrepresented on juries?
+
+Quote from our book:
+
+"In 1968, Dr. Benjamin Spock was tried in Boston on charges of conspiring to violate the Selective Service Act by encouraging young men to resist being drafted into military service for Vietnam. The defence in the case challenged the method of jury selection claiming that women were underrepresented. Boston juries are selected in three stages. First 300 names are selected at random from the City Directory, then a venire of 30 or more jurors is selected from the initial list of 300 and finally, an actual jury is selected from the venire in a nonrandom process allowing each side to exclude certain jurors. There was one woman on the venire and no women on the final list. The defence argued that the judge in the trial had a history of venires in which women were systematically underrepresented and compared the judge's recent venires with the venires of six other Boston area district judges."
+
+```{r, message = FALSE}
+library(readr)
+library(ggplot2)
+library(dplyr)
+
+juries <- read_csv("http://www.evanlray.com/data/sleuth3/ex0502_women_jurors.csv")
+```
+
+```{r}
+dim(juries)
+head(juries)
+
+juries %>% count(Judge)
+```
+
+Each observational unit is a venire (jury pool) assembled by one of 7 judges in Boston at this time.  We have information about a total of 46 venires across the 7 judges.  For each venire, we have recorded:
+
+ * The percent of potential jurors in the venire who were women
+ * Which judge assembled that venire
+
+\newpage
+
+General format for plot code below:
+
+```{r, eval = FALSE}
+ggplot(data = <name of data frame>,
+    mapping = aes(x = <variable for horizontal axis>, ...)) +
+  geom_<geometry type>() +
+  <optional other options...>
+```
+
+#### Initial Plots
+
+In R, recreate at least one of the plots below.  Also calculate the group means.
+
+```{r, fig.height = 2, echo = FALSE}
+ggplot(data = juries, mapping = aes(x = Judge, y = Percent)) +
+  geom_boxplot() +
+  theme_bw()
+```
+
+```{r, fig.height=2.5, echo = FALSE}
+ggplot(data = juries, mapping = aes(x = Percent)) +
+  geom_histogram(binwidth = 2.5) +
+  facet_wrap( ~ Judge, ncol = 4) +
+  theme_bw()
+```
+
+```{r}
+
+```
+
+\newpage
+
+### Example 2: 
+
+
+## References
+
+
+

@@ -1,0 +1,238 @@
+---
+title: "$t$ Tests Involving a Linear Combination of Multiple Means"
+output:
+  pdf_document:
+    fig_height: 2.8
+    fig_width: 6
+  html_document:
+    fig_height: 3
+    fig_width: 5
+  word_document:
+    fig_height: 3
+    fig_width: 5
+header-includes:
+  - \usepackage{booktabs}
+geometry: margin=0.6in
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(cache = TRUE)
+```
+
+#### The ANOVA Model
+
+ * We have $I$ groups ($I = 3$ for iris example)
+ * Sample size of $n_i$ for group $i$, total sample size $n = n_1 + n_2 + \cdots + n_I$
+ * Observations in group $i$ follow a Normal($\mu_i$, \sigma^2) distribution
+    * (Potentially) different mean for each group
+    * Same variance across all groups
+
+Theoretical model:
+
+```{r, echo = FALSE, fig.height = 2}
+x_grid <- seq(from = 0, to = 20, length = 101)
+group_sd <- 2
+
+plot_df <- data.frame(
+  x = rep(x_grid, 3),
+  y = c(dnorm(x_grid, mean = 8, sd = group_sd),
+        dnorm(x_grid, mean = 10, sd = group_sd),
+        dnorm(x_grid, mean = 14, sd = group_sd)),
+  group = rep(c("Group 1: mean = 8, sd = 2", "Group 2: mean = 10, sd = 2", "Group 3: mean = 14, sd = 2"),
+    each = length(x_grid))
+)
+
+ggplot(data = plot_df, mapping = aes(x = x, y = y, color = group)) +
+  geom_line()
+  
+```
+
+Compare to the plot for our iris data:
+
+```{r, fig.height = 2}
+ggplot(data = iris, mapping = aes(x = Sepal.Width, color = Species)) +
+  geom_density()
+```
+
+#### Hypothesis
+
+ * General case:
+ 
+$H_0: C_1 \mu_1 + C_2 \mu_2 + \cdots + C_I \mu_I = 0$
+
+$H_A: C_1 \mu_1 + C_2 \mu_2 + \cdots + C_I \mu_I \neq 0$
+
+ * Example: Test of whether $\mu_1 = \mu_2$, or equivalently $\mu_1 - \mu_2 = 0$
+
+$H_0: 1 \times \mu_1 + (-1) \times \mu_2 + 0 \times \mu_3 + \cdots + 0 \times \mu_I = 0$
+
+$H_A: 1 \times \mu_1 + (-1) \times \mu_2 + 0 \times \mu_3 + \cdots + 0 \times \mu_I \neq 0$
+
+$C_1 = 1$, $C_2 = -1$, $C_3 = 0$, $\ldots$, $C_I = 0$
+
+
+
+ * The variance the average squared difference from the mean.
+ 
+ * Imagine a population of $N$ people, each has a height $Y_i$
+ 
+ * Mean height is $\mu = \frac{1}{N} \sum_{i = 1}^N Y_i$
+ 
+ * Variance of heights is $\sigma^2 = \frac{1}{N} \sum_{i = 1}^N (Y_i - \mu)^2$
+
+```{r, echo = FALSE, fig.height = 3, message = FALSE, warning=FALSE}
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+library(mosaic)
+
+ggplot(data = data.frame(Y = c(-10, 10)), mapping = aes(x = Y)) +
+  stat_function(fun = dnorm, args = list(mean = 0, sd = 1)) +
+  stat_function(fun = dnorm, args = list(mean = 0, sd = 4), color = "orange") +
+  theme_bw()
+```
+
+ * Both distributions have mean 0
+ * The distribution shown in orange has larger variance than the distribution shown in black
+    * A typical value is farther from 0
+    * A typical value has larger squared distance from 0
+    * Across all values, the average squared difference from 0 is larger
+
+#### Sample Variance
+
+ * The *sample variance* $s^2$ is used as an estimate of the population variance $\sigma^2$.
+
+ * Suppose we tried to use
+
+$\tilde{s}^2 = \frac{1}{n}\sum_{i = 1}^n(Y_i - \bar{Y})^2$
+
+ * Doesn't work because:
+    * Values in sample tend to be a little closer to $\bar{Y}$ than to $\mu$
+    * Squared differences from $\bar{Y}$ are a little smaller than squared differences from $\mu$
+    * $\tilde{s}^2$ tends to be less than $\sigma^2$
+
+ * Dividing by $n - 1$ instead of $n$ is just the right adjustment:
+
+$s^2 = \frac{1}{n - 1}\sum_{i = 1}^n(Y_i - \bar{Y})^2$
+
+\newpage
+
+#### Demonstration by simulation
+
+ * "Population": Normal$(0, 1)$  Variance is $\sigma^2 = 1$
+
+ * Sample of size $n = 4$
+
+```{r, echo = FALSE, fig.height = 1.7}
+set.seed(847)
+
+sample_df <- data.frame(
+  x = rnorm(4),
+  y = 0
+)
+
+ggplot(data = data.frame(x = c(-4, 4)), mapping = aes(x = x)) + 
+  stat_function(fun = dnorm) +
+  geom_vline(xintercept = 0) +
+  geom_vline(xintercept = mean(sample_df$x), color = "orange", linetype = 2, size = 1) +
+  geom_point(data = sample_df, mapping = aes(y = y), color = "orange", size = 3) +
+  ylab("") +
+  ggtitle("In black: Population distribution, population mean\nIn orange: Sample observations, sample mean") +
+  theme_bw()
+
+sample_df <- sample_df %>% select(x)
+```
+
+Here's our data frame with sample data:
+
+```{r}
+sample_df
+```
+
+Sample mean is:
+
+```{r}
+sample_df %>%
+  summarize(
+    mean = mean(x)
+  )
+```
+
+Average squared difference from population mean of 0:
+
+```{r}
+sample_df %>%
+  summarize(
+    mean_squared_difference_from_0 = mean((x - 0)^2)
+  )
+```
+
+Average squared difference from sample mean of 0.376:
+
+```{r}
+sample_df %>%
+  summarize(
+    mean_squared_difference_from_0 = mean((x - 0.376)^2)
+  )
+```
+
+Corrected by dividing by $n - 1$ instead of $n$:
+
+```{r}
+sample_df %>%
+  summarize(
+    almost_mean_squared_difference_from_0 = sum((x - 0.376)^2) / (4 - 1)
+  )
+```
+
+ * For this particular sample, all three are below the population variance of 1.  What about across 10000 samples?
+
+```{r, echo = FALSE, cache = TRUE}
+sample_df <- data.frame(
+  x = rnorm(4),
+  y = 0
+)
+
+results <- do(10000) * {
+  sample_df <- data.frame(
+    x = rnorm(4)
+  )
+  
+  data.frame(
+    `Denominator n` = mean((sample_df$x - mean(sample_df$x))^2),
+    `Denominator n minus 1` = sum((sample_df$x - mean(sample_df$x))^2) / (3)
+  )
+}
+```
+
+```{r, echo = FALSE}
+results <- results %>%
+  select(1:2) %>%
+  gather(
+    "denominator", value = "variance_estimate"
+  ) %>%
+  mutate(
+    denominator = ifelse(denominator == "Denominator.n", "Denominator n", "Denominator n-1")
+  )
+```
+
+```{r, echo = FALSE}
+ggplot(data = results, mapping = aes(x = variance_estimate)) +
+  geom_histogram(boundary = 0, fill = "orange", alpha = 0.5, bins = 30) +
+  geom_vline(xintercept = 1) +
+  geom_vline(results %>% group_by(denominator) %>% summarize(mean_est = mean(variance_estimate)),
+    mapping = aes(xintercept = mean_est), color = "orange", linetype = 2, size = 1) +
+  facet_wrap(~ denominator, ncol = 1) +
+  ggtitle("Black line: population variance\nOrange line: average estimate of population variance across 10000 samples") +
+  theme_bw()
+```
+
+#### Connection to $t$ tests
+
+ * Our $t$ statistic for a test about the value of a mean $\mu$ is
+
+$t = \frac{\bar{Y} - \mu}{SE(\bar{Y})} = \frac{\bar{Y} - \mu}{s / \sqrt{n}}$
+
+ * $s$ shows up in this calculation, with associated degrees of freedom $n - 1$.
+
+
