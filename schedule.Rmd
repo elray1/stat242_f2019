@@ -114,6 +114,7 @@ make_week_box("week3", TRUE, "Week 3: Sep 16 -- Sep 20", "
  * **In class**, we will work on:
     * Quiz on material from Chapter 1 or Chapter 2
     * More on $t$ tests for ANOVA.  No new handouts.
+    * We developed a set of solutions to all the questions we asked related to stuff in Lab 2: [https://github.com/mhc-stat242-f2019/Lab2-solutions.git](https://github.com/mhc-stat242-f2019/Lab2-solutions.git)
  * **After class**, please:
     * Work on Homework 2; due Fri, Sep 20
     * Read Sections 2.3, 5.2, and 6.2 of The Statistical Sleuth 3rd Edition
@@ -123,6 +124,7 @@ make_week_box("week3", TRUE, "Week 3: Sep 16 -- Sep 20", "
  * **In class**, we will work on:
     * Concepts behind t-based inference and F tests for ANOVA: [pdf](materials/20190920_anova_t_F/20190920_anova_t_F.pdf)
     * R code for F tests for ANOVA: [pdf](materials/20190920_anova_t_F/anova_F_R_code.pdf)  (note: this is a first look at this that we will expand on next class)
+    * Lab 3: [https://github.com/mhc-stat242-f2019/Lab3.git](https://github.com/mhc-stat242-f2019/Lab3.git)
  * **After class**, please:
     * Review all quizzes!
     * Work on Homework 3; due Fri, Sep 27.  Will be assigned by Saturday.
