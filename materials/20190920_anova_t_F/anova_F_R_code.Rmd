@@ -1,0 +1,69 @@
+---
+title: "R code: F tests for ANOVA (Sleuth3 Section 5.3)"
+subtitle: "We will refine this R code next class"
+date: "2019-09-20"
+output:
+  pdf_document:
+    fig_height: 2.8
+    fig_width: 6
+  html_document:
+    fig_height: 3
+    fig_width: 5
+  word_document:
+    fig_height: 3
+    fig_width: 5
+header-includes:
+  - \usepackage{booktabs}
+  - \usepackage{multirow}
+geometry: margin=0.6in
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(cache = TRUE)
+```
+
+```{r, message = FALSE, echo = FALSE, warning=FALSE}
+library(readr)
+library(dplyr)
+library(ggplot2)
+library(gridExtra)
+library(mosaic)
+options("pillar.sigfig" = 10) # print 10 significant digits in summarize output
+```
+
+# Iris Flowers Example
+
+Conduct a claim of the test that the population mean sepal width is the same for all three species.
+
+$H_0: \mu_1 = \mu_2 = \mu_3$
+
+$H_A:$ it is not the case that all three means are equal.
+
+#### Any approach will start off by fitting the full model
+
+```{r, echo = TRUE, fig.height = 1.5, fig.width = 7}
+full_fit <- lm(Sepal.Width ~ Species, data = iris)
+```
+
+#### Option 1: F statistic and p-value at bottom of model summary
+
+```{r}
+summary(full_fit)
+```
+
+#### Option 2: Call `anova` on your model fit
+
+```{r}
+anova(full_fit)
+```
+
+#### Option 3: Fit a reduced model and call `anova`, supplying both the full and reduced models.
+
+For the reduced model, our explanatory variable is "1" -- which means, include only an intercept.
+
+```{r}
+reduced_fit <- lm(Sepal.Width ~ 1, data = iris)
+anova(reduced_fit, full_fit)
+```
+
+This third approach is too much work for the current example, but it is necessary in the examples we will look at next week.

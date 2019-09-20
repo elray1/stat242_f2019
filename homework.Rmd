@@ -8,25 +8,25 @@ Here's a guide to getting homework assignments from RStudio into Gradescope: [pd
 
 I realize that this is kindof a pain!  Let me know if you run into any problems with this.
 
-+------------------+--------------------------------------------------------------------------------------+-------------------+----------+-----------------------+
-| Assignment       | Description                                                                          | Due Date          | Value    | Solutions             |
-+==================+======================================================================================+===================+==========+=======================+
-| HW0              | Optional Data Camp assignments.                                                      |    N/A            | 0        |  N/A                  |
-|                  |                                                                                      |                   |(optional)|                       |
-|                  | Register for our course on Data Camp at this link, and complete the assignment there:|                   |          |                       |
-|                  | https://www.datacamp.com/groups/shared_links/e05929250408228fa302681f53f66bdc48e8142d|                   |          |                       |
-|                  |                                                                                      |                   |          |                       |
-|                  | If you are already comfortable with R, you don't need to do this.  If you would like |                   |          |                       |
-|                  | a review, you are welcome to do this.  **If you haven't seen R before, you should**  |                   |          |                       |
-|                  | **treat this as a required assignment even though it won't be graded.**  If you have |                   |          |                       |
-|                  | not used R much/at all yet, this assignment may feel overwhelming.  Don't worry, we  |                   |          |                       |
-|                  | will talk about this material in more depth in future classes.  This is a first pass.|                   |          |                       |
-+------------------+--------------------------------------------------------------------------------------+-------------------+----------+-----------------------+
-| HW1              | Chapter 1.  Use the instructions above to clone the assignment into RStudio, using   | Sept. 13          | 1        | Posted later.         |
-|                  | this link for the repository URL in step 6:                                          |                   |          |                       |
-|                  | https://github.com/mhc-stat242-f2019/HW1.git                                         |                   |          |                       |
-+------------------+--------------------------------------------------------------------------------------+-------------------+----------+-----------------------+
-| HW2              | Chapter 2.  Use the instructions above to clone the assignment into RStudio, using   | Sept. 20          | 1        | Posted later.         |
-|                  | this link for the repository URL in step 6:                                          |                   |          |                       |
-|                  | https://github.com/mhc-stat242-f2019/HW2.git                                         |                   |          |                       |
-+------------------+--------------------------------------------------------------------------------------+-------------------+----------+-----------------------+
++------------------+--------------------------------------------------------------------------------------+-------------------+----------+--------------------------------------------------------------------------+
+| Assignment       | Description                                                                          | Due Date          | Value    | Solutions                                                                |
++==================+======================================================================================+===================+==========+==========================================================================+
+| HW0              | Optional Data Camp assignments.                                                      |    N/A            | 0        |  N/A                                                                     |
+|                  |                                                                                      |                   |(optional)|                                                                          |
+|                  | Register for our course on Data Camp at this link, and complete the assignment there:|                   |          |                                                                          |
+|                  | https://www.datacamp.com/groups/shared_links/e05929250408228fa302681f53f66bdc48e8142d|                   |          |                                                                          |
+|                  |                                                                                      |                   |          |                                                                          |
+|                  | If you are already comfortable with R, you don't need to do this.  If you would like |                   |          |                                                                          |
+|                  | a review, you are welcome to do this.  **If you haven't seen R before, you should**  |                   |          |                                                                          |
+|                  | **treat this as a required assignment even though it won't be graded.**  If you have |                   |          |                                                                          |
+|                  | not used R much/at all yet, this assignment may feel overwhelming.  Don't worry, we  |                   |          |                                                                          |
+|                  | will talk about this material in more depth in future classes.  This is a first pass.|                   |          |                                                                          |
++------------------+--------------------------------------------------------------------------------------+-------------------+----------+--------------------------------------------------------------------------+
+| HW1              | Chapter 1.  Use the instructions above to clone the assignment into RStudio, using   | Sept. 13          | 1        | https://github.com/mhc-stat242-f2019/HW1-solutions/blob/master/HW1.pdf   |
+|                  | this link for the repository URL in step 6:                                          |                   |          |                                                                          |
+|                  | https://github.com/mhc-stat242-f2019/HW1.git                                         |                   |          |                                                                          |
++------------------+--------------------------------------------------------------------------------------+-------------------+----------+--------------------------------------------------------------------------+
+| HW2              | Chapter 2.  Use the instructions above to clone the assignment into RStudio, using   | Sept. 20          | 1        | Posted later.                                                            |
+|                  | this link for the repository URL in step 6:                                          |                   |          |                                                                          |
+|                  | https://github.com/mhc-stat242-f2019/HW2.git                                         |                   |          |                                                                          |
++------------------+--------------------------------------------------------------------------------------+-------------------+----------+--------------------------------------------------------------------------+

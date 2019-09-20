@@ -61,7 +61,7 @@ make_week_box("week1", FALSE, "Week 1: Sep 02 -- Sep 06", "
 ```
 
 ```{r, echo = FALSE, results='asis'}
-make_week_box("week2", TRUE, "Week 2: Sep 09 -- Sep 13", "
+make_week_box("week2", FALSE, "Week 2: Sep 09 -- Sep 13", "
 #### Mon, Sep 09
  * **In class**, we will work on:
     * Quiz on material from Chapter 1
@@ -79,6 +79,7 @@ make_week_box("week2", TRUE, "Week 2: Sep 09 -- Sep 13", "
     * Lab about t-based inference
  * **After class**, please:
     * Work on Homework 1; due Fri, Sep 13
+    * Read Sections 2.3, 5.2, and 6.2 of The Statistical Sleuth 3rd Edition
 
 
 #### Fri, Sep 13
@@ -89,6 +90,7 @@ make_week_box("week2", TRUE, "Week 2: Sep 09 -- Sep 13", "
         * We only talked about the set up and plots
  * **After class**, please:
     * Work on Homework 2; due Fri, Sep 20
+    * Read Sections 2.3, 5.2, and 6.2 of The Statistical Sleuth 3rd Edition
     * Review quizzes on material from Chapter 2 (possible quizzes and their solutions are posted on the Quizzes/Exams page on the course website)
 ")
 ```
@@ -105,20 +107,26 @@ make_week_box("week3", TRUE, "Week 3: Sep 16 -- Sep 20", "
         * Discuss another way of setting up the ANOVA model in terms of $\\beta$'s: [pdf](materials/20190916_lm_summary/lm_summary.pdf)
  * **After class**, please:
     * Work on Homework 2; due Fri, Sep 20
+    * Read Sections 2.3, 5.2, and 6.2 of The Statistical Sleuth 3rd Edition
 
 
 #### Wed, Sep 18
  * **In class**, we will work on:
     * Quiz on material from Chapter 1 or Chapter 2
-    * More on $t$ tests for ANOVA
+    * More on $t$ tests for ANOVA.  No new handouts.
  * **After class**, please:
     * Work on Homework 2; due Fri, Sep 20
+    * Read Sections 2.3, 5.2, and 6.2 of The Statistical Sleuth 3rd Edition
 
 
 #### Fri, Sep 20
  * **In class**, we will work on:
-    * F tests for ANOVA
+    * Concepts behind t-based inference and F tests for ANOVA: [pdf](materials/20190920_anova_t_F/20190920_anova_t_F.pdf)
+    * R code for F tests for ANOVA: [pdf](materials/20190920_anova_t_F/anova_F_R_code.pdf)  (note: this is a first look at this that we will expand on next class)
  * **After class**, please:
+    * Review all quizzes!
+    * Work on Homework 3; due Fri, Sep 27.  Will be assigned by Saturday.
+    * Read Sections 5.3 and 5.4 of The Statistical Sleuth 3rd Edition
 ")
 ```
 
@@ -126,16 +134,22 @@ make_week_box("week3", TRUE, "Week 3: Sep 16 -- Sep 20", "
 make_week_box("week4", TRUE, "Week 4: Sep 23 -- Sep 27", "
 #### Mon, Sep 23
  * **In class**, we will work on:
+    * Quiz on Sections 5.2 and 6.2
+    * More on F tests for ANOVA models.
  * **After class**, please:
 
 
 #### Wed, Sep 25
  * **In class**, we will work on:
+    * Quiz on any material up through Sections 5.2 and 6.2
+    * Think about conditions for the ANOVA model?  Or maybe multiple comparisons.
+    * Possibly, start on data transformations for ANOVA
  * **After class**, please:
 
 
 #### Fri, Sep 27
  * **In class**, we will work on:
+    * Transformations for ANOVA
  * **After class**, please:
 ")
 ```
@@ -144,11 +158,13 @@ make_week_box("week4", TRUE, "Week 4: Sep 23 -- Sep 27", "
 make_week_box("week5", TRUE, "Week 5: Sep 30 -- Oct 04", "
 #### Mon, Sep 30
  * **In class**, we will work on:
+    * Either alternative approaches to inference (reminder about permutation tests, start on bootstrap) or multiple comparisons
  * **After class**, please:
 
 
 #### Wed, Oct 02
  * **In class**, we will work on:
+    * More on bootstrap or more on multiple comparisons
  * **After class**, please:
 
 
@@ -162,11 +178,13 @@ make_week_box("week5", TRUE, "Week 5: Sep 30 -- Oct 04", "
 make_week_box("week6", TRUE, "Week 6: Oct 07 -- Oct 11", "
 #### Mon, Oct 07
  * **In class**, we will work on:
+    * Midterm?
  * **After class**, please:
 
 
 #### Wed, Oct 09
  * **In class**, we will work on:
+    * Midterm?
  * **After class**, please:
 
 

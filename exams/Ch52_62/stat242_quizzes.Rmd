@@ -1,0 +1,294 @@
+---
+title: ""
+subtitle: ""
+output:
+  pdf_document:
+    fig_height: 2.8
+    fig_width: 6
+    keep_tex: true
+  html_document:
+    fig_height: 3
+    fig_width: 5
+  word_document:
+    fig_height: 3
+    fig_width: 5
+header-includes:
+  - \usepackage{booktabs}
+geometry: margin=0.6in
+---
+
+## Stat 242 Quiz -- Topics Drawn from Sections 2.3, 5.2, and 6.2
+
+## What's Your Name? ____________________
+
+In the 1970's, it was found that giving terminal cancer patients a dietary supplement of ascorbate could prolong their lives.  As a follow-up question, researchers wondered if the effect of the ascorbate was different when different organs were affected by the cancer.  We have a data set with records for 64 different cancer patients.  Each patient had cancer in one of 5 different organs: breast, bronchus, colon, ovary, or stomach.  For each patient, we have recorded their cancer type and their survival time.  Here we will treat the log of survival time as the response variable.  The R code below calculates the mean log survival time for each group of patients.
+
+```{r, echo = FALSE, message=FALSE, warning=FALSE}
+library(tidyverse)
+library(dplyr)
+
+cancer <- read_csv("http://www.evanlray.com/data/stat2/CancerSurvival.CSV") %>%
+  mutate(
+    log_survival_time = log(Survival)
+  )
+```
+
+```{r}
+cancer %>%
+  group_by(Organ) %>%
+  summarize(
+    mean_log_survival_time = mean(Survival)
+  )
+```
+
+Define the parameters as follows:
+
+ * $\mu_1$ is the mean log survival time for breast cancer patients similar to those enrolled in this study;
+ * $\mu_2$ is the mean log survival time for bronchus cancer patients similar to those enrolled in this study;
+ * $\mu_3$ is the mean log survival time for colon cancer patients similar to those enrolled in this study;
+ * $\mu_4$ is the mean log survival time for ovarian cancer patients similar to those enrolled in this study; and
+ * $\mu_5$ is the mean log survival time for stomach cancer patients similar to those enrolled in this study
+
+### 1. We would like to see if the average log survival time for breast cancer is different from the average log survival time for stomach cancer.  State the hypotheses for this test as a linear combination of the means for the five groups.
+
+\vspace{4cm}
+
+### 2. Show how you could find an estimate of the linear combination specified in the hypotheses for part 1.  (You can just do the set up, no need to simplify to find an actual number.)
+
+\vspace{3cm}
+
+#### (See question 3 on other side!)
+
+\newpage
+
+### 3. We would like to see if the average log survival time for breast and ovary cancers (treated as a group) are different from the average log survival time for the other three types.  State the hypotheses for this test as a linear combination of the means for the five groups.
+
+For your reference, here are our parameter definitions again:
+
+ * $\mu_1$ is the mean log survival time for breast cancer patients similar to those enrolled in this study;
+ * $\mu_2$ is the mean log survival time for bronchus cancer patients similar to those enrolled in this study;
+ * $\mu_3$ is the mean log survival time for colon cancer patients similar to those enrolled in this study;
+ * $\mu_4$ is the mean log survival time for ovarian cancer patients similar to those enrolled in this study; and
+ * $\mu_5$ is the mean log survival time for stomach cancer patients similar to those enrolled in this study
+
+
+\newpage
+
+## Stat 242 Quiz -- Topics Drawn from Sections 2.3, 5.2, and 6.2
+
+## What's Your Name? ____________________
+
+In the 1970's, it was found that giving terminal cancer patients a dietary supplement of ascorbate could prolong their lives.  As a follow-up question, researchers wondered if the effect of the ascorbate was different when different organs were affected by the cancer.  We have a data set with records for 64 different cancer patients.  Each patient had cancer in one of 5 different organs: breast, bronchus, colon, ovary, or stomach.  For each patient, we have recorded their cancer type and their survival time.  Here we will treat the log of survival time as the response variable.
+
+The R code below produces output for a confidence interval and a hypothesis test for the hypotheses
+
+$H_0: \frac{1}{2} (\mu_1 + \mu_4) - \frac{1}{3} (\mu_2 + \mu_3 + \mu_5) = 0$
+
+$H_A: \frac{1}{2} (\mu_1 + \mu_4) - \frac{1}{3} (\mu_2 + \mu_3 + \mu_5) \neq 0$
+
+Here, the parameters are as follows:
+
+ * $\mu_1$ is the mean log survival time for breast cancer patients similar to those enrolled in this study;
+ * $\mu_2$ is the mean log survival time for bronchus cancer patients similar to those enrolled in this study;
+ * $\mu_3$ is the mean log survival time for colon cancer patients similar to those enrolled in this study;
+ * $\mu_4$ is the mean log survival time for ovarian cancer patients similar to those enrolled in this study; and
+ * $\mu_5$ is the mean log survival time for stomach cancer patients similar to those enrolled in this study
+
+```{r, echo = FALSE, message=FALSE, warning=FALSE}
+library(tidyverse)
+library(dplyr)
+library(gmodels)
+
+cancer <- read_csv("http://www.evanlray.com/data/stat2/CancerSurvival.CSV") %>%
+  mutate(
+    log_survival_time = log(Survival)
+  )
+
+options(digits = 3)
+```
+
+```{r, echo = TRUE, eval = FALSE}
+anova_fit <- lm(log_survival_time ~ Organ, data = cancer)
+fit.contrast(anova_fit, "Organ", c(1/2, -1/3, -1/3, 1/2, -1/3), conf.int = 0.95)
+```
+
+```{r, echo = FALSE, eval = FALSE}
+anova_fit <- lm(log_survival_time ~ Organ, data = cancer)
+temp <- fit.contrast(anova_fit, "Organ", c(1/2, -1/3, -1/3, 1/2, -1/3), conf.int = 0.95)
+rownames(temp) <- NULL
+temp
+```
+
+
+\begin{verbatim}
+##      Estimate Std. Error t value Pr(>|t|) lower CI upper CI
+## [1,]     1.13      0.351    3.23  0.00204     0.43     1.83
+\end{verbatim}
+
+#### (a) Draw a conclusion about the strength of evidence against the null hypothesis.  Your statement should be in the context of this question.
+
+\vspace{4cm}
+
+#### (b) Interpret the confidence interval in context.  Include a description of the meaning of the phrase "95% confident" as part of your answer.
+
+\newpage
+
+(this page left blank intentionally)
+
+\newpage
+
+
+## Stat 242 Quiz -- Topics Drawn from Sections 2.3, 5.2, and 6.2
+
+## What's Your Name? ____________________
+
+In the 1970's, it was found that giving terminal cancer patients a dietary supplement of ascorbate could prolong their lives.  As a follow-up question, researchers wondered if the effect of the ascorbate was different when different organs were affected by the cancer.  We have a data set with records for 64 different cancer patients.  Each patient had cancer in one of 5 different organs: breast, bronchus, colon, ovary, or stomach.  For each patient, we have recorded their cancer type and their survival time.  Here we will treat the log of survival time as the response variable.
+
+The researchers were interested in seeing whether or not the difference in mean log survival times between breast cancer patients and ovarian cancer patients is 0, among patients similar to those enrolled in this study.  They expressed this question in the following hypothesis test:
+
+$H_0: \mu_1 - \mu_4 = 0$
+
+$H_A: \mu_1 - \mu_4 \neq 0$
+
+Here, $\mu_1$ represented the mean for breast cancer patients and $\mu_4$ represented the mean for ovarian cancer patients.
+
+Based on their sample data, an estimate of $\mu_1 - \mu_4$ was 0.408, with a standard error of 0.607.
+
+#### (a) Show the set up for calculating a t statistic to use for this test, based on the estimate and standard error above.  No need to simplify to get an actual number.
+
+\vspace{3cm}
+
+#### (b) What are the degrees of freedom for the distribution of the t statistic?
+
+\vspace{2cm}
+
+#### (c) Suppose the t statistic above worked out to be 1 (it wouldn't, this is just for illustration).  Draw a picture illustrating how the p-value for the test would be calculated.
+
+\vspace{2cm}
+
+\newpage
+
+(this page left blank intentionally)
+
+\newpage
+
+
+## Stat 242 Quiz -- Topics Drawn from Sections 2.3, 5.2, and 6.2
+
+## What's Your Name? ____________________
+
+In the 1970's, it was found that giving terminal cancer patients a dietary supplement of ascorbate could prolong their lives.  As a follow-up question, researchers wondered if the effect of the ascorbate was different when different organs were affected by the cancer.  We have a data set with records for 64 different cancer patients.  Each patient had cancer in one of 5 different organs: breast, bronchus, colon, ovary, or stomach.  For each patient, we have recorded their cancer type and their survival time.  Here we will treat the log of survival time as the response variable.
+
+The researchers were interested in the difference in mean log survival times between breast cancer patients and ovarian cancer patients, among patients similar to those enrolled in this study.  They expressed this difference as $\mu_1 - \mu_4$, where $\mu_1$ represented the mean for breast cancer patients and $\mu_4$ represented the mean for ovarian cancer patients.
+
+Based on their sample data, an estimate of $\mu_1 - \mu_4$ was 0.408, with a standard error of 0.607.
+
+Use the R output below to answer the following question.
+
+```{r, echo = FALSE}
+options(digits = 7)
+```
+
+```{r}
+qt(0.975, df = 64)
+qt(0.975, df = 63)
+qt(0.975, df = 62)
+qt(0.975, df = 59)
+```
+
+#### (a) What is the degrees of freedom for the t statistic?
+
+\vspace{3cm}
+
+#### (b) Show the set up for calculating a 95% confidence interval for $\mu_1 - \mu_4$, based on the estimate and standard error above.  No need to simplify to get numbers, just show the set up.  You will need the output from just one of the calls to qt above.
+
+\vspace{3cm}
+
+\newpage
+
+(this page left blank intentionally)
+
+\newpage
+
+## Stat 242 Quiz -- Topics Drawn from Sections 2.3, 5.2, and 6.2
+
+## What's Your Name? ____________________
+
+In the 1970's, it was found that giving terminal cancer patients a dietary supplement of ascorbate could prolong their lives.  As a follow-up question, researchers wondered if the effect of the ascorbate was different when different organs were affected by the cancer.  We have a data set with records for 64 different cancer patients.  Each patient had cancer in one of 5 different organs: breast, bronchus, colon, ovary, or stomach.  For each patient, we have recorded their cancer type and their survival time.  Here we will treat the log of survival time as the response variable.
+
+The researchers were interested in whether there was a difference in mean log survival times between breast cancer patients and ovarian cancer patients, among patients similar to those enrolled in this study.
+
+Use the R output below to answer the following questions.
+
+```{r, echo = FALSE}
+options(digits = 7)
+```
+
+```{r, echo = TRUE, eval = TRUE}
+anova_fit <- lm(log_survival_time ~ Organ, data = cancer)
+summary(anova_fit)
+```
+
+#### (a) What is an estimate of the difference in mean log survival times for breast cancer and ovarian cancer patients?
+
+\vspace{2.5cm}
+
+#### (b) State the null and alternative hypotheses for a relevant hypothesis test in terms of one of the model parameters $\beta_0$, $\beta_1$, $\beta_2$, $\beta_3$, or $\beta_4$.
+
+\vspace{2.5cm}
+
+#### (See question c on other side!)
+
+#### (c) What is the p-value for the test?  State a conclusion for the test in terms of strength of evidence against the null hypothesis.
+
+\vspace{3cm}
+
+\newpage
+
+
+
+## Stat 242 Quiz -- Topics Drawn from Sections 2.3, 5.2, and 6.2
+
+## What's Your Name? ____________________
+
+In the 1970's, it was found that giving terminal cancer patients a dietary supplement of ascorbate could prolong their lives.  As a follow-up question, researchers wondered if the effect of the ascorbate was different when different organs were affected by the cancer.  We have a data set with records for 64 different cancer patients.  Each patient had cancer in one of 5 different organs: breast, bronchus, colon, ovary, or stomach.  For each patient, we have recorded their cancer type and their survival time.  Here we will treat the log of survival time as the response variable.
+
+The researchers fit an ANOVA model to these data with log survival time as the response and the affected organ as the explanatory variable.
+
+Use the R output below to answer the following questions.
+
+```{r, echo = FALSE}
+options(digits = 7)
+```
+
+```{r, echo = TRUE, eval = TRUE}
+anova_fit <- lm(log_survival_time ~ Organ, data = cancer)
+summary(anova_fit)
+```
+
+#### (a) Write down the linear model equation for the population mean log survival time as a function of the model parameters $\beta_0$, $\beta_1$, $\beta_2$, $\beta_3$, and $\beta_4$.
+
+\vspace{2.25cm}
+
+#### (b) In the background, R created a new variable called `OrganStomach`.  Explain what that variable is (what are the possible values for that variable, and when does it take each of those values?).
+
+\vspace{2.25cm}
+
+#### (See questions c through f on other side!)
+
+\vspace{3cm}
+
+#### (c) Write down the population mean log survival time for patients who have breast cancer in terms of the model parameters $\beta_0$, $\beta_1$, $\beta_2$, $\beta_3$, and $\beta_4$.
+
+\vspace{3cm}
+
+#### (d) Write down the population mean log survival time for patients who have ovarian cancer in terms of the model parameters $\beta_0$, $\beta_1$, $\beta_2$, $\beta_3$, and $\beta_4$.
+
+\vspace{3cm}
+
+#### (e) What is the interpretation of $\beta_0$?
+
+\vspace{3cm}
+
+#### (f) What is the interpretation $\beta_3$?
+
