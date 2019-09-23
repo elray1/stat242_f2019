@@ -138,8 +138,8 @@ make_week_box("week4", TRUE, "Week 4: Sep 23 -- Sep 27", "
  * **In class**, we will work on:
     * Quiz on Sections 5.2 and 6.2
     * More on F tests for ANOVA models.
-        * slides illustrating how p-value calculations for F tests work: [pdf](materials/20190223_F/F_Test_p-values.pdf)
-        * p-values for nested models: [pdf](materials/20190223_F/anova_F.pdf)
+        * slides illustrating how p-value calculations for F tests work: [pdf](materials/20190923_F/F_Test_p-values.pdf)
+        * p-values for nested models: [pdf](materials/20190923_F/anova_F.pdf)
         * Finish Lab 3
  * **After class**, please:
     * Read Sections 6.3, 6.4.3, and the paragraph headed \"Bonferroni\" in 6.4.4.
