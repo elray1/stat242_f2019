@@ -1,0 +1,2226 @@
+---
+title: "F Test p-values"
+author: "Evan L. Ray"
+date: "September 23, 2019"
+output:
+  ioslides_presentation:
+    smaller: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, cache = TRUE)
+library(dplyr)
+library(ggplot2)
+library(grid)
+library(purrr)
+```
+
+<style> 
+  slides > slide > hgroup + article { 
+    margin-top: 10px; 
+  } 
+</style>
+
+## F tests: Iris example
+
+Suppose we have 3 flowers of each iris species, and we want to conduct an F test of $H_0: \mu_1 = \mu_2 = \mu_3$.
+
+```{r, echo=  FALSE}
+set.seed(1234)
+iris <- datasets::iris %>%
+  group_by(Species) %>%
+  sample_n(size = 3) %>%
+  select(Species, Sepal.Width)
+
+# manually adjust to avoid overplotting
+iris$Sepal.Width[4] <- 2.3
+```
+
+```{r, echo = FALSE, fig.height=2}
+red_ss <- iris %>%
+  ungroup() %>%
+  mutate(
+    mean_sw = mean(Sepal.Width),
+    resid = Sepal.Width - mean_sw
+  ) %>%
+  summarize(
+    rss = mean(resid^2)
+  ) %>%
+  pull(rss)
+
+full_ss <- iris %>%
+  group_by(Species) %>%
+  mutate(
+    mean_sw = mean(Sepal.Width),
+    resid = Sepal.Width - mean_sw
+  ) %>%
+  ungroup() %>%
+  summarize(
+    rss = mean(resid^2)
+  ) %>%
+  pull(rss)
+
+p_full <- ggplot() +
+  geom_point(
+    data = iris,
+    mapping = aes(x = Sepal.Width, y = 0, color = Species, shape = Species)
+  ) +
+  geom_vline(
+    data = iris %>%
+      group_by(Species) %>%
+      summarize(
+        mean_sw = mean(Sepal.Width)
+      ),
+    mapping = aes(xintercept = mean_sw, color = Species)
+  ) +
+  ylim(0, 0.4) +
+  ylab("") +
+  ggtitle(paste0("Full Model RSS = ", round(full_ss, 3))) +
+  theme_bw()
+
+p_red <- ggplot() +
+  geom_point(
+    data = iris,
+    mapping = aes(x = Sepal.Width, y = 0)
+  ) +
+  geom_vline(
+    data = iris %>%
+      ungroup() %>%
+      summarize(
+        mean_sw = mean(Sepal.Width)
+      ),
+    mapping = aes(xintercept = mean_sw)
+  ) +
+  ylim(0, 0.4) +
+  ylab("") +
+  ggtitle(paste0("Reduced Model RSS = ", round(red_ss, 3))) +
+  theme_bw()
+
+grid.newpage()
+pushViewport(viewport(layout = grid.layout(ncol = 2, widths= unit(c(1, 0.7),units = rep("null", 2)))))
+print(p_full, vp = viewport(layout.pos.row = 1, layout.pos.col = 1))
+print(p_red, vp = viewport(layout.pos.row = 1, layout.pos.col = 2))
+```
+
+```{r, echo = FALSE, fig.height=2}
+f_stat <- lm(Sepal.Width ~ Species, data = iris) %>% summary() %>% `[[`("fstatistic") %>% `[[`("value")
+plot_df <- data.frame(
+  f = f_stat
+)
+
+ggplot() +
+  geom_vline(
+    data = plot_df,
+    mapping = aes(xintercept = f_stat)
+  ) +
+  xlim(0, 6) +
+  ylim(0, 0.4) +
+  ylab("") +
+  ggtitle(substitute(paste("F = ", frac("(Extra Sum of Squares)/(Extra Degrees of Freedom)", "(Residual Sum of Squares, Full Model)/(Degrees of Freedom, Full Model)"), " = ", f_stat),
+  list(f_stat=round(f_stat, 3)))) +
+#  ggtitle(paste0("F Statistic = ", round(f_stat, 3))) +
+  theme_bw()
+```
+
+
+## Heading towards a p-value
+
+p-value: If $H_0$ is correct, what proportion of samples would give you F statistics at least as extreme as the F statistic of 4.78 we got from our actual data?
+
+Let's simulate a fake data set, assuming $H_0$ is true.  We have 9 observations drawn at random from a Normal(3.033, 0.579) distribution.
+
+```{r, echo =  FALSE}
+fake_iris <- data.frame(
+  Species = iris$Species,
+  Sepal.Width = rnorm(n = 9, mean = 3.033, sd = 0.579)
+)
+```
+
+```{r, echo = FALSE, fig.height=2}
+red_ss <- fake_iris %>%
+  ungroup() %>%
+  mutate(
+    mean_sw = mean(Sepal.Width),
+    resid = Sepal.Width - mean_sw
+  ) %>%
+  summarize(
+    rss = mean(resid^2)
+  ) %>%
+  pull(rss)
+
+full_ss <- fake_iris %>%
+  group_by(Species) %>%
+  mutate(
+    mean_sw = mean(Sepal.Width),
+    resid = Sepal.Width - mean_sw
+  ) %>%
+  ungroup() %>%
+  summarize(
+    rss = mean(resid^2)
+  ) %>%
+  pull(rss)
+
+p_full <- ggplot() +
+  geom_point(
+    data = fake_iris,
+    mapping = aes(x = Sepal.Width, y = 0, color = Species, shape = Species)
+  ) +
+  geom_vline(
+    data = fake_iris %>%
+      group_by(Species) %>%
+      summarize(
+        mean_sw = mean(Sepal.Width)
+      ),
+    mapping = aes(xintercept = mean_sw, color = Species)
+  ) +
+  ylim(0, 0.4) +
+  ylab("") +
+  ggtitle(paste0("Full Model RSS = ", round(full_ss, 3))) +
+  theme_bw()
+
+p_red <- ggplot() +
+  geom_point(
+    data = fake_iris,
+    mapping = aes(x = Sepal.Width, y = 0)
+  ) +
+  geom_vline(
+    data = fake_iris %>%
+      ungroup() %>%
+      summarize(
+        mean_sw = mean(Sepal.Width)
+      ),
+    mapping = aes(xintercept = mean_sw)
+  ) +
+  ylim(0, 0.4) +
+  ylab("") +
+  ggtitle(paste0("Reduced Model RSS = ", round(red_ss, 3))) +
+  theme_bw()
+
+grid.newpage()
+pushViewport(viewport(layout = grid.layout(ncol = 2, widths= unit(c(1, 0.7),units = rep("null", 2)))))
+print(p_full, vp = viewport(layout.pos.row = 1, layout.pos.col = 1))
+print(p_red, vp = viewport(layout.pos.row = 1, layout.pos.col = 2))
+```
+
+```{r, echo = FALSE, fig.height=2, warning=FALSE}
+f_stat <- lm(Sepal.Width ~ Species, data = fake_iris) %>% summary() %>% `[[`("fstatistic") %>% `[[`("value")
+fake_plot_df <- data.frame(
+  f = f_stat
+)
+
+ggplot() +
+  geom_histogram(
+    data = fake_plot_df,
+    mapping = aes(x = f),
+    binwidth = 0.1,
+    boundary = 0
+  ) +
+  geom_vline(
+#    mapping = aes(xintercept = plot_df$f_stat)
+    data = plot_df,
+    mapping = aes(xintercept = f)
+  ) +
+  xlim(0, 6) +
+  ylab("") +
+  ggtitle(substitute(paste("F = ", frac("(Extra Sum of Squares)/(Extra Degrees of Freedom)", "(Residual Sum of Squares, Full Model)/(Degrees of Freedom, Full Model)"), " = ", f_stat),
+  list(f_stat=round(f_stat, 3)))) +
+  theme_bw()
+```
+
+
+
+## Heading towards a p-value
+
+p-value: If $H_0$ is correct, what proportion of samples would give you F statistics at least as extreme as the F statistic of 4.78 we got from our actual data?
+
+Let's simulate a fake data set, assuming $H_0$ is true.  We have 9 observations drawn at random from a Normal(3.033, 0.579) distribution.
+
+```{r, echo =  FALSE}
+fake_iris <- data.frame(
+  Species = iris$Species,
+  Sepal.Width = rnorm(n = 9, mean = 3.033, sd = 0.579)
+)
+```
+
+```{r, echo = FALSE, fig.height=2}
+red_ss <- fake_iris %>%
+  ungroup() %>%
+  mutate(
+    mean_sw = mean(Sepal.Width),
+    resid = Sepal.Width - mean_sw
+  ) %>%
+  summarize(
+    rss = mean(resid^2)
+  ) %>%
+  pull(rss)
+
+full_ss <- fake_iris %>%
+  group_by(Species) %>%
+  mutate(
+    mean_sw = mean(Sepal.Width),
+    resid = Sepal.Width - mean_sw
+  ) %>%
+  ungroup() %>%
+  summarize(
+    rss = mean(resid^2)
+  ) %>%
+  pull(rss)
+
+p_full <- ggplot() +
+  geom_point(
+    data = fake_iris,
+    mapping = aes(x = Sepal.Width, y = 0, color = Species, shape = Species)
+  ) +
+  geom_vline(
+    data = fake_iris %>%
+      group_by(Species) %>%
+      summarize(
+        mean_sw = mean(Sepal.Width)
+      ),
+    mapping = aes(xintercept = mean_sw, color = Species)
+  ) +
+  ylim(0, 0.4) +
+  ylab("") +
+  ggtitle(paste0("Full Model RSS = ", round(full_ss, 3))) +
+  theme_bw()
+
+p_red <- ggplot() +
+  geom_point(
+    data = fake_iris,
+    mapping = aes(x = Sepal.Width, y = 0)
+  ) +
+  geom_vline(
+    data = fake_iris %>%
+      ungroup() %>%
+      summarize(
+        mean_sw = mean(Sepal.Width)
+      ),
+    mapping = aes(xintercept = mean_sw)
+  ) +
+  ylim(0, 0.4) +
+  ylab("") +
+  ggtitle(paste0("Reduced Model RSS = ", round(red_ss, 3))) +
+  theme_bw()
+
+grid.newpage()
+pushViewport(viewport(layout = grid.layout(ncol = 2, widths= unit(c(1, 0.7),units = rep("null", 2)))))
+print(p_full, vp = viewport(layout.pos.row = 1, layout.pos.col = 1))
+print(p_red, vp = viewport(layout.pos.row = 1, layout.pos.col = 2))
+```
+
+```{r, echo = FALSE, fig.height=2, warning=FALSE}
+f_stat <- lm(Sepal.Width ~ Species, data = fake_iris) %>% summary() %>% `[[`("fstatistic") %>% `[[`("value")
+fake_plot_df <- rbind(
+  fake_plot_df,
+  data.frame(
+    f = f_stat
+  )
+)
+
+ggplot() +
+  geom_histogram(
+    data = fake_plot_df,
+    mapping = aes(x = f),
+    binwidth = 0.1,
+    boundary = 0
+  ) +
+  geom_vline(
+#    mapping = aes(xintercept = plot_df$f_stat)
+    data = plot_df,
+    mapping = aes(xintercept = f)
+  ) +
+  xlim(0, 6) +
+  ylab("") +
+  ggtitle(substitute(paste("F = ", frac("(Extra Sum of Squares)/(Extra Degrees of Freedom)", "(Residual Sum of Squares, Full Model)/(Degrees of Freedom, Full Model)"), " = ", f_stat),
+  list(f_stat=round(f_stat, 3)))) +
+  theme_bw()
+```
+
+
+
+## Heading towards a p-value
+
+p-value: If $H_0$ is correct, what proportion of samples would give you F statistics at least as extreme as the F statistic of 4.78 we got from our actual data?
+
+Let's simulate a fake data set, assuming $H_0$ is true.  We have 9 observations drawn at random from a Normal(3.033, 0.579) distribution.
+
+```{r, echo =  FALSE}
+fake_iris <- data.frame(
+  Species = iris$Species,
+  Sepal.Width = rnorm(n = 9, mean = 3.033, sd = 0.579)
+)
+```
+
+```{r, echo = FALSE, fig.height=2}
+red_ss <- fake_iris %>%
+  ungroup() %>%
+  mutate(
+    mean_sw = mean(Sepal.Width),
+    resid = Sepal.Width - mean_sw
+  ) %>%
+  summarize(
+    rss = mean(resid^2)
+  ) %>%
+  pull(rss)
+
+full_ss <- fake_iris %>%
+  group_by(Species) %>%
+  mutate(
+    mean_sw = mean(Sepal.Width),
+    resid = Sepal.Width - mean_sw
+  ) %>%
+  ungroup() %>%
+  summarize(
+    rss = mean(resid^2)
+  ) %>%
+  pull(rss)
+
+p_full <- ggplot() +
+  geom_point(
+    data = fake_iris,
+    mapping = aes(x = Sepal.Width, y = 0, color = Species, shape = Species)
+  ) +
+  geom_vline(
+    data = fake_iris %>%
+      group_by(Species) %>%
+      summarize(
+        mean_sw = mean(Sepal.Width)
+      ),
+    mapping = aes(xintercept = mean_sw, color = Species)
+  ) +
+  ylim(0, 0.4) +
+  ylab("") +
+  ggtitle(paste0("Full Model RSS = ", round(full_ss, 3))) +
+  theme_bw()
+
+p_red <- ggplot() +
+  geom_point(
+    data = fake_iris,
+    mapping = aes(x = Sepal.Width, y = 0)
+  ) +
+  geom_vline(
+    data = fake_iris %>%
+      ungroup() %>%
+      summarize(
+        mean_sw = mean(Sepal.Width)
+      ),
+    mapping = aes(xintercept = mean_sw)
+  ) +
+  ylim(0, 0.4) +
+  ylab("") +
+  ggtitle(paste0("Reduced Model RSS = ", round(red_ss, 3))) +
+  theme_bw()
+
+grid.newpage()
+pushViewport(viewport(layout = grid.layout(ncol = 2, widths= unit(c(1, 0.7),units = rep("null", 2)))))
+print(p_full, vp = viewport(layout.pos.row = 1, layout.pos.col = 1))
+print(p_red, vp = viewport(layout.pos.row = 1, layout.pos.col = 2))
+```
+
+```{r, echo = FALSE, fig.height=2, warning=FALSE}
+f_stat <- lm(Sepal.Width ~ Species, data = fake_iris) %>% summary() %>% `[[`("fstatistic") %>% `[[`("value")
+fake_plot_df <- rbind(
+  fake_plot_df,
+  data.frame(
+    f = f_stat
+  )
+)
+
+ggplot() +
+  geom_histogram(
+    data = fake_plot_df,
+    mapping = aes(x = f),
+    binwidth = 0.1,
+    boundary = 0
+  ) +
+  geom_vline(
+#    mapping = aes(xintercept = plot_df$f_stat)
+    data = plot_df,
+    mapping = aes(xintercept = f)
+  ) +
+  xlim(0, 6) +
+  ylab("") +
+  ggtitle(substitute(paste("F = ", frac("(Extra Sum of Squares)/(Extra Degrees of Freedom)", "(Residual Sum of Squares, Full Model)/(Degrees of Freedom, Full Model)"), " = ", f_stat),
+  list(f_stat=round(f_stat, 3)))) +
+  theme_bw()
+```
+
+
+
+## Heading towards a p-value
+
+p-value: If $H_0$ is correct, what proportion of samples would give you F statistics at least as extreme as the F statistic of 4.78 we got from our actual data?
+
+Let's simulate a fake data set, assuming $H_0$ is true.  We have 9 observations drawn at random from a Normal(3.033, 0.579) distribution.
+
+```{r, echo =  FALSE}
+fake_iris <- data.frame(
+  Species = iris$Species,
+  Sepal.Width = rnorm(n = 9, mean = 3.033, sd = 0.579)
+)
+```
+
+```{r, echo = FALSE, fig.height=2}
+red_ss <- fake_iris %>%
+  ungroup() %>%
+  mutate(
+    mean_sw = mean(Sepal.Width),
+    resid = Sepal.Width - mean_sw
+  ) %>%
+  summarize(
+    rss = mean(resid^2)
+  ) %>%
+  pull(rss)
+
+full_ss <- fake_iris %>%
+  group_by(Species) %>%
+  mutate(
+    mean_sw = mean(Sepal.Width),
+    resid = Sepal.Width - mean_sw
+  ) %>%
+  ungroup() %>%
+  summarize(
+    rss = mean(resid^2)
+  ) %>%
+  pull(rss)
+
+p_full <- ggplot() +
+  geom_point(
+    data = fake_iris,
+    mapping = aes(x = Sepal.Width, y = 0, color = Species, shape = Species)
+  ) +
+  geom_vline(
+    data = fake_iris %>%
+      group_by(Species) %>%
+      summarize(
+        mean_sw = mean(Sepal.Width)
+      ),
+    mapping = aes(xintercept = mean_sw, color = Species)
+  ) +
+  ylim(0, 0.4) +
+  ylab("") +
+  ggtitle(paste0("Full Model RSS = ", round(full_ss, 3))) +
+  theme_bw()
+
+p_red <- ggplot() +
+  geom_point(
+    data = fake_iris,
+    mapping = aes(x = Sepal.Width, y = 0)
+  ) +
+  geom_vline(
+    data = fake_iris %>%
+      ungroup() %>%
+      summarize(
+        mean_sw = mean(Sepal.Width)
+      ),
+    mapping = aes(xintercept = mean_sw)
+  ) +
+  ylim(0, 0.4) +
+  ylab("") +
+  ggtitle(paste0("Reduced Model RSS = ", round(red_ss, 3))) +
+  theme_bw()
+
+grid.newpage()
+pushViewport(viewport(layout = grid.layout(ncol = 2, widths= unit(c(1, 0.7),units = rep("null", 2)))))
+print(p_full, vp = viewport(layout.pos.row = 1, layout.pos.col = 1))
+print(p_red, vp = viewport(layout.pos.row = 1, layout.pos.col = 2))
+```
+
+```{r, echo = FALSE, fig.height=2, warning=FALSE}
+f_stat <- lm(Sepal.Width ~ Species, data = fake_iris) %>% summary() %>% `[[`("fstatistic") %>% `[[`("value")
+fake_plot_df <- rbind(
+  fake_plot_df,
+  data.frame(
+    f = f_stat
+  )
+)
+
+ggplot() +
+  geom_histogram(
+    data = fake_plot_df,
+    mapping = aes(x = f),
+    binwidth = 0.1,
+    boundary = 0
+  ) +
+  geom_vline(
+#    mapping = aes(xintercept = plot_df$f_stat)
+    data = plot_df,
+    mapping = aes(xintercept = f)
+  ) +
+  xlim(0, 6) +
+  ylab("") +
+  ggtitle(substitute(paste("F = ", frac("(Extra Sum of Squares)/(Extra Degrees of Freedom)", "(Residual Sum of Squares, Full Model)/(Degrees of Freedom, Full Model)"), " = ", f_stat),
+  list(f_stat=round(f_stat, 3)))) +
+  theme_bw()
+```
+
+
+
+## Heading towards a p-value
+
+p-value: If $H_0$ is correct, what proportion of samples would give you F statistics at least as extreme as the F statistic of 4.78 we got from our actual data?
+
+Let's simulate a fake data set, assuming $H_0$ is true.  We have 9 observations drawn at random from a Normal(3.033, 0.579) distribution.
+
+```{r, echo =  FALSE}
+fake_iris <- data.frame(
+  Species = iris$Species,
+  Sepal.Width = rnorm(n = 9, mean = 3.033, sd = 0.579)
+)
+```
+
+```{r, echo = FALSE, fig.height=2}
+red_ss <- fake_iris %>%
+  ungroup() %>%
+  mutate(
+    mean_sw = mean(Sepal.Width),
+    resid = Sepal.Width - mean_sw
+  ) %>%
+  summarize(
+    rss = mean(resid^2)
+  ) %>%
+  pull(rss)
+
+full_ss <- fake_iris %>%
+  group_by(Species) %>%
+  mutate(
+    mean_sw = mean(Sepal.Width),
+    resid = Sepal.Width - mean_sw
+  ) %>%
+  ungroup() %>%
+  summarize(
+    rss = mean(resid^2)
+  ) %>%
+  pull(rss)
+
+p_full <- ggplot() +
+  geom_point(
+    data = fake_iris,
+    mapping = aes(x = Sepal.Width, y = 0, color = Species, shape = Species)
+  ) +
+  geom_vline(
+    data = fake_iris %>%
+      group_by(Species) %>%
+      summarize(
+        mean_sw = mean(Sepal.Width)
+      ),
+    mapping = aes(xintercept = mean_sw, color = Species)
+  ) +
+  ylim(0, 0.4) +
+  ylab("") +
+  ggtitle(paste0("Full Model RSS = ", round(full_ss, 3))) +
+  theme_bw()
+
+p_red <- ggplot() +
+  geom_point(
+    data = fake_iris,
+    mapping = aes(x = Sepal.Width, y = 0)
+  ) +
+  geom_vline(
+    data = fake_iris %>%
+      ungroup() %>%
+      summarize(
+        mean_sw = mean(Sepal.Width)
+      ),
+    mapping = aes(xintercept = mean_sw)
+  ) +
+  ylim(0, 0.4) +
+  ylab("") +
+  ggtitle(paste0("Reduced Model RSS = ", round(red_ss, 3))) +
+  theme_bw()
+
+grid.newpage()
+pushViewport(viewport(layout = grid.layout(ncol = 2, widths= unit(c(1, 0.7),units = rep("null", 2)))))
+print(p_full, vp = viewport(layout.pos.row = 1, layout.pos.col = 1))
+print(p_red, vp = viewport(layout.pos.row = 1, layout.pos.col = 2))
+```
+
+```{r, echo = FALSE, fig.height=2, warning=FALSE}
+f_stat <- lm(Sepal.Width ~ Species, data = fake_iris) %>% summary() %>% `[[`("fstatistic") %>% `[[`("value")
+fake_plot_df <- rbind(
+  fake_plot_df,
+  data.frame(
+    f = f_stat
+  )
+)
+
+ggplot() +
+  geom_histogram(
+    data = fake_plot_df,
+    mapping = aes(x = f),
+    binwidth = 0.1,
+    boundary = 0
+  ) +
+  geom_vline(
+#    mapping = aes(xintercept = plot_df$f_stat)
+    data = plot_df,
+    mapping = aes(xintercept = f)
+  ) +
+  xlim(0, 6) +
+  ylab("") +
+  ggtitle(substitute(paste("F = ", frac("(Extra Sum of Squares)/(Extra Degrees of Freedom)", "(Residual Sum of Squares, Full Model)/(Degrees of Freedom, Full Model)"), " = ", f_stat),
+  list(f_stat=round(f_stat, 3)))) +
+  theme_bw()
+```
+
+
+
+## Heading towards a p-value
+
+p-value: If $H_0$ is correct, what proportion of samples would give you F statistics at least as extreme as the F statistic of 4.78 we got from our actual data?
+
+Let's simulate a fake data set, assuming $H_0$ is true.  We have 9 observations drawn at random from a Normal(3.033, 0.579) distribution.
+
+```{r, echo =  FALSE}
+fake_iris <- data.frame(
+  Species = iris$Species,
+  Sepal.Width = rnorm(n = 9, mean = 3.033, sd = 0.579)
+)
+```
+
+```{r, echo = FALSE, fig.height=2}
+red_ss <- fake_iris %>%
+  ungroup() %>%
+  mutate(
+    mean_sw = mean(Sepal.Width),
+    resid = Sepal.Width - mean_sw
+  ) %>%
+  summarize(
+    rss = mean(resid^2)
+  ) %>%
+  pull(rss)
+
+full_ss <- fake_iris %>%
+  group_by(Species) %>%
+  mutate(
+    mean_sw = mean(Sepal.Width),
+    resid = Sepal.Width - mean_sw
+  ) %>%
+  ungroup() %>%
+  summarize(
+    rss = mean(resid^2)
+  ) %>%
+  pull(rss)
+
+p_full <- ggplot() +
+  geom_point(
+    data = fake_iris,
+    mapping = aes(x = Sepal.Width, y = 0, color = Species, shape = Species)
+  ) +
+  geom_vline(
+    data = fake_iris %>%
+      group_by(Species) %>%
+      summarize(
+        mean_sw = mean(Sepal.Width)
+      ),
+    mapping = aes(xintercept = mean_sw, color = Species)
+  ) +
+  ylim(0, 0.4) +
+  ylab("") +
+  ggtitle(paste0("Full Model RSS = ", round(full_ss, 3))) +
+  theme_bw()
+
+p_red <- ggplot() +
+  geom_point(
+    data = fake_iris,
+    mapping = aes(x = Sepal.Width, y = 0)
+  ) +
+  geom_vline(
+    data = fake_iris %>%
+      ungroup() %>%
+      summarize(
+        mean_sw = mean(Sepal.Width)
+      ),
+    mapping = aes(xintercept = mean_sw)
+  ) +
+  ylim(0, 0.4) +
+  ylab("") +
+  ggtitle(paste0("Reduced Model RSS = ", round(red_ss, 3))) +
+  theme_bw()
+
+grid.newpage()
+pushViewport(viewport(layout = grid.layout(ncol = 2, widths= unit(c(1, 0.7),units = rep("null", 2)))))
+print(p_full, vp = viewport(layout.pos.row = 1, layout.pos.col = 1))
+print(p_red, vp = viewport(layout.pos.row = 1, layout.pos.col = 2))
+```
+
+```{r, echo = FALSE, fig.height=2, warning=FALSE}
+f_stat <- lm(Sepal.Width ~ Species, data = fake_iris) %>% summary() %>% `[[`("fstatistic") %>% `[[`("value")
+fake_plot_df <- rbind(
+  fake_plot_df,
+  data.frame(
+    f = f_stat
+  )
+)
+
+ggplot() +
+  geom_histogram(
+    data = fake_plot_df,
+    mapping = aes(x = f),
+    binwidth = 0.1,
+    boundary = 0
+  ) +
+  geom_vline(
+#    mapping = aes(xintercept = plot_df$f_stat)
+    data = plot_df,
+    mapping = aes(xintercept = f)
+  ) +
+  xlim(0, 6) +
+  ylab("") +
+  ggtitle(substitute(paste("F = ", frac("(Extra Sum of Squares)/(Extra Degrees of Freedom)", "(Residual Sum of Squares, Full Model)/(Degrees of Freedom, Full Model)"), " = ", f_stat),
+  list(f_stat=round(f_stat, 3)))) +
+  theme_bw()
+```
+
+
+
+## Heading towards a p-value
+
+p-value: If $H_0$ is correct, what proportion of samples would give you F statistics at least as extreme as the F statistic of 4.78 we got from our actual data?
+
+Let's simulate a fake data set, assuming $H_0$ is true.  We have 9 observations drawn at random from a Normal(3.033, 0.579) distribution.
+
+```{r, echo =  FALSE}
+fake_iris <- data.frame(
+  Species = iris$Species,
+  Sepal.Width = rnorm(n = 9, mean = 3.033, sd = 0.579)
+)
+```
+
+```{r, echo = FALSE, fig.height=2}
+red_ss <- fake_iris %>%
+  ungroup() %>%
+  mutate(
+    mean_sw = mean(Sepal.Width),
+    resid = Sepal.Width - mean_sw
+  ) %>%
+  summarize(
+    rss = mean(resid^2)
+  ) %>%
+  pull(rss)
+
+full_ss <- fake_iris %>%
+  group_by(Species) %>%
+  mutate(
+    mean_sw = mean(Sepal.Width),
+    resid = Sepal.Width - mean_sw
+  ) %>%
+  ungroup() %>%
+  summarize(
+    rss = mean(resid^2)
+  ) %>%
+  pull(rss)
+
+p_full <- ggplot() +
+  geom_point(
+    data = fake_iris,
+    mapping = aes(x = Sepal.Width, y = 0, color = Species, shape = Species)
+  ) +
+  geom_vline(
+    data = fake_iris %>%
+      group_by(Species) %>%
+      summarize(
+        mean_sw = mean(Sepal.Width)
+      ),
+    mapping = aes(xintercept = mean_sw, color = Species)
+  ) +
+  ylim(0, 0.4) +
+  ylab("") +
+  ggtitle(paste0("Full Model RSS = ", round(full_ss, 3))) +
+  theme_bw()
+
+p_red <- ggplot() +
+  geom_point(
+    data = fake_iris,
+    mapping = aes(x = Sepal.Width, y = 0)
+  ) +
+  geom_vline(
+    data = fake_iris %>%
+      ungroup() %>%
+      summarize(
+        mean_sw = mean(Sepal.Width)
+      ),
+    mapping = aes(xintercept = mean_sw)
+  ) +
+  ylim(0, 0.4) +
+  ylab("") +
+  ggtitle(paste0("Reduced Model RSS = ", round(red_ss, 3))) +
+  theme_bw()
+
+grid.newpage()
+pushViewport(viewport(layout = grid.layout(ncol = 2, widths= unit(c(1, 0.7),units = rep("null", 2)))))
+print(p_full, vp = viewport(layout.pos.row = 1, layout.pos.col = 1))
+print(p_red, vp = viewport(layout.pos.row = 1, layout.pos.col = 2))
+```
+
+```{r, echo = FALSE, fig.height=2, warning=FALSE}
+f_stat <- lm(Sepal.Width ~ Species, data = fake_iris) %>% summary() %>% `[[`("fstatistic") %>% `[[`("value")
+fake_plot_df <- rbind(
+  fake_plot_df,
+  data.frame(
+    f = f_stat
+  )
+)
+
+ggplot() +
+  geom_histogram(
+    data = fake_plot_df,
+    mapping = aes(x = f),
+    binwidth = 0.1,
+    boundary = 0
+  ) +
+  geom_vline(
+#    mapping = aes(xintercept = plot_df$f_stat)
+    data = plot_df,
+    mapping = aes(xintercept = f)
+  ) +
+  xlim(0, 6) +
+  ylab("") +
+  ggtitle(substitute(paste("F = ", frac("(Extra Sum of Squares)/(Extra Degrees of Freedom)", "(Residual Sum of Squares, Full Model)/(Degrees of Freedom, Full Model)"), " = ", f_stat),
+  list(f_stat=round(f_stat, 3)))) +
+  theme_bw()
+```
+
+
+
+
+## Heading towards a p-value
+
+p-value: If $H_0$ is correct, what proportion of samples would give you F statistics at least as extreme as the F statistic of 4.78 we got from our actual data?
+
+Let's simulate a fake data set, assuming $H_0$ is true.  We have 9 observations drawn at random from a Normal(3.033, 0.579) distribution.
+
+```{r, echo =  FALSE}
+fake_iris <- data.frame(
+  Species = iris$Species,
+  Sepal.Width = rnorm(n = 9, mean = 3.033, sd = 0.579)
+)
+```
+
+```{r, echo = FALSE, fig.height=2}
+red_ss <- fake_iris %>%
+  ungroup() %>%
+  mutate(
+    mean_sw = mean(Sepal.Width),
+    resid = Sepal.Width - mean_sw
+  ) %>%
+  summarize(
+    rss = mean(resid^2)
+  ) %>%
+  pull(rss)
+
+full_ss <- fake_iris %>%
+  group_by(Species) %>%
+  mutate(
+    mean_sw = mean(Sepal.Width),
+    resid = Sepal.Width - mean_sw
+  ) %>%
+  ungroup() %>%
+  summarize(
+    rss = mean(resid^2)
+  ) %>%
+  pull(rss)
+
+p_full <- ggplot() +
+  geom_point(
+    data = fake_iris,
+    mapping = aes(x = Sepal.Width, y = 0, color = Species, shape = Species)
+  ) +
+  geom_vline(
+    data = fake_iris %>%
+      group_by(Species) %>%
+      summarize(
+        mean_sw = mean(Sepal.Width)
+      ),
+    mapping = aes(xintercept = mean_sw, color = Species)
+  ) +
+  ylim(0, 0.4) +
+  ylab("") +
+  ggtitle(paste0("Full Model RSS = ", round(full_ss, 3))) +
+  theme_bw()
+
+p_red <- ggplot() +
+  geom_point(
+    data = fake_iris,
+    mapping = aes(x = Sepal.Width, y = 0)
+  ) +
+  geom_vline(
+    data = fake_iris %>%
+      ungroup() %>%
+      summarize(
+        mean_sw = mean(Sepal.Width)
+      ),
+    mapping = aes(xintercept = mean_sw)
+  ) +
+  ylim(0, 0.4) +
+  ylab("") +
+  ggtitle(paste0("Reduced Model RSS = ", round(red_ss, 3))) +
+  theme_bw()
+
+grid.newpage()
+pushViewport(viewport(layout = grid.layout(ncol = 2, widths= unit(c(1, 0.7),units = rep("null", 2)))))
+print(p_full, vp = viewport(layout.pos.row = 1, layout.pos.col = 1))
+print(p_red, vp = viewport(layout.pos.row = 1, layout.pos.col = 2))
+```
+
+```{r, echo = FALSE, fig.height=2, warning=FALSE}
+f_stat <- lm(Sepal.Width ~ Species, data = fake_iris) %>% summary() %>% `[[`("fstatistic") %>% `[[`("value")
+fake_plot_df <- rbind(
+  fake_plot_df,
+  data.frame(
+    f = f_stat
+  )
+)
+
+ggplot() +
+  geom_histogram(
+    data = fake_plot_df,
+    mapping = aes(x = f),
+    binwidth = 0.1,
+    boundary = 0
+  ) +
+  geom_vline(
+#    mapping = aes(xintercept = plot_df$f_stat)
+    data = plot_df,
+    mapping = aes(xintercept = f)
+  ) +
+  xlim(0, 6) +
+  ylab("") +
+  ggtitle(substitute(paste("F = ", frac("(Extra Sum of Squares)/(Extra Degrees of Freedom)", "(Residual Sum of Squares, Full Model)/(Degrees of Freedom, Full Model)"), " = ", f_stat),
+  list(f_stat=round(f_stat, 3)))) +
+  theme_bw()
+```
+
+
+
+## Heading towards a p-value
+
+p-value: If $H_0$ is correct, what proportion of samples would give you F statistics at least as extreme as the F statistic of 4.78 we got from our actual data?
+
+Let's simulate a fake data set, assuming $H_0$ is true.  We have 9 observations drawn at random from a Normal(3.033, 0.579) distribution.
+
+```{r, echo =  FALSE}
+fake_iris <- data.frame(
+  Species = iris$Species,
+  Sepal.Width = rnorm(n = 9, mean = 3.033, sd = 0.579)
+)
+```
+
+```{r, echo = FALSE, fig.height=2}
+red_ss <- fake_iris %>%
+  ungroup() %>%
+  mutate(
+    mean_sw = mean(Sepal.Width),
+    resid = Sepal.Width - mean_sw
+  ) %>%
+  summarize(
+    rss = mean(resid^2)
+  ) %>%
+  pull(rss)
+
+full_ss <- fake_iris %>%
+  group_by(Species) %>%
+  mutate(
+    mean_sw = mean(Sepal.Width),
+    resid = Sepal.Width - mean_sw
+  ) %>%
+  ungroup() %>%
+  summarize(
+    rss = mean(resid^2)
+  ) %>%
+  pull(rss)
+
+p_full <- ggplot() +
+  geom_point(
+    data = fake_iris,
+    mapping = aes(x = Sepal.Width, y = 0, color = Species, shape = Species)
+  ) +
+  geom_vline(
+    data = fake_iris %>%
+      group_by(Species) %>%
+      summarize(
+        mean_sw = mean(Sepal.Width)
+      ),
+    mapping = aes(xintercept = mean_sw, color = Species)
+  ) +
+  ylim(0, 0.4) +
+  ylab("") +
+  ggtitle(paste0("Full Model RSS = ", round(full_ss, 3))) +
+  theme_bw()
+
+p_red <- ggplot() +
+  geom_point(
+    data = fake_iris,
+    mapping = aes(x = Sepal.Width, y = 0)
+  ) +
+  geom_vline(
+    data = fake_iris %>%
+      ungroup() %>%
+      summarize(
+        mean_sw = mean(Sepal.Width)
+      ),
+    mapping = aes(xintercept = mean_sw)
+  ) +
+  ylim(0, 0.4) +
+  ylab("") +
+  ggtitle(paste0("Reduced Model RSS = ", round(red_ss, 3))) +
+  theme_bw()
+
+grid.newpage()
+pushViewport(viewport(layout = grid.layout(ncol = 2, widths= unit(c(1, 0.7),units = rep("null", 2)))))
+print(p_full, vp = viewport(layout.pos.row = 1, layout.pos.col = 1))
+print(p_red, vp = viewport(layout.pos.row = 1, layout.pos.col = 2))
+```
+
+```{r, echo = FALSE, fig.height=2, warning=FALSE}
+f_stat <- lm(Sepal.Width ~ Species, data = fake_iris) %>% summary() %>% `[[`("fstatistic") %>% `[[`("value")
+fake_plot_df <- rbind(
+  fake_plot_df,
+  data.frame(
+    f = f_stat
+  )
+)
+
+ggplot() +
+  geom_histogram(
+    data = fake_plot_df,
+    mapping = aes(x = f),
+    binwidth = 0.1,
+    boundary = 0
+  ) +
+  geom_vline(
+#    mapping = aes(xintercept = plot_df$f_stat)
+    data = plot_df,
+    mapping = aes(xintercept = f)
+  ) +
+  xlim(0, 6) +
+  ylab("") +
+  ggtitle(substitute(paste("F = ", frac("(Extra Sum of Squares)/(Extra Degrees of Freedom)", "(Residual Sum of Squares, Full Model)/(Degrees of Freedom, Full Model)"), " = ", f_stat),
+  list(f_stat=round(f_stat, 3)))) +
+  theme_bw()
+```
+
+
+
+## Heading towards a p-value
+
+p-value: If $H_0$ is correct, what proportion of samples would give you F statistics at least as extreme as the F statistic of 4.78 we got from our actual data?
+
+Let's simulate a fake data set, assuming $H_0$ is true.  We have 9 observations drawn at random from a Normal(3.033, 0.579) distribution.
+
+```{r, echo =  FALSE}
+fake_iris <- data.frame(
+  Species = iris$Species,
+  Sepal.Width = rnorm(n = 9, mean = 3.033, sd = 0.579)
+)
+```
+
+```{r, echo = FALSE, fig.height=2}
+red_ss <- fake_iris %>%
+  ungroup() %>%
+  mutate(
+    mean_sw = mean(Sepal.Width),
+    resid = Sepal.Width - mean_sw
+  ) %>%
+  summarize(
+    rss = mean(resid^2)
+  ) %>%
+  pull(rss)
+
+full_ss <- fake_iris %>%
+  group_by(Species) %>%
+  mutate(
+    mean_sw = mean(Sepal.Width),
+    resid = Sepal.Width - mean_sw
+  ) %>%
+  ungroup() %>%
+  summarize(
+    rss = mean(resid^2)
+  ) %>%
+  pull(rss)
+
+p_full <- ggplot() +
+  geom_point(
+    data = fake_iris,
+    mapping = aes(x = Sepal.Width, y = 0, color = Species, shape = Species)
+  ) +
+  geom_vline(
+    data = fake_iris %>%
+      group_by(Species) %>%
+      summarize(
+        mean_sw = mean(Sepal.Width)
+      ),
+    mapping = aes(xintercept = mean_sw, color = Species)
+  ) +
+  ylim(0, 0.4) +
+  ylab("") +
+  ggtitle(paste0("Full Model RSS = ", round(full_ss, 3))) +
+  theme_bw()
+
+p_red <- ggplot() +
+  geom_point(
+    data = fake_iris,
+    mapping = aes(x = Sepal.Width, y = 0)
+  ) +
+  geom_vline(
+    data = fake_iris %>%
+      ungroup() %>%
+      summarize(
+        mean_sw = mean(Sepal.Width)
+      ),
+    mapping = aes(xintercept = mean_sw)
+  ) +
+  ylim(0, 0.4) +
+  ylab("") +
+  ggtitle(paste0("Reduced Model RSS = ", round(red_ss, 3))) +
+  theme_bw()
+
+grid.newpage()
+pushViewport(viewport(layout = grid.layout(ncol = 2, widths= unit(c(1, 0.7),units = rep("null", 2)))))
+print(p_full, vp = viewport(layout.pos.row = 1, layout.pos.col = 1))
+print(p_red, vp = viewport(layout.pos.row = 1, layout.pos.col = 2))
+```
+
+```{r, echo = FALSE, fig.height=2, warning=FALSE}
+f_stat <- lm(Sepal.Width ~ Species, data = fake_iris) %>% summary() %>% `[[`("fstatistic") %>% `[[`("value")
+fake_plot_df <- rbind(
+  fake_plot_df,
+  data.frame(
+    f = f_stat
+  )
+)
+
+ggplot() +
+  geom_histogram(
+    data = fake_plot_df,
+    mapping = aes(x = f),
+    binwidth = 0.1,
+    boundary = 0
+  ) +
+  geom_vline(
+#    mapping = aes(xintercept = plot_df$f_stat)
+    data = plot_df,
+    mapping = aes(xintercept = f)
+  ) +
+  xlim(0, 6) +
+  ylab("") +
+  ggtitle(substitute(paste("F = ", frac("(Extra Sum of Squares)/(Extra Degrees of Freedom)", "(Residual Sum of Squares, Full Model)/(Degrees of Freedom, Full Model)"), " = ", f_stat),
+  list(f_stat=round(f_stat, 3)))) +
+  theme_bw()
+```
+
+
+
+## Heading towards a p-value
+
+p-value: If $H_0$ is correct, what proportion of samples would give you F statistics at least as extreme as the F statistic of 4.78 we got from our actual data?
+
+Let's simulate a fake data set, assuming $H_0$ is true.  We have 9 observations drawn at random from a Normal(3.033, 0.579) distribution.
+
+```{r, echo =  FALSE}
+fake_iris <- data.frame(
+  Species = iris$Species,
+  Sepal.Width = rnorm(n = 9, mean = 3.033, sd = 0.579)
+)
+```
+
+```{r, echo = FALSE, fig.height=2}
+red_ss <- fake_iris %>%
+  ungroup() %>%
+  mutate(
+    mean_sw = mean(Sepal.Width),
+    resid = Sepal.Width - mean_sw
+  ) %>%
+  summarize(
+    rss = mean(resid^2)
+  ) %>%
+  pull(rss)
+
+full_ss <- fake_iris %>%
+  group_by(Species) %>%
+  mutate(
+    mean_sw = mean(Sepal.Width),
+    resid = Sepal.Width - mean_sw
+  ) %>%
+  ungroup() %>%
+  summarize(
+    rss = mean(resid^2)
+  ) %>%
+  pull(rss)
+
+p_full <- ggplot() +
+  geom_point(
+    data = fake_iris,
+    mapping = aes(x = Sepal.Width, y = 0, color = Species, shape = Species)
+  ) +
+  geom_vline(
+    data = fake_iris %>%
+      group_by(Species) %>%
+      summarize(
+        mean_sw = mean(Sepal.Width)
+      ),
+    mapping = aes(xintercept = mean_sw, color = Species)
+  ) +
+  ylim(0, 0.4) +
+  ylab("") +
+  ggtitle(paste0("Full Model RSS = ", round(full_ss, 3))) +
+  theme_bw()
+
+p_red <- ggplot() +
+  geom_point(
+    data = fake_iris,
+    mapping = aes(x = Sepal.Width, y = 0)
+  ) +
+  geom_vline(
+    data = fake_iris %>%
+      ungroup() %>%
+      summarize(
+        mean_sw = mean(Sepal.Width)
+      ),
+    mapping = aes(xintercept = mean_sw)
+  ) +
+  ylim(0, 0.4) +
+  ylab("") +
+  ggtitle(paste0("Reduced Model RSS = ", round(red_ss, 3))) +
+  theme_bw()
+
+grid.newpage()
+pushViewport(viewport(layout = grid.layout(ncol = 2, widths= unit(c(1, 0.7),units = rep("null", 2)))))
+print(p_full, vp = viewport(layout.pos.row = 1, layout.pos.col = 1))
+print(p_red, vp = viewport(layout.pos.row = 1, layout.pos.col = 2))
+```
+
+```{r, echo = FALSE, fig.height=2, warning=FALSE}
+f_stat <- lm(Sepal.Width ~ Species, data = fake_iris) %>% summary() %>% `[[`("fstatistic") %>% `[[`("value")
+fake_plot_df <- rbind(
+  fake_plot_df,
+  data.frame(
+    f = f_stat
+  )
+)
+
+ggplot() +
+  geom_histogram(
+    data = fake_plot_df,
+    mapping = aes(x = f),
+    binwidth = 0.1,
+    boundary = 0
+  ) +
+  geom_vline(
+#    mapping = aes(xintercept = plot_df$f_stat)
+    data = plot_df,
+    mapping = aes(xintercept = f)
+  ) +
+  xlim(0, 6) +
+  ylab("") +
+  ggtitle(substitute(paste("F = ", frac("(Extra Sum of Squares)/(Extra Degrees of Freedom)", "(Residual Sum of Squares, Full Model)/(Degrees of Freedom, Full Model)"), " = ", f_stat),
+  list(f_stat=round(f_stat, 3)))) +
+  theme_bw()
+```
+
+
+
+## Heading towards a p-value
+
+p-value: If $H_0$ is correct, what proportion of samples would give you F statistics at least as extreme as the F statistic of 4.78 we got from our actual data?
+
+Let's simulate a fake data set, assuming $H_0$ is true.  We have 9 observations drawn at random from a Normal(3.033, 0.579) distribution.
+
+```{r, echo =  FALSE}
+fake_iris <- data.frame(
+  Species = iris$Species,
+  Sepal.Width = rnorm(n = 9, mean = 3.033, sd = 0.579)
+)
+```
+
+```{r, echo = FALSE, fig.height=2}
+red_ss <- fake_iris %>%
+  ungroup() %>%
+  mutate(
+    mean_sw = mean(Sepal.Width),
+    resid = Sepal.Width - mean_sw
+  ) %>%
+  summarize(
+    rss = mean(resid^2)
+  ) %>%
+  pull(rss)
+
+full_ss <- fake_iris %>%
+  group_by(Species) %>%
+  mutate(
+    mean_sw = mean(Sepal.Width),
+    resid = Sepal.Width - mean_sw
+  ) %>%
+  ungroup() %>%
+  summarize(
+    rss = mean(resid^2)
+  ) %>%
+  pull(rss)
+
+p_full <- ggplot() +
+  geom_point(
+    data = fake_iris,
+    mapping = aes(x = Sepal.Width, y = 0, color = Species, shape = Species)
+  ) +
+  geom_vline(
+    data = fake_iris %>%
+      group_by(Species) %>%
+      summarize(
+        mean_sw = mean(Sepal.Width)
+      ),
+    mapping = aes(xintercept = mean_sw, color = Species)
+  ) +
+  ylim(0, 0.4) +
+  ylab("") +
+  ggtitle(paste0("Full Model RSS = ", round(full_ss, 3))) +
+  theme_bw()
+
+p_red <- ggplot() +
+  geom_point(
+    data = fake_iris,
+    mapping = aes(x = Sepal.Width, y = 0)
+  ) +
+  geom_vline(
+    data = fake_iris %>%
+      ungroup() %>%
+      summarize(
+        mean_sw = mean(Sepal.Width)
+      ),
+    mapping = aes(xintercept = mean_sw)
+  ) +
+  ylim(0, 0.4) +
+  ylab("") +
+  ggtitle(paste0("Reduced Model RSS = ", round(red_ss, 3))) +
+  theme_bw()
+
+grid.newpage()
+pushViewport(viewport(layout = grid.layout(ncol = 2, widths= unit(c(1, 0.7),units = rep("null", 2)))))
+print(p_full, vp = viewport(layout.pos.row = 1, layout.pos.col = 1))
+print(p_red, vp = viewport(layout.pos.row = 1, layout.pos.col = 2))
+```
+
+```{r, echo = FALSE, fig.height=2, warning=FALSE}
+f_stat <- lm(Sepal.Width ~ Species, data = fake_iris) %>% summary() %>% `[[`("fstatistic") %>% `[[`("value")
+fake_plot_df <- rbind(
+  fake_plot_df,
+  data.frame(
+    f = f_stat
+  )
+)
+
+ggplot() +
+  geom_histogram(
+    data = fake_plot_df,
+    mapping = aes(x = f),
+    binwidth = 0.1,
+    boundary = 0
+  ) +
+  geom_vline(
+#    mapping = aes(xintercept = plot_df$f_stat)
+    data = plot_df,
+    mapping = aes(xintercept = f)
+  ) +
+  xlim(0, 6) +
+  ylab("") +
+  ggtitle(substitute(paste("F = ", frac("(Extra Sum of Squares)/(Extra Degrees of Freedom)", "(Residual Sum of Squares, Full Model)/(Degrees of Freedom, Full Model)"), " = ", f_stat),
+  list(f_stat=round(f_stat, 3)))) +
+  theme_bw()
+```
+
+
+
+## Heading towards a p-value
+
+p-value: If $H_0$ is correct, what proportion of samples would give you F statistics at least as extreme as the F statistic of 4.78 we got from our actual data?
+
+Let's simulate a fake data set, assuming $H_0$ is true.  We have 9 observations drawn at random from a Normal(3.033, 0.579) distribution.
+
+```{r, echo =  FALSE}
+fake_iris <- data.frame(
+  Species = iris$Species,
+  Sepal.Width = rnorm(n = 9, mean = 3.033, sd = 0.579)
+)
+```
+
+```{r, echo = FALSE, fig.height=2}
+red_ss <- fake_iris %>%
+  ungroup() %>%
+  mutate(
+    mean_sw = mean(Sepal.Width),
+    resid = Sepal.Width - mean_sw
+  ) %>%
+  summarize(
+    rss = mean(resid^2)
+  ) %>%
+  pull(rss)
+
+full_ss <- fake_iris %>%
+  group_by(Species) %>%
+  mutate(
+    mean_sw = mean(Sepal.Width),
+    resid = Sepal.Width - mean_sw
+  ) %>%
+  ungroup() %>%
+  summarize(
+    rss = mean(resid^2)
+  ) %>%
+  pull(rss)
+
+p_full <- ggplot() +
+  geom_point(
+    data = fake_iris,
+    mapping = aes(x = Sepal.Width, y = 0, color = Species, shape = Species)
+  ) +
+  geom_vline(
+    data = fake_iris %>%
+      group_by(Species) %>%
+      summarize(
+        mean_sw = mean(Sepal.Width)
+      ),
+    mapping = aes(xintercept = mean_sw, color = Species)
+  ) +
+  ylim(0, 0.4) +
+  ylab("") +
+  ggtitle(paste0("Full Model RSS = ", round(full_ss, 3))) +
+  theme_bw()
+
+p_red <- ggplot() +
+  geom_point(
+    data = fake_iris,
+    mapping = aes(x = Sepal.Width, y = 0)
+  ) +
+  geom_vline(
+    data = fake_iris %>%
+      ungroup() %>%
+      summarize(
+        mean_sw = mean(Sepal.Width)
+      ),
+    mapping = aes(xintercept = mean_sw)
+  ) +
+  ylim(0, 0.4) +
+  ylab("") +
+  ggtitle(paste0("Reduced Model RSS = ", round(red_ss, 3))) +
+  theme_bw()
+
+grid.newpage()
+pushViewport(viewport(layout = grid.layout(ncol = 2, widths= unit(c(1, 0.7),units = rep("null", 2)))))
+print(p_full, vp = viewport(layout.pos.row = 1, layout.pos.col = 1))
+print(p_red, vp = viewport(layout.pos.row = 1, layout.pos.col = 2))
+```
+
+```{r, echo = FALSE, fig.height=2, warning=FALSE}
+f_stat <- lm(Sepal.Width ~ Species, data = fake_iris) %>% summary() %>% `[[`("fstatistic") %>% `[[`("value")
+fake_plot_df <- rbind(
+  fake_plot_df,
+  data.frame(
+    f = f_stat
+  )
+)
+
+ggplot() +
+  geom_histogram(
+    data = fake_plot_df,
+    mapping = aes(x = f),
+    binwidth = 0.1,
+    boundary = 0
+  ) +
+  geom_vline(
+#    mapping = aes(xintercept = plot_df$f_stat)
+    data = plot_df,
+    mapping = aes(xintercept = f)
+  ) +
+  xlim(0, 6) +
+  ylab("") +
+  ggtitle(substitute(paste("F = ", frac("(Extra Sum of Squares)/(Extra Degrees of Freedom)", "(Residual Sum of Squares, Full Model)/(Degrees of Freedom, Full Model)"), " = ", f_stat),
+  list(f_stat=round(f_stat, 3)))) +
+  theme_bw()
+```
+
+
+
+## Heading towards a p-value
+
+p-value: If $H_0$ is correct, what proportion of samples would give you F statistics at least as extreme as the F statistic of 4.78 we got from our actual data?
+
+Let's simulate a fake data set, assuming $H_0$ is true.  We have 9 observations drawn at random from a Normal(3.033, 0.579) distribution.
+
+```{r, echo =  FALSE}
+fake_iris <- data.frame(
+  Species = iris$Species,
+  Sepal.Width = rnorm(n = 9, mean = 3.033, sd = 0.579)
+)
+```
+
+```{r, echo = FALSE, fig.height=2}
+red_ss <- fake_iris %>%
+  ungroup() %>%
+  mutate(
+    mean_sw = mean(Sepal.Width),
+    resid = Sepal.Width - mean_sw
+  ) %>%
+  summarize(
+    rss = mean(resid^2)
+  ) %>%
+  pull(rss)
+
+full_ss <- fake_iris %>%
+  group_by(Species) %>%
+  mutate(
+    mean_sw = mean(Sepal.Width),
+    resid = Sepal.Width - mean_sw
+  ) %>%
+  ungroup() %>%
+  summarize(
+    rss = mean(resid^2)
+  ) %>%
+  pull(rss)
+
+p_full <- ggplot() +
+  geom_point(
+    data = fake_iris,
+    mapping = aes(x = Sepal.Width, y = 0, color = Species, shape = Species)
+  ) +
+  geom_vline(
+    data = fake_iris %>%
+      group_by(Species) %>%
+      summarize(
+        mean_sw = mean(Sepal.Width)
+      ),
+    mapping = aes(xintercept = mean_sw, color = Species)
+  ) +
+  ylim(0, 0.4) +
+  ylab("") +
+  ggtitle(paste0("Full Model RSS = ", round(full_ss, 3))) +
+  theme_bw()
+
+p_red <- ggplot() +
+  geom_point(
+    data = fake_iris,
+    mapping = aes(x = Sepal.Width, y = 0)
+  ) +
+  geom_vline(
+    data = fake_iris %>%
+      ungroup() %>%
+      summarize(
+        mean_sw = mean(Sepal.Width)
+      ),
+    mapping = aes(xintercept = mean_sw)
+  ) +
+  ylim(0, 0.4) +
+  ylab("") +
+  ggtitle(paste0("Reduced Model RSS = ", round(red_ss, 3))) +
+  theme_bw()
+
+grid.newpage()
+pushViewport(viewport(layout = grid.layout(ncol = 2, widths= unit(c(1, 0.7),units = rep("null", 2)))))
+print(p_full, vp = viewport(layout.pos.row = 1, layout.pos.col = 1))
+print(p_red, vp = viewport(layout.pos.row = 1, layout.pos.col = 2))
+```
+
+```{r, echo = FALSE, fig.height=2, warning=FALSE}
+f_stat <- lm(Sepal.Width ~ Species, data = fake_iris) %>% summary() %>% `[[`("fstatistic") %>% `[[`("value")
+fake_plot_df <- rbind(
+  fake_plot_df,
+  data.frame(
+    f = f_stat
+  )
+)
+
+ggplot() +
+  geom_histogram(
+    data = fake_plot_df,
+    mapping = aes(x = f),
+    binwidth = 0.1,
+    boundary = 0
+  ) +
+  geom_vline(
+#    mapping = aes(xintercept = plot_df$f_stat)
+    data = plot_df,
+    mapping = aes(xintercept = f)
+  ) +
+  xlim(0, 6) +
+  ylab("") +
+  ggtitle(substitute(paste("F = ", frac("(Extra Sum of Squares)/(Extra Degrees of Freedom)", "(Residual Sum of Squares, Full Model)/(Degrees of Freedom, Full Model)"), " = ", f_stat),
+  list(f_stat=round(f_stat, 3)))) +
+  theme_bw()
+```
+
+
+
+## Heading towards a p-value
+
+p-value: If $H_0$ is correct, what proportion of samples would give you F statistics at least as extreme as the F statistic of 4.78 we got from our actual data?
+
+Let's simulate a fake data set, assuming $H_0$ is true.  We have 9 observations drawn at random from a Normal(3.033, 0.579) distribution.
+
+```{r, echo =  FALSE}
+fake_iris <- data.frame(
+  Species = iris$Species,
+  Sepal.Width = rnorm(n = 9, mean = 3.033, sd = 0.579)
+)
+```
+
+```{r, echo = FALSE, fig.height=2}
+red_ss <- fake_iris %>%
+  ungroup() %>%
+  mutate(
+    mean_sw = mean(Sepal.Width),
+    resid = Sepal.Width - mean_sw
+  ) %>%
+  summarize(
+    rss = mean(resid^2)
+  ) %>%
+  pull(rss)
+
+full_ss <- fake_iris %>%
+  group_by(Species) %>%
+  mutate(
+    mean_sw = mean(Sepal.Width),
+    resid = Sepal.Width - mean_sw
+  ) %>%
+  ungroup() %>%
+  summarize(
+    rss = mean(resid^2)
+  ) %>%
+  pull(rss)
+
+p_full <- ggplot() +
+  geom_point(
+    data = fake_iris,
+    mapping = aes(x = Sepal.Width, y = 0, color = Species, shape = Species)
+  ) +
+  geom_vline(
+    data = fake_iris %>%
+      group_by(Species) %>%
+      summarize(
+        mean_sw = mean(Sepal.Width)
+      ),
+    mapping = aes(xintercept = mean_sw, color = Species)
+  ) +
+  ylim(0, 0.4) +
+  ylab("") +
+  ggtitle(paste0("Full Model RSS = ", round(full_ss, 3))) +
+  theme_bw()
+
+p_red <- ggplot() +
+  geom_point(
+    data = fake_iris,
+    mapping = aes(x = Sepal.Width, y = 0)
+  ) +
+  geom_vline(
+    data = fake_iris %>%
+      ungroup() %>%
+      summarize(
+        mean_sw = mean(Sepal.Width)
+      ),
+    mapping = aes(xintercept = mean_sw)
+  ) +
+  ylim(0, 0.4) +
+  ylab("") +
+  ggtitle(paste0("Reduced Model RSS = ", round(red_ss, 3))) +
+  theme_bw()
+
+grid.newpage()
+pushViewport(viewport(layout = grid.layout(ncol = 2, widths= unit(c(1, 0.7),units = rep("null", 2)))))
+print(p_full, vp = viewport(layout.pos.row = 1, layout.pos.col = 1))
+print(p_red, vp = viewport(layout.pos.row = 1, layout.pos.col = 2))
+```
+
+```{r, echo = FALSE, fig.height=2, warning=FALSE}
+f_stat <- lm(Sepal.Width ~ Species, data = fake_iris) %>% summary() %>% `[[`("fstatistic") %>% `[[`("value")
+fake_plot_df <- rbind(
+  fake_plot_df,
+  data.frame(
+    f = f_stat
+  )
+)
+
+ggplot() +
+  geom_histogram(
+    data = fake_plot_df,
+    mapping = aes(x = f),
+    binwidth = 0.1,
+    boundary = 0
+  ) +
+  geom_vline(
+#    mapping = aes(xintercept = plot_df$f_stat)
+    data = plot_df,
+    mapping = aes(xintercept = f)
+  ) +
+  xlim(0, 6) +
+  ylab("") +
+  ggtitle(substitute(paste("F = ", frac("(Extra Sum of Squares)/(Extra Degrees of Freedom)", "(Residual Sum of Squares, Full Model)/(Degrees of Freedom, Full Model)"), " = ", f_stat),
+  list(f_stat=round(f_stat, 3)))) +
+  theme_bw()
+```
+
+
+
+## Heading towards a p-value
+
+p-value: If $H_0$ is correct, what proportion of samples would give you F statistics at least as extreme as the F statistic of 4.78 we got from our actual data?
+
+Let's simulate a fake data set, assuming $H_0$ is true.  We have 9 observations drawn at random from a Normal(3.033, 0.579) distribution.
+
+```{r, echo =  FALSE}
+fake_iris <- data.frame(
+  Species = iris$Species,
+  Sepal.Width = rnorm(n = 9, mean = 3.033, sd = 0.579)
+)
+```
+
+```{r, echo = FALSE, fig.height=2}
+red_ss <- fake_iris %>%
+  ungroup() %>%
+  mutate(
+    mean_sw = mean(Sepal.Width),
+    resid = Sepal.Width - mean_sw
+  ) %>%
+  summarize(
+    rss = mean(resid^2)
+  ) %>%
+  pull(rss)
+
+full_ss <- fake_iris %>%
+  group_by(Species) %>%
+  mutate(
+    mean_sw = mean(Sepal.Width),
+    resid = Sepal.Width - mean_sw
+  ) %>%
+  ungroup() %>%
+  summarize(
+    rss = mean(resid^2)
+  ) %>%
+  pull(rss)
+
+p_full <- ggplot() +
+  geom_point(
+    data = fake_iris,
+    mapping = aes(x = Sepal.Width, y = 0, color = Species, shape = Species)
+  ) +
+  geom_vline(
+    data = fake_iris %>%
+      group_by(Species) %>%
+      summarize(
+        mean_sw = mean(Sepal.Width)
+      ),
+    mapping = aes(xintercept = mean_sw, color = Species)
+  ) +
+  ylim(0, 0.4) +
+  ylab("") +
+  ggtitle(paste0("Full Model RSS = ", round(full_ss, 3))) +
+  theme_bw()
+
+p_red <- ggplot() +
+  geom_point(
+    data = fake_iris,
+    mapping = aes(x = Sepal.Width, y = 0)
+  ) +
+  geom_vline(
+    data = fake_iris %>%
+      ungroup() %>%
+      summarize(
+        mean_sw = mean(Sepal.Width)
+      ),
+    mapping = aes(xintercept = mean_sw)
+  ) +
+  ylim(0, 0.4) +
+  ylab("") +
+  ggtitle(paste0("Reduced Model RSS = ", round(red_ss, 3))) +
+  theme_bw()
+
+grid.newpage()
+pushViewport(viewport(layout = grid.layout(ncol = 2, widths= unit(c(1, 0.7),units = rep("null", 2)))))
+print(p_full, vp = viewport(layout.pos.row = 1, layout.pos.col = 1))
+print(p_red, vp = viewport(layout.pos.row = 1, layout.pos.col = 2))
+```
+
+```{r, echo = FALSE, fig.height=2, warning=FALSE}
+f_stat <- lm(Sepal.Width ~ Species, data = fake_iris) %>% summary() %>% `[[`("fstatistic") %>% `[[`("value")
+fake_plot_df <- rbind(
+  fake_plot_df,
+  data.frame(
+    f = f_stat
+  )
+)
+
+ggplot() +
+  geom_histogram(
+    data = fake_plot_df,
+    mapping = aes(x = f),
+    binwidth = 0.1,
+    boundary = 0
+  ) +
+  geom_vline(
+#    mapping = aes(xintercept = plot_df$f_stat)
+    data = plot_df,
+    mapping = aes(xintercept = f)
+  ) +
+  xlim(0, 6) +
+  ylab("") +
+  ggtitle(substitute(paste("F = ", frac("(Extra Sum of Squares)/(Extra Degrees of Freedom)", "(Residual Sum of Squares, Full Model)/(Degrees of Freedom, Full Model)"), " = ", f_stat),
+  list(f_stat=round(f_stat, 3)))) +
+  theme_bw()
+```
+
+
+
+## Heading towards a p-value
+
+p-value: If $H_0$ is correct, what proportion of samples would give you F statistics at least as extreme as the F statistic of 4.78 we got from our actual data?
+
+Let's simulate a fake data set, assuming $H_0$ is true.  We have 9 observations drawn at random from a Normal(3.033, 0.579) distribution.
+
+```{r, echo =  FALSE}
+fake_iris <- data.frame(
+  Species = iris$Species,
+  Sepal.Width = rnorm(n = 9, mean = 3.033, sd = 0.579)
+)
+```
+
+```{r, echo = FALSE, fig.height=2}
+red_ss <- fake_iris %>%
+  ungroup() %>%
+  mutate(
+    mean_sw = mean(Sepal.Width),
+    resid = Sepal.Width - mean_sw
+  ) %>%
+  summarize(
+    rss = mean(resid^2)
+  ) %>%
+  pull(rss)
+
+full_ss <- fake_iris %>%
+  group_by(Species) %>%
+  mutate(
+    mean_sw = mean(Sepal.Width),
+    resid = Sepal.Width - mean_sw
+  ) %>%
+  ungroup() %>%
+  summarize(
+    rss = mean(resid^2)
+  ) %>%
+  pull(rss)
+
+p_full <- ggplot() +
+  geom_point(
+    data = fake_iris,
+    mapping = aes(x = Sepal.Width, y = 0, color = Species, shape = Species)
+  ) +
+  geom_vline(
+    data = fake_iris %>%
+      group_by(Species) %>%
+      summarize(
+        mean_sw = mean(Sepal.Width)
+      ),
+    mapping = aes(xintercept = mean_sw, color = Species)
+  ) +
+  ylim(0, 0.4) +
+  ylab("") +
+  ggtitle(paste0("Full Model RSS = ", round(full_ss, 3))) +
+  theme_bw()
+
+p_red <- ggplot() +
+  geom_point(
+    data = fake_iris,
+    mapping = aes(x = Sepal.Width, y = 0)
+  ) +
+  geom_vline(
+    data = fake_iris %>%
+      ungroup() %>%
+      summarize(
+        mean_sw = mean(Sepal.Width)
+      ),
+    mapping = aes(xintercept = mean_sw)
+  ) +
+  ylim(0, 0.4) +
+  ylab("") +
+  ggtitle(paste0("Reduced Model RSS = ", round(red_ss, 3))) +
+  theme_bw()
+
+grid.newpage()
+pushViewport(viewport(layout = grid.layout(ncol = 2, widths= unit(c(1, 0.7),units = rep("null", 2)))))
+print(p_full, vp = viewport(layout.pos.row = 1, layout.pos.col = 1))
+print(p_red, vp = viewport(layout.pos.row = 1, layout.pos.col = 2))
+```
+
+```{r, echo = FALSE, fig.height=2, warning=FALSE}
+f_stat <- lm(Sepal.Width ~ Species, data = fake_iris) %>% summary() %>% `[[`("fstatistic") %>% `[[`("value")
+fake_plot_df <- rbind(
+  fake_plot_df,
+  data.frame(
+    f = f_stat
+  )
+)
+
+ggplot() +
+  geom_histogram(
+    data = fake_plot_df,
+    mapping = aes(x = f),
+    binwidth = 0.1,
+    boundary = 0
+  ) +
+  geom_vline(
+#    mapping = aes(xintercept = plot_df$f_stat)
+    data = plot_df,
+    mapping = aes(xintercept = f)
+  ) +
+  xlim(0, 6) +
+  ylab("") +
+  ggtitle(substitute(paste("F = ", frac("(Extra Sum of Squares)/(Extra Degrees of Freedom)", "(Residual Sum of Squares, Full Model)/(Degrees of Freedom, Full Model)"), " = ", f_stat),
+  list(f_stat=round(f_stat, 3)))) +
+  theme_bw()
+```
+
+
+
+## Heading towards a p-value
+
+p-value: If $H_0$ is correct, what proportion of samples would give you F statistics at least as extreme as the F statistic of 4.78 we got from our actual data?
+
+Let's simulate a fake data set, assuming $H_0$ is true.  We have 9 observations drawn at random from a Normal(3.033, 0.579) distribution.
+
+```{r, echo =  FALSE}
+fake_iris <- data.frame(
+  Species = iris$Species,
+  Sepal.Width = rnorm(n = 9, mean = 3.033, sd = 0.579)
+)
+```
+
+```{r, echo = FALSE, fig.height=2}
+red_ss <- fake_iris %>%
+  ungroup() %>%
+  mutate(
+    mean_sw = mean(Sepal.Width),
+    resid = Sepal.Width - mean_sw
+  ) %>%
+  summarize(
+    rss = mean(resid^2)
+  ) %>%
+  pull(rss)
+
+full_ss <- fake_iris %>%
+  group_by(Species) %>%
+  mutate(
+    mean_sw = mean(Sepal.Width),
+    resid = Sepal.Width - mean_sw
+  ) %>%
+  ungroup() %>%
+  summarize(
+    rss = mean(resid^2)
+  ) %>%
+  pull(rss)
+
+p_full <- ggplot() +
+  geom_point(
+    data = fake_iris,
+    mapping = aes(x = Sepal.Width, y = 0, color = Species, shape = Species)
+  ) +
+  geom_vline(
+    data = fake_iris %>%
+      group_by(Species) %>%
+      summarize(
+        mean_sw = mean(Sepal.Width)
+      ),
+    mapping = aes(xintercept = mean_sw, color = Species)
+  ) +
+  ylim(0, 0.4) +
+  ylab("") +
+  ggtitle(paste0("Full Model RSS = ", round(full_ss, 3))) +
+  theme_bw()
+
+p_red <- ggplot() +
+  geom_point(
+    data = fake_iris,
+    mapping = aes(x = Sepal.Width, y = 0)
+  ) +
+  geom_vline(
+    data = fake_iris %>%
+      ungroup() %>%
+      summarize(
+        mean_sw = mean(Sepal.Width)
+      ),
+    mapping = aes(xintercept = mean_sw)
+  ) +
+  ylim(0, 0.4) +
+  ylab("") +
+  ggtitle(paste0("Reduced Model RSS = ", round(red_ss, 3))) +
+  theme_bw()
+
+grid.newpage()
+pushViewport(viewport(layout = grid.layout(ncol = 2, widths= unit(c(1, 0.7),units = rep("null", 2)))))
+print(p_full, vp = viewport(layout.pos.row = 1, layout.pos.col = 1))
+print(p_red, vp = viewport(layout.pos.row = 1, layout.pos.col = 2))
+```
+
+```{r, echo = FALSE, fig.height=2, warning=FALSE}
+f_stat <- lm(Sepal.Width ~ Species, data = fake_iris) %>% summary() %>% `[[`("fstatistic") %>% `[[`("value")
+fake_plot_df <- rbind(
+  fake_plot_df,
+  data.frame(
+    f = f_stat
+  )
+)
+
+ggplot() +
+  geom_histogram(
+    data = fake_plot_df,
+    mapping = aes(x = f),
+    binwidth = 0.1,
+    boundary = 0
+  ) +
+  geom_vline(
+#    mapping = aes(xintercept = plot_df$f_stat)
+    data = plot_df,
+    mapping = aes(xintercept = f)
+  ) +
+  xlim(0, 6) +
+  ylab("") +
+  ggtitle(substitute(paste("F = ", frac("(Extra Sum of Squares)/(Extra Degrees of Freedom)", "(Residual Sum of Squares, Full Model)/(Degrees of Freedom, Full Model)"), " = ", f_stat),
+  list(f_stat=round(f_stat, 3)))) +
+  theme_bw()
+```
+
+
+
+## Heading towards a p-value
+
+p-value: If $H_0$ is correct, what proportion of samples would give you F statistics at least as extreme as the F statistic of 4.78 we got from our actual data?
+
+F statistics from 10,000 more samples, all generated assuming $H_0$ is true.  The orange curve shows the theoretically derived F distribution.
+
+```{r, echo =  FALSE, warning = FALSE, fig.height = 2.5}
+get_fake_f <- function(i) {
+  fake_iris <- data.frame(
+    Species = iris$Species,
+    Sepal.Width = rnorm(n = 9, mean = 3.033, sd = 0.579)
+  )
+  
+  f_stat <- lm(Sepal.Width ~ Species, data = fake_iris) %>% summary() %>% `[[`("fstatistic") %>% `[[`("value")
+
+  data.frame(
+    f = f_stat
+  )
+}
+
+fake_plot_df <- rbind(
+  fake_plot_df,
+  map_dfr(1:10000, get_fake_f)
+)
+```
+
+```{r, echo =  FALSE, warning = FALSE}
+temp1 <- hist(
+  fake_plot_df %>% filter(f < plot_df$f) %>% pull(f),
+  breaks = seq(from = 0, to = round(plot_df$f, 1), by = 0.1),
+  plot = FALSE
+)
+temp2 <- hist(
+  fake_plot_df %>% filter(f >= round(plot_df$f, 1) & f <= 6) %>% pull(f),
+  breaks = seq(from = round(plot_df$f, 1), to = 6, by = 0.1),
+  plot = FALSE
+)
+
+total_counts <- sum(temp1$counts, temp2$counts)
+fake_plot_df1 <- data.frame(
+  mid = temp1$mids,
+  density = temp1$counts / total_counts * 10
+)
+fake_plot_df2 <- data.frame(
+  mid = temp2$mids,
+  density = temp2$counts / total_counts * 10
+)
+
+ggplot(data = fake_plot_df, mapping = aes(x = f)) +
+  geom_histogram(
+    data = fake_plot_df1,
+    mapping = aes(x = mid, y = density),
+#    data = fake_plot_df %>% filter(f < plot_df$f),
+#    mapping = aes(y = ..density..),
+    stat = "identity",
+    binwidth = 0.1,
+    boundary = 0
+  ) +
+  geom_histogram(
+    data = fake_plot_df2,
+    mapping = aes(x = mid, y = density),
+#    data = fake_plot_df %>% filter(f >= plot_df$f),
+#    mapping = aes(y = ..density..),
+    fill = "cornflowerblue",
+    stat = "identity",
+    binwidth = 0.1,
+    boundary = 0
+  ) +
+  stat_function(fun = df, args = list(df1 = 2, df2 = 6), color = "orange") +
+  geom_vline(
+#    mapping = aes(xintercept = plot_df$f_stat)
+    data = plot_df,
+    mapping = aes(xintercept = f)
+  ) +
+  xlim(0, 6) +
+  ylab("") +
+  theme_bw()
+```
+
+
+
+
+
+## A p-value
+
+* The p-value is 0.05732
+* If the null hypothesis that all three species had the same population mean were true, about 5.7% of samples would give you F statistics at least as extreme as the F statistic of 4.78 we got from our actual data.  (Those samples contribute to the blue part of the histogram.)
+* This offers some evidence against $H_0$, but not very strong.
+
+```{r, echo =  FALSE, warning = FALSE, fig.height = 4}
+temp1 <- hist(
+  fake_plot_df %>% filter(f < plot_df$f) %>% pull(f),
+  breaks = seq(from = 0, to = round(plot_df$f, 1), by = 0.1),
+  plot = FALSE
+)
+temp2 <- hist(
+  fake_plot_df %>% filter(f >= round(plot_df$f, 1) & f <= 6) %>% pull(f),
+  breaks = seq(from = round(plot_df$f, 1), to = 6, by = 0.1),
+  plot = FALSE
+)
+
+total_counts <- sum(temp1$counts, temp2$counts)
+fake_plot_df1 <- data.frame(
+  mid = temp1$mids,
+  density = temp1$counts / total_counts * 10
+)
+fake_plot_df2 <- data.frame(
+  mid = temp2$mids,
+  density = temp2$counts / total_counts * 10
+)
+
+ggplot(data = fake_plot_df, mapping = aes(x = f)) +
+  geom_histogram(
+    data = fake_plot_df1,
+    mapping = aes(x = mid, y = density),
+#    data = fake_plot_df %>% filter(f < plot_df$f),
+#    mapping = aes(y = ..density..),
+    stat = "identity",
+    binwidth = 0.1,
+    boundary = 0
+  ) +
+  geom_histogram(
+    data = fake_plot_df2,
+    mapping = aes(x = mid, y = density),
+#    data = fake_plot_df %>% filter(f >= plot_df$f),
+#    mapping = aes(y = ..density..),
+    fill = "cornflowerblue",
+    stat = "identity",
+    binwidth = 0.1,
+    boundary = 0
+  ) +
+  stat_function(fun = df, args = list(df1 = 2, df2 = 6), color = "orange") +
+  geom_vline(
+#    mapping = aes(xintercept = plot_df$f_stat)
+    data = plot_df,
+    mapping = aes(xintercept = f)
+  ) +
+  xlim(0, 6) +
+  ylab("") +
+  theme_bw()
+```

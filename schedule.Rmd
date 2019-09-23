@@ -138,20 +138,22 @@ make_week_box("week4", TRUE, "Week 4: Sep 23 -- Sep 27", "
  * **In class**, we will work on:
     * Quiz on Sections 5.2 and 6.2
     * More on F tests for ANOVA models.
+        * slides illustrating how p-value calculations for F tests work: [pdf](materials/20190223_F/F_Test_p-values.pdf)
+        * p-values for nested models: [pdf](materials/20190223_F/anova_F.pdf)
+        * Finish Lab 3
  * **After class**, please:
-
+    * Read Sections 6.3, 6.4.3, and the paragraph headed \"Bonferroni\" in 6.4.4.
 
 #### Wed, Sep 25
  * **In class**, we will work on:
     * Quiz on any material up through Sections 5.2 and 6.2
-    * Think about conditions for the ANOVA model?  Or maybe multiple comparisons.
-    * Possibly, start on data transformations for ANOVA
+    * Multiple comparisons.
  * **After class**, please:
 
 
 #### Fri, Sep 27
  * **In class**, we will work on:
-    * Transformations for ANOVA
+    * Multiple Comparisons
  * **After class**, please:
 ")
 ```
@@ -160,18 +162,19 @@ make_week_box("week4", TRUE, "Week 4: Sep 23 -- Sep 27", "
 make_week_box("week5", TRUE, "Week 5: Sep 30 -- Oct 04", "
 #### Mon, Sep 30
  * **In class**, we will work on:
-    * Either alternative approaches to inference (reminder about permutation tests, start on bootstrap) or multiple comparisons
+    * Transformations
  * **After class**, please:
 
 
 #### Wed, Oct 02
  * **In class**, we will work on:
-    * More on bootstrap or more on multiple comparisons
+    * Transformations
  * **After class**, please:
 
 
 #### Fri, Oct 04
  * **In class**, we will work on:
+    * Alternative approaches to inference; reminder about permutation tests
  * **After class**, please:
 ")
 ```
@@ -180,7 +183,7 @@ make_week_box("week5", TRUE, "Week 5: Sep 30 -- Oct 04", "
 make_week_box("week6", TRUE, "Week 6: Oct 07 -- Oct 11", "
 #### Mon, Oct 07
  * **In class**, we will work on:
-    * Midterm?
+    * Alternative approaches to inference; bootstrap
  * **After class**, please:
 
 
@@ -192,6 +195,7 @@ make_week_box("week6", TRUE, "Week 6: Oct 07 -- Oct 11", "
 
 #### Fri, Oct 11
  * **In class**, we will work on:
+    * Alternative approaches to inference; bootstrap
  * **After class**, please:
 ")
 ```

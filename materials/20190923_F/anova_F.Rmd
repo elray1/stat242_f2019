@@ -1,0 +1,102 @@
+---
+title: "R Code: F tests for ANOVA, More Nested Models"
+subtitle: "(Sleuth3 Sections 5.3 and 5.4)"
+date: "2019-09-22"
+output:
+  pdf_document:
+    fig_height: 2.8
+    fig_width: 6
+    highlight: zenburn
+header-includes:
+  - \usepackage{booktabs}
+  - \usepackage{multirow}
+  - \usepackage{pdflscape}
+  - \newcommand{\blandscape}{\begin{landscape}}
+  - \newcommand{\elandscape}{\end{landscape}}
+geometry: margin=0.6in
+---
+
+```{r setup, include=FALSE}
+library(knitr)
+knitr::opts_chunk$set(cache = TRUE)
+```
+
+## Spock Trials Example
+
+```{r, message = FALSE, echo = FALSE, warning=FALSE}
+library(readr)
+library(dplyr)
+library(ggplot2)
+library(gridExtra)
+library(mosaic)
+library(gmodels)
+
+juries <- read_csv("http://www.evanlray.com/data/sleuth3/ex0502_women_jurors.csv")
+
+ggplot(data = juries, mapping = aes(x = Judge, y = Percent)) +
+  geom_boxplot()
+```
+
+### Question: are the means for judges A through F equal?
+
+$H_0: \mu_1 = \mu_2 = \mu_3 = \mu_4 = \mu_5 = \mu_6$
+
+$H_A:$ At least one mean for a judge other than Spock is not equal to the others.
+
+Note: if the null hypothesis is correct, there are effectively two groups:
+
+1. All judges other than Spock's (they all have the same mean!)
+2. Spock's judge
+
+### Tasks we need to do:
+
+1. Fit the full model
+2. Create a new variable in the data set representing the groups in the reduced model
+3. Fit the reduced model
+4. Call `anova` to compare the reduced model to the full model
+
+\newpage
+
+#### Step 1: Fit the full model
+
+```{r}
+fit_full <- lm(Percent ~ Judge, data = juries)
+summary(fit_full)
+```
+
+#### Step 2: Create a new variable in the data set representing the groups in the reduced model
+
+The mutate statement below creates a new variable in the `juries` data frame called `judge_reduced`.  For each observation in the data set, `judge_reduced` is `"Other"` if the Judge was in `"A"`, `"B"`, `"C"`, `"D"`, `"E"`, or `"F"`.  Otherwise, `judge_reduced` is `"Spock's"`.
+
+```{r}
+juries <- juries %>%
+  mutate(
+    judge_reduced = ifelse(Judge %in% c("A", "B", "C", "D", "E", "F"), "Other", "Spock's")
+  )
+
+head(juries, 15) # just to check and make sure our new variable was created correctly
+```
+
+#### Step 3: Fit the reduced model
+
+```{r}
+fit_reduced <- lm(Percent ~ judge_reduced, data = juries)
+summary(fit_reduced)
+```
+
+#### Step 4: Call `anova` to compare the reduced model to the full model
+
+```{r}
+anova(fit_reduced, fit_full)
+```
+
+
+#### Not part of the R code, but I can't resist: what is the conclusion?  Does this prove that the other judges had the same mean percent of women in their jury pools?
+
+
+\blandscape
+\includegraphics{F_examples_p1.pdf}
+
+\includegraphics{F_examples_p2.pdf}
+\elandscape
+
