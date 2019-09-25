@@ -96,7 +96,7 @@ make_week_box("week2", FALSE, "Week 2: Sep 09 -- Sep 13", "
 ```
 
 ```{r, echo = FALSE, results='asis'}
-make_week_box("week3", TRUE, "Week 3: Sep 16 -- Sep 20", "
+make_week_box("week3", FALSE, "Week 3: Sep 16 -- Sep 20", "
 #### Mon, Sep 16
  * **In class**, we will work on:
     * Quiz on material from Chapter 2
@@ -148,6 +148,9 @@ make_week_box("week4", TRUE, "Week 4: Sep 23 -- Sep 27", "
  * **In class**, we will work on:
     * Quiz on any material up through Sections 5.2 and 6.2
     * Multiple comparisons.
+        * Concepts: [pdf](materials/20190925_multiple_comparisons/Concepts_multiple_comparisons.pdf)
+        * R: [pdf](materials/20190925_multiple_comparisons/R_multiple_comparisons.pdf)
+    * Lab 4: https://github.com/mhc-stat242-f2019/Lab4.git
  * **After class**, please:
 
 

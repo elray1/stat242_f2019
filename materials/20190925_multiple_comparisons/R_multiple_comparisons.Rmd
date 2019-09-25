@@ -1,0 +1,111 @@
+---
+title: "R Code: Multiple Comparisons (Sleuth3 Sections 6.3 and 6.4)"
+date: "2019-09-25"
+output:
+  pdf_document:
+    fig_height: 2.8
+    fig_width: 6
+    highlight: zenburn
+  html_document:
+    fig_height: 3
+    fig_width: 5
+  word_document:
+    fig_height: 3
+    fig_width: 5
+header-includes:
+  - \usepackage{booktabs}
+geometry: margin=0.6in
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(cache = FALSE)
+library(ggplot2)
+library(readr)
+library(dplyr)
+library(gmodels)
+```
+
+### R code, Handicaps Study
+
+```{r, message = FALSE}
+handicaps <- read_csv("http://www.evanlray.com/data/sleuth3/ex0601_handicaps.csv") %>%
+  mutate(
+    Handicap = factor(Handicap, levels = c("None", "Amputee", "Crutches", "Hearing", "Wheelchair"))
+  )
+
+nrow(handicaps)
+
+head(handicaps)
+
+handicaps %>%
+  count(Handicap)
+```
+
+To keep things shorter, suppose we just want to find 4 confidence intervals:
+
+* $\mu_1 - \mu_2$
+* $\mu_1 - \mu_3$
+* $\mu_1 - \mu_4$
+* $\mu_1 - \mu_5$
+
+### Bonferroni adjustment
+
+#### Step 1: Figure out the individual confidence levels that get you the desired familywise confidence level
+
+ * Can always work through the table
+ * General formula is $1 - \alpha/k$ where:
+     * $k$ is number of intervals we're making (4 in our example)
+     * If we want a 95\% familywise confidence level, $\alpha = 0.05$
+
+```{r}
+1 - 0.05/4
+```
+
+#### Step 2: Make the confidence intervals
+
+```{r}
+anova_fit <- lm(Score ~ Handicap, data = handicaps)
+fit.contrast(anova_fit, "Handicap", c(1, -1, 0, 0, 0), conf.int = 0.9875)
+fit.contrast(anova_fit, "Handicap", c(1, 0, -1, 0, 0), conf.int = 0.9875)
+fit.contrast(anova_fit, "Handicap", c(1, 0, 0, -1, 0), conf.int = 0.9875)
+fit.contrast(anova_fit, "Handicap", c(1, 0, 0, 0, -1), conf.int = 0.9875)
+```
+
+#### We could also calculate by hand based on the estimates and standard errors from R:
+
+ * The multiplier is the quantile of the t distribution at the point $1 - \alpha/2k$
+
+```{r}
+bonferroni_multiplier <- qt(1 - 0.05/(2*4), df = 70 - 5)
+bonferroni_multiplier
+```
+
+```{r}
+c(-0.471 - bonferroni_multiplier * 0.617, -0.471 + bonferroni_multiplier * 0.617)
+c(1.021 - bonferroni_multiplier * 0.617, 1.021 + bonferroni_multiplier * 0.617)
+c(0.85 - bonferroni_multiplier * 0.617, 0.85 + bonferroni_multiplier * 0.617)
+c(-0.443 - bonferroni_multiplier * 0.617, -0.443 + bonferroni_multiplier * 0.617)
+```
+
+\newpage
+
+#### Scheffe 95% familywise CIs
+
+ * Use $\text{Multiplier} = \sqrt{(I - 1) F_{(I-1),(n - 1)}(1 - \alpha)}$
+
+First, find the multiplier
+
+```{r}
+scheffe_multiplier <- sqrt((5 - 1) * qf(0.95, df1 = 5 - 1, df2 = 70 - 5))
+scheffe_multiplier
+```
+
+```{r}
+c(-0.471 - scheffe_multiplier * 0.617, -0.471 + scheffe_multiplier * 0.617)
+c(1.021 - scheffe_multiplier * 0.617, 1.021 + scheffe_multiplier * 0.617)
+c(0.85 - scheffe_multiplier * 0.617, 0.85 + scheffe_multiplier * 0.617)
+c(-0.443 - scheffe_multiplier * 0.617, -0.443 + scheffe_multiplier * 0.617)
+```
+
+#### What is the interpretation of the Scheffe intervals above in context?  As part of your answer, explain what it means that they have a 95% familywise confidence level.
+
