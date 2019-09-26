@@ -1,0 +1,68 @@
+---
+title: ""
+subtitle: ""
+output:
+  pdf_document:
+    fig_height: 2.8
+    fig_width: 6
+    keep_tex: true
+  html_document:
+    fig_height: 3
+    fig_width: 5
+  word_document:
+    fig_height: 3
+    fig_width: 5
+header-includes:
+  - \usepackage{booktabs}
+geometry: margin=0.6in
+---
+
+## Stat 242 Quiz -- Topics Drawn from Sections 6.3 and 6.4
+
+## What's Your Name? ____________________
+
+A researcher takes 20 samples of bark from each of 10 tree species in order to estimate the differences between fuel potentials.  The data give 10 species averages that the researcher will compare.  The standard deviations of the measured fuel potentials are similar for all 10 groups.
+
+#### 1. Suppose the researcher conducts 45 different hypothesis tests of the form $H_0: \mu_i - \mu_j = 0$ vs. $H_A: \mu_i - \mu_j \neq 0$, for every possible pair of species $i$ and $j$.  (There are 45 different pairs that can be formed by taking different combinations of the 10 species.)  The researcher will declare a difference in sample means for a pair of species "statistically significant" if the p-value for the test involving those species is less than 0.05.  If in fact all 10 means were the same in the population of all trees of these 10 species, about how many "statistically significant" results would you expect the researcher to find?
+
+Note that $0.05 = \frac{1}{20}$.
+
+\vspace{5cm}
+
+#### 2. The researcher doesn't want to do all that work, and had some concerns about running 45 different tests.  Instead, they looked at all the group means, and noticed that the sample mean for group 7 was largest and the sample mean for group 3 was smallest.  They then calculated a confidence interval for the difference $\mu_7 - \mu_3$.  Explain why a multiple comparison procedure should be used even through they only formed one confidence interval.
+
+\newpage
+
+(this page left intentionally blank)
+
+\newpage
+
+## Stat 242 Quiz -- Topics Drawn from Sections 6.3 and 6.4
+
+## What's Your Name? ____________________
+
+Suppose I compute 10 confidence intervals, each estimating one of 10 different means $\mu_1, \mu_2, \ldots, \mu_{10}$.  I set it up so that each interval has an individual confidence level of 99.5%, and as a group the 10 intervals have a familywise confidence level of 95%.
+
+#### 1. What does it mean that the confidence interval for $\mu_1$ has an individual confidence level of 99.5%?
+
+\vspace{5cm}
+
+#### 2. What does it mean that as a group, the 10 confidence intervals have a familywise confidence level of 95%?
+
+\newpage
+
+(this page left intentionally blank)
+
+\newpage
+
+## Stat 242 Quiz -- Topics Drawn from Sections 6.3 and 6.4
+
+## What's Your Name? ____________________
+
+#### 1. Suppose I compute 4 confidence intervals using the Bonferroni adjustment procedure, and I want a familywise confidence level of 95%.  What should the individual confidence level for each interval be?
+
+
+
+
+
+

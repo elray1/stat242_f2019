@@ -15,6 +15,12 @@ Review materials and solutions to quizzes and exams will be posted here.
 +------+----------------------------------------------------------+---------------------------------------------------------------+
 | Quiz | Chapter 2: [pdf](exams/ch2/stat242_quizzes.pdf)          | Solutions: [pdf](exams/ch2/stat242_quiz_solutions.pdf)        |
 +------+----------------------------------------------------------+---------------------------------------------------------------+
-| Quiz | Sections 5.2 and 6.2:                                    | Solutions: [pdf](exams/Ch52_62/stat242_quiz_solutions.pdf)    |
+| Quiz | Sections 5.2 and 6.2 (t tests):                          | Solutions: [pdf](exams/Ch52_62/stat242_quiz_solutions.pdf)    |
 |      | [pdf](exams/Ch52_62/stat242_quizzes.pdf)                 |                                                               |
++------+----------------------------------------------------------+---------------------------------------------------------------+
+| Quiz | Sections 5.3 and 5.4 (F tests):                          | Solutions: [pdf](exams/ch53_54/stat242_quiz_solutions.pdf)    |
+|      | [pdf](exams/ch53_54/stat242_quizzes.pdf)                 |                                                               |
++------+----------------------------------------------------------+---------------------------------------------------------------+
+| Quiz | Sections 6.3 and 6.4 (multiple comparisons):             | Solutions: [pdf](exams/ch63_64/stat242_quiz_solutions.pdf)    |
+|      | [pdf](exams/ch63_64/stat242_quizzes.pdf)                 |                                                               |
 +------+----------------------------------------------------------+---------------------------------------------------------------+

@@ -1,0 +1,96 @@
+---
+title: ""
+subtitle: ""
+output:
+  pdf_document:
+    fig_height: 2.8
+    fig_width: 6
+    keep_tex: true
+  html_document:
+    fig_height: 3
+    fig_width: 5
+  word_document:
+    fig_height: 3
+    fig_width: 5
+header-includes:
+  - \usepackage{booktabs}
+geometry: margin=0.6in
+---
+
+## Stat 242 Quiz -- Topics Drawn from Sections 6.3 and 6.4
+
+## What's Your Name? ____________________
+
+A researcher takes 20 samples of bark from each of 10 tree species in order to estimate the differences between fuel potentials.  The data give 10 species averages that the researcher will compare.  The standard deviations of the measured fuel potentials are similar for all 10 groups.
+
+#### 1. Suppose the researcher conducts 45 different hypothesis tests of the form $H_0: \mu_i - \mu_j = 0$ vs. $H_A: \mu_i - \mu_j \neq 0$, for every possible pair of species $i$ and $j$.  (There are 45 different pairs that can be formed by taking different combinations of the 10 species.)  The researcher will declare a difference in sample means for a pair of species "statistically significant" if the p-value for the test involving those species is less than 0.05.  If in fact all 10 means were the same in the population of all trees of these 10 species, about how many "statistically significant" results would you expect the researcher to find?
+
+Note that $0.05 = \frac{1}{20}$.
+
+Answer: $\frac{1}{20} \times 45$ is a little over 2.  We'd expect the researcher to find about 2 statistically significant results out of the 45 comparisons, if the null hypothesis was actually true in every one of the 45 tests.
+
+Explanation (not necessary for you to write this): If the null hypothesis of a hypothesis test is true, the probability of obtaining a p-value less than 0.05 is 0.05 (this is how the whole testing procedure is set up).  In this example, we're imagining conducting 45 different tests where the null hypothesis of no difference in population means for the species being compared is true for every one of the tests.  We expect that the researcher will incorrectly declare statistically significant results in about 1/20 of those 45 tests, or about 2 of them.
+
+\vspace{1cm}
+
+#### 2. The researcher doesn't want to do all that work, and had some concerns about running 45 different tests.  Instead, they looked at all the group means, and noticed that the sample mean for group 7 was largest and the sample mean for group 3 was smallest.  They then calculated a confidence interval for the difference $\mu_7 - \mu_3$.  Explain why a multiple comparison procedure should be used even through they only formed one confidence interval.
+
+Although the researchers only calculated one confidence interval, in selecting which comparison to make by looking at all of the group means they implicitly compared all of the groups with each other.  The end result of their analysis is equivalent to calculating all 45 confidence intervals and then reporting only the comparison for the pair of groups with the biggest difference in means.  In our statistical analysis, we should account for the process of deciding which confidence interval to calculate by looking at the data, which really entails making all of the comparisons even if an explicit confidence interval is not calculated for all of the comparisons.
+
+\newpage
+
+(this page left intentionally blank)
+
+\newpage
+
+## Stat 242 Quiz -- Topics Drawn from Sections 6.3 and 6.4
+
+## What's Your Name? ____________________
+
+Suppose I compute 10 confidence intervals, each estimating one of 10 different means $\mu_1, \mu_2, \ldots, \mu_{10}$.  I set it up so that each interval has an individual confidence level of 99.5%, and as a group the 10 intervals have a familywise confidence level of 95%.
+
+#### 1. What does it mean that the confidence interval for $\mu_1$ has an individual confidence level of 99.5%?
+
+For 99.5% of samples we might take from the population, a confidence interval based on that sample calculated using this procedure will contain $\mu_1$.
+
+\vspace{4cm}
+
+#### 2. What does it mean that as a group, the 10 confidence intervals have a familywise confidence level of 95%?
+
+For 95% of samples we might take from the population, all 10 confidence intervals calculated based on that sample will simultaneously contain the means they are estimating.
+
+\newpage
+
+(this page left intentionally blank)
+
+\newpage
+
+## Stat 242 Quiz -- Topics Drawn from Sections 6.3 and 6.4
+
+## What's Your Name? ____________________
+
+#### 1. Suppose I compute 2 confidence intervals using the Bonferroni adjustment procedure, and I want a familywise confidence level of 95%.  What should the individual confidence level for each interval be?  Please show your work for how you found this.
+
+For a familywise confidence level of 95%, we are working with a familywise value of $\alpha = 0.05$.
+
+The two individual intervals will have confidence level $(1 - \frac{\alpha}{2})*100 = (1 - \frac{0.05}{2})*100 = (1 - 0.025)*100 = 97.5$.
+
+You could also set up and work through a table like the one below:
+
+\begin{table}[!h]
+\centering
+\begin{tabular}{r c c}
+\toprule
+ & Target Percent of Samples Successful & Target Percent of Samples UNSuccessful \\
+Groups & (Confidence Level) & (100 - Confidence Level) \\
+\toprule
+Individual Interval 1 & 97.5\% ($1 - \alpha = 0.975$) & 2.5\% ($\alpha = 0.025$) \\
+\midrule
+Individual Interval 2 & 97.5\% ($1 - \alpha = 0.975$) & 2.5\% ($\alpha = 0.025$) \\
+\midrule
+Both Intervals & 95\% ($1 - \alpha = 0.95$) & 5\% ($\alpha = 0.05$) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+

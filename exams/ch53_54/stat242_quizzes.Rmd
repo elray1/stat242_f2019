@@ -1,0 +1,204 @@
+---
+title: ""
+subtitle: ""
+output:
+  pdf_document:
+    fig_height: 2.8
+    fig_width: 6
+    keep_tex: true
+  html_document:
+    fig_height: 3
+    fig_width: 5
+  word_document:
+    fig_height: 3
+    fig_width: 5
+header-includes:
+  - \usepackage{booktabs}
+geometry: margin=0.6in
+---
+
+## Stat 242 Quiz -- Topics Drawn from Sections 5.3 and 5.4
+
+## What's Your Name? ____________________
+
+A study of competition for nesting cavities in Southeast Colorado located 294 entrance area measurements from cavities (holes in trees) occupied by a variety of bird and rodent species.  The researchers studied entrance area measurements from cavities chosen by nine common nesting species.  Their question related to whether multiple species compete for the same size of cavities, or if there are differences in the cavity sizes selected by animals of different species.
+
+Define the parameters as follows:
+
+ * $\mu_1$ is the mean cavity entrance size for mice;
+ * $\mu_2$ is the mean entrance size for pinyon mice;
+ * $\mu_3$ is the mean cavity entrance size for Bewick's wrens;
+ * $\mu_4$ is the mean cavity entrance size for Mountain bluebirds;
+ * $\mu_5$ is the mean cavity entrance size for Ash-throated flycatchers;
+ * $\mu_6$ is the mean cavity entrance size for Plain titmice;
+ * $\mu_7$ is the mean cavity entrance size for Northern flickers;
+ * $\mu_8$ is the mean cavity entrance size for Western Screech-owls;
+ * $\mu_9$ is the mean cavity entrance size for American kestrels
+
+### 1. We would like to determine whether on average, the cavity entrance sizes are about the same for all of these species, or there are differences in the average cavity entrance sizes across the different species.  State relevant null and alternative hypotheses in terms of the parameters above, and also in written sentences describing the meaning of the hypotheses in context.
+
+\vspace{4cm}
+
+### 2. The p-value for the test stated in part 1 worked out to be about $5.5 \times 10^{-14}$.  What is the strength of evidence provided by the data against the null hypothesis?  Please explain your answer in context.
+
+\vspace{3cm}
+
+\newpage
+
+(this page left intentionally blank)
+
+\newpage
+
+## Stat 242 Quiz -- Topics Drawn from Sections 2.3, 5.2, and 6.2
+
+## What's Your Name? ____________________
+
+A study of competition for nesting cavities in Southeast Colorado located 294 entrance area measurements from cavities (holes in trees) occupied by a variety of bird and rodent species.  The researchers studied entrance area measurements from cavities chosen by nine common nesting species.  Their question related to whether multiple species compete for the same size of cavities, or if there are differences in the cavity sizes selected by animals of different species.
+
+Define the parameters as follows:
+
+ * $\mu_1$ is the mean cavity entrance size for mice;
+ * $\mu_2$ is the mean entrance size for pinyon mice;
+ * $\mu_3$ is the mean cavity entrance size for Bewick's wrens;
+ * $\mu_4$ is the mean cavity entrance size for Mountain bluebirds;
+ * $\mu_5$ is the mean cavity entrance size for Ash-throated flycatchers;
+ * $\mu_6$ is the mean cavity entrance size for Plain titmice;
+ * $\mu_7$ is the mean cavity entrance size for Northern flickers;
+ * $\mu_8$ is the mean cavity entrance size for Western Screech-owls;
+ * $\mu_9$ is the mean cavity entrance size for American kestrels
+
+### 1. The Northern flicker, Western Screech-owl, and American kestrel are all larger than the other species that were included in this study.  It's possible that these three species might be competing with each other, so we would like to determine whether on average, the cavity entrance sizes are about the same for these 3 species species, or there are differences in the average cavity entrance sizes across these 3 species.  State relevant null and alternative hypotheses in terms of the parameters above, and also in written sentences describing the meaning of the hypotheses in context.
+
+\vspace{4cm}
+
+### 2. The p-value for the test stated in part 1 worked out to be about $0.95$.  What is the strength of evidence provided by the data against the null hypothesis?  Please explain your answer in context.
+
+\vspace{3cm}
+
+\newpage
+
+(this page left blank intentionally)
+
+\newpage
+
+
+## Stat 242 Quiz -- Topics Drawn from Sections 2.3, 5.2, and 6.2
+
+## What's Your Name? ____________________
+
+A study of competition for nesting cavities in Southeast Colorado located 294 entrance area measurements from cavities (holes in trees) occupied by a variety of bird and rodent species.  The researchers studied entrance area measurements from cavities chosen by nine common nesting species.  Their question related to whether multiple species compete for the same size of cavities, or if there are differences in the cavity sizes selected by animals of different species.
+
+Define the parameters as follows:
+
+ * $\mu_1$ is the mean cavity entrance size for mice;
+ * $\mu_2$ is the mean entrance size for pinyon mice;
+ * $\mu_3$ is the mean cavity entrance size for Bewick's wrens;
+ * $\mu_4$ is the mean cavity entrance size for Mountain bluebirds;
+ * $\mu_5$ is the mean cavity entrance size for Ash-throated flycatchers;
+ * $\mu_6$ is the mean cavity entrance size for Plain titmice;
+ * $\mu_7$ is the mean cavity entrance size for Northern flickers;
+ * $\mu_8$ is the mean cavity entrance size for Western Screech-owls;
+ * $\mu_9$ is the mean cavity entrance size for American kestrels
+
+The Northern flicker, Western Screech-owl, and American kestrel are all larger than the other species that were included in this study.  It's possible that these three species might be competing with each other, so we would like to determine whether on average, the cavity entrance sizes are about the same for these 3 species species, or there are differences in the average cavity entrance sizes across these 3 species.
+
+For this test, we will use the following hypotheses:
+
+$H_0: \mu_7 = \mu_8 = \mu_9$ (the Northern flicker, Western Screech-owl, and American kestrel species have the same mean cavity entrance size)
+
+$H_A:$ it's not true that $\mu_7 = \mu_8 = \mu_9$.  At least one of the Northern flicker, Western Screech-owl, and American kestrel species has a different mean cavity entrance size than the others.
+
+#### 1. For conducting this test, how many parameters will the full model have?  What will the degrees of freedom for the sum of squared residuals for that model be?
+
+\vspace{3cm}
+
+#### 2. For conducting this test, how many parameters will the reduced model have?  What will the degrees of freedom for the sum of squared residuals for that model be?
+
+\vspace{3cm}
+
+#### 3. For conducting this test, what is the degrees of freedom associated with the extra sum of squares?
+
+\newpage
+
+(this page left blank intentionally)
+
+\newpage
+
+
+## Stat 242 Quiz -- Topics Drawn from Sections 2.3, 5.2, and 6.2
+
+## What's Your Name? ____________________
+
+A study of competition for nesting cavities in Southeast Colorado located 294 entrance area measurements from cavities (holes in trees) occupied by a variety of bird and rodent species.  The researchers studied entrance area measurements from cavities chosen by nine common nesting species.  Their question related to whether multiple species compete for the same size of cavities, or if there are differences in the cavity sizes selected by animals of different species.
+
+Define the parameters as follows:
+
+ * $\mu_1$ is the mean cavity entrance size for mice;
+ * $\mu_2$ is the mean entrance size for pinyon mice;
+ * $\mu_3$ is the mean cavity entrance size for Bewick's wrens;
+ * $\mu_4$ is the mean cavity entrance size for Mountain bluebirds;
+ * $\mu_5$ is the mean cavity entrance size for Ash-throated flycatchers;
+ * $\mu_6$ is the mean cavity entrance size for Plain titmice;
+ * $\mu_7$ is the mean cavity entrance size for Northern flickers;
+ * $\mu_8$ is the mean cavity entrance size for Western Screech-owls;
+ * $\mu_9$ is the mean cavity entrance size for American kestrels
+
+The Northern flicker, Western Screech-owl, and American kestrel are all larger than the other species that were included in this study.  It's possible that these three species might be competing with each other, so we would like to determine whether on average, the cavity entrance sizes are about the same for these 3 species species, or there are differences in the average cavity entrance sizes across these 3 species.
+
+For this test, we will use the following hypotheses:
+
+$H_0: \mu_7 = \mu_8 = \mu_9$ (the Northern flicker, Western Screech-owl, and American kestrel species have the same mean cavity entrance size)
+
+$H_A:$ it's not true that $\mu_7 = \mu_8 = \mu_9$.  At least one of the Northern flicker, Western Screech-owl, and American kestrel species has a different mean cavity entrance size than the others.
+
+#### 1. What is a residual?
+
+\vspace{4cm}
+
+#### 2. In general, is it better if the residuals are larger or smaller?  Why?
+
+\vspace{4cm}
+
+#### (See question 3 on the other side!)
+
+\newpage
+
+#### 3. How is the extra sum of squares used in conducting this test calculated?  If the extra sum of squares is large, is that strong or weak evidence against the null hypothesis?
+
+\newpage
+
+
+## Stat 242 Quiz -- Topics Drawn from Sections 2.3, 5.2, and 6.2
+
+## What's Your Name? ____________________
+
+A study of competition for nesting cavities in Southeast Colorado located 294 entrance area measurements from cavities (holes in trees) occupied by a variety of bird and rodent species.  The researchers studied entrance area measurements from cavities chosen by nine common nesting species.  Their question related to whether multiple species compete for the same size of cavities, or if there are differences in the cavity sizes selected by animals of different species.
+
+Define the parameters as follows:
+
+ * $\mu_1$ is the mean cavity entrance size for mice;
+ * $\mu_2$ is the mean entrance size for pinyon mice;
+ * $\mu_3$ is the mean cavity entrance size for Bewick's wrens;
+ * $\mu_4$ is the mean cavity entrance size for Mountain bluebirds;
+ * $\mu_5$ is the mean cavity entrance size for Ash-throated flycatchers;
+ * $\mu_6$ is the mean cavity entrance size for Plain titmice;
+ * $\mu_7$ is the mean cavity entrance size for Northern flickers;
+ * $\mu_8$ is the mean cavity entrance size for Western Screech-owls;
+ * $\mu_9$ is the mean cavity entrance size for American kestrels
+
+The Northern flicker, Western Screech-owl, and American kestrel are all larger than the other species that were included in this study.  It's possible that these three species might be competing with each other, so we would like to determine whether on average, the cavity entrance sizes are about the same for these 3 species species, or there are differences in the average cavity entrance sizes across these 3 species.
+
+### 1. For each of the following hypothesis statements, please indicate whether it would be most straightforward to conduct the test with a t test or an F test:
+
+#### (a) $H_0: \mu_1 = \mu_2 = \mu_3$ vs. $H_A:$ $\mu_1$, $\mu_2$, and $\mu_3$ are not all equal to each other.
+
+t test \hspace{2in} F test
+
+#### (b) $H_0: \frac{1}{2}(\mu_1 + \mu_2) = \frac{1}{4}(\mu_3 + \mu_4 + \mu_5 + \mu_6)$ vs. $H_A: \frac{1}{2}(\mu_1 + \mu_2) \neq \frac{1}{4}(\mu_3 + \mu_4 + \mu_5 + \mu_6)$
+
+t test \hspace{2in} F test
+
+#### (c) $H_0: \mu_1 = \mu_2 = \mu_3 = \mu_4 = \mu_5 = \mu_6 = \mu_7 = \mu_8 = \mu_9$ vs. $H_A:$ The means $\mu_1$, $\mu_2$ $\ldots$, $\mu_9$ are not all equal to each other.
+
+t test \hspace{2in} F test
+
