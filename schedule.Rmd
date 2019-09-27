@@ -156,7 +156,10 @@ make_week_box("week4", TRUE, "Week 4: Sep 23 -- Sep 27", "
 
 #### Fri, Sep 27
  * **In class**, we will work on:
-    * Multiple Comparisons
+    * Multiple Comparisons:
+        * Lab 5: https://github.com/mhc-stat242-f2019/Lab5.git (does not need to be submitted)
+        * Finish Lab 4
+    * Review quizzes on F tests and multiple comparisons.
  * **After class**, please:
 ")
 ```
@@ -165,6 +168,7 @@ make_week_box("week4", TRUE, "Week 4: Sep 23 -- Sep 27", "
 make_week_box("week5", TRUE, "Week 5: Sep 30 -- Oct 04", "
 #### Mon, Sep 30
  * **In class**, we will work on:
+    * Conditions for t and F based inference with the ANOVA model.
     * Transformations
  * **After class**, please:
 
@@ -192,7 +196,7 @@ make_week_box("week6", TRUE, "Week 6: Oct 07 -- Oct 11", "
 
 #### Wed, Oct 09
  * **In class**, we will work on:
-    * Midterm?
+    * Midterm!
  * **After class**, please:
 
 
