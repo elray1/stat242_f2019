@@ -59,7 +59,7 @@ Suppose I compute 10 confidence intervals, each estimating one of 10 different m
 
 ## What's Your Name? ____________________
 
-#### 1. Suppose I compute 4 confidence intervals using the Bonferroni adjustment procedure, and I want a familywise confidence level of 95%.  What should the individual confidence level for each interval be?
+#### 1. Suppose I compute 2 confidence intervals using the Bonferroni adjustment procedure, and I want a familywise confidence level of 95%.  What should the individual confidence level for each interval be?
 
 
 

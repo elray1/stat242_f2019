@@ -1,0 +1,170 @@
+\documentclass[]{article}
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\usepackage{fixltx2e} % provides \textsubscript
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+\else % if luatex or xelatex
+  \ifxetex
+    \usepackage{mathspec}
+  \else
+    \usepackage{fontspec}
+  \fi
+  \defaultfontfeatures{Ligatures=TeX,Scale=MatchLowercase}
+\fi
+% use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+% use microtype if available
+\IfFileExists{microtype.sty}{%
+\usepackage{microtype}
+\UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\usepackage[margin=0.6in]{geometry}
+\usepackage{hyperref}
+\hypersetup{unicode=true,
+            pdfborder={0 0 0},
+            breaklinks=true}
+\urlstyle{same}  % don't use monospace font for urls
+\usepackage{graphicx,grffile}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+\IfFileExists{parskip.sty}{%
+\usepackage{parskip}
+}{% else
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt plus 2pt minus 1pt}
+}
+\setlength{\emergencystretch}{3em}  % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{0}
+% Redefines (sub)paragraphs to behave more like sections
+\ifx\paragraph\undefined\else
+\let\oldparagraph\paragraph
+\renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+\let\oldsubparagraph\subparagraph
+\renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+
+%%% Use protect on footnotes to avoid problems with footnotes in titles
+\let\rmarkdownfootnote\footnote%
+\def\footnote{\protect\rmarkdownfootnote}
+
+%%% Change title format to be more compact
+\usepackage{titling}
+
+% Create subtitle command for use in maketitle
+\newcommand{\subtitle}[1]{
+  \posttitle{
+    \begin{center}\large#1\end{center}
+    }
+}
+
+\setlength{\droptitle}{-2em}
+
+  \title{}
+    \pretitle{\vspace{\droptitle}}
+  \posttitle{}
+    \author{}
+    \preauthor{}\postauthor{}
+    \date{}
+    \predate{}\postdate{}
+  
+\usepackage{booktabs}
+
+\begin{document}
+
+\subsection{Stat 242 Quiz -- Topics Drawn from Sections 6.3 and
+6.4}\label{stat-242-quiz-topics-drawn-from-sections-6.3-and-6.4}
+
+\subsection{What's Your Name?
+\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_}\label{whats-your-name-____________________}
+
+A researcher takes 20 samples of bark from each of 10 tree species in
+order to estimate the differences between fuel potentials. The data give
+10 species averages that the researcher will compare. The standard
+deviations of the measured fuel potentials are similar for all 10
+groups.
+
+\paragraph{\texorpdfstring{1. Suppose the researcher conducts 45
+different hypothesis tests of the form \(H_0: \mu_i - \mu_j = 0\) vs.
+\(H_A: \mu_i - \mu_j \neq 0\), for every possible pair of species \(i\)
+and \(j\). (There are 45 different pairs that can be formed by taking
+different combinations of the 10 species.) The researcher will declare a
+difference in sample means for a pair of species ``statistically
+significant'' if the p-value for the test involving those species is
+less than 0.05. If in fact all 10 means were the same in the population
+of all trees of these 10 species, about how many ``statistically
+significant'' results would you expect the researcher to
+find?}{1. Suppose the researcher conducts 45 different hypothesis tests of the form H\_0: \textbackslash{}mu\_i - \textbackslash{}mu\_j = 0 vs. H\_A: \textbackslash{}mu\_i - \textbackslash{}mu\_j \textbackslash{}neq 0, for every possible pair of species i and j. (There are 45 different pairs that can be formed by taking different combinations of the 10 species.) The researcher will declare a difference in sample means for a pair of species statistically significant if the p-value for the test involving those species is less than 0.05. If in fact all 10 means were the same in the population of all trees of these 10 species, about how many statistically significant results would you expect the researcher to find?}}\label{suppose-the-researcher-conducts-45-different-hypothesis-tests-of-the-form-h_0-mu_i---mu_j-0-vs.-h_a-mu_i---mu_j-neq-0-for-every-possible-pair-of-species-i-and-j.-there-are-45-different-pairs-that-can-be-formed-by-taking-different-combinations-of-the-10-species.-the-researcher-will-declare-a-difference-in-sample-means-for-a-pair-of-species-statistically-significant-if-the-p-value-for-the-test-involving-those-species-is-less-than-0.05.-if-in-fact-all-10-means-were-the-same-in-the-population-of-all-trees-of-these-10-species-about-how-many-statistically-significant-results-would-you-expect-the-researcher-to-find}
+
+Note that \(0.05 = \frac{1}{20}\).
+
+\vspace{5cm}
+
+\paragraph{\texorpdfstring{2. The researcher doesn't want to do all that
+work, and had some concerns about running 45 different tests. Instead,
+they looked at all the group means, and noticed that the sample mean for
+group 7 was largest and the sample mean for group 3 was smallest. They
+then calculated a confidence interval for the difference
+\(\mu_7 - \mu_3\). Explain why a multiple comparison procedure should be
+used even through they only formed one confidence
+interval.}{2. The researcher doesn't want to do all that work, and had some concerns about running 45 different tests. Instead, they looked at all the group means, and noticed that the sample mean for group 7 was largest and the sample mean for group 3 was smallest. They then calculated a confidence interval for the difference \textbackslash{}mu\_7 - \textbackslash{}mu\_3. Explain why a multiple comparison procedure should be used even through they only formed one confidence interval.}}\label{the-researcher-doesnt-want-to-do-all-that-work-and-had-some-concerns-about-running-45-different-tests.-instead-they-looked-at-all-the-group-means-and-noticed-that-the-sample-mean-for-group-7-was-largest-and-the-sample-mean-for-group-3-was-smallest.-they-then-calculated-a-confidence-interval-for-the-difference-mu_7---mu_3.-explain-why-a-multiple-comparison-procedure-should-be-used-even-through-they-only-formed-one-confidence-interval.}
+
+\newpage
+
+(this page left intentionally blank)
+
+\newpage
+
+\subsection{Stat 242 Quiz -- Topics Drawn from Sections 6.3 and
+6.4}\label{stat-242-quiz-topics-drawn-from-sections-6.3-and-6.4-1}
+
+\subsection{What's Your Name?
+\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_}\label{whats-your-name-____________________-1}
+
+Suppose I compute 10 confidence intervals, each estimating one of 10
+different means \(\mu_1, \mu_2, \ldots, \mu_{10}\). I set it up so that
+each interval has an individual confidence level of 99.5\%, and as a
+group the 10 intervals have a familywise confidence level of 95\%.
+
+\paragraph{\texorpdfstring{1. What does it mean that the confidence
+interval for \(\mu_1\) has an individual confidence level of
+99.5\%?}{1. What does it mean that the confidence interval for \textbackslash{}mu\_1 has an individual confidence level of 99.5\%?}}\label{what-does-it-mean-that-the-confidence-interval-for-mu_1-has-an-individual-confidence-level-of-99.5}
+
+\vspace{5cm}
+
+\paragraph{2. What does it mean that as a group, the 10 confidence
+intervals have a familywise confidence level of
+95\%?}\label{what-does-it-mean-that-as-a-group-the-10-confidence-intervals-have-a-familywise-confidence-level-of-95}
+
+\newpage
+
+(this page left intentionally blank)
+
+\newpage
+
+\subsection{Stat 242 Quiz -- Topics Drawn from Sections 6.3 and
+6.4}\label{stat-242-quiz-topics-drawn-from-sections-6.3-and-6.4-2}
+
+\subsection{What's Your Name?
+\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_}\label{whats-your-name-____________________-2}
+
+\paragraph{1. Suppose I compute 2 confidence intervals using the
+Bonferroni adjustment procedure, and I want a familywise confidence
+level of 95\%. What should the individual confidence level for each
+interval
+be?}\label{suppose-i-compute-2-confidence-intervals-using-the-bonferroni-adjustment-procedure-and-i-want-a-familywise-confidence-level-of-95.-what-should-the-individual-confidence-level-for-each-interval-be}
+
+
+\end{document}
