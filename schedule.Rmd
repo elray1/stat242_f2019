@@ -168,14 +168,16 @@ make_week_box("week4", TRUE, "Week 4: Sep 23 -- Sep 27", "
 make_week_box("week5", TRUE, "Week 5: Sep 30 -- Oct 04", "
 #### Mon, Sep 30
  * **In class**, we will work on:
-    * Conditions for t and F based inference with the ANOVA model.
-    * Transformations
+    * Conditions for t and F based inference with the ANOVA model. [pdf](materials/20190930/anova_conditions.pdf)
  * **After class**, please:
 
 
 #### Wed, Oct 02
  * **In class**, we will work on:
-    * Transformations
+    * Transformations for ANOVA models.
+        * Concepts: [pdf](materials/20190930/concepts_anova_transformations.pdf)
+        * Examples with R code: [pdf](materials/20190930/example_anova_transformations.pdf)
+        * If time, Lab 6: https://github.com/mhc-stat242-f2019/Lab6.git
  * **After class**, please:
 
 
