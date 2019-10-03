@@ -24,3 +24,6 @@ Review materials and solutions to quizzes and exams will be posted here.
 | Quiz | Sections 6.3 and 6.4 (multiple comparisons):             | Solutions: [pdf](exams/ch63_64/stat242_quiz_solutions.pdf)    |
 |      | [pdf](exams/ch63_64/stat242_quizzes.pdf)                 |                                                               |
 +------+----------------------------------------------------------+---------------------------------------------------------------+
+| Quiz | Section 5.5 and Chapter 3 (ANOVA conditions):            | Solutions: [pdf](exams/ch55_3a/stat242_quiz_solutions.pdf)    |
+|      | [pdf](exams/ch55_3a/stat242_quizzes.pdf)                 |                                                               |
++------+----------------------------------------------------------+---------------------------------------------------------------+
