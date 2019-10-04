@@ -1,0 +1,159 @@
+---
+title: "Examples: Transformations for ANOVA models"
+subtitle: "20190930 -- Sleuth3 Sections 3.5 and 5.5"
+output:
+  pdf_document:
+    fig_height: 2.8
+    fig_width: 6
+    highlight: zenburn
+  html_document:
+    fig_height: 3
+    fig_width: 5
+  word_document:
+    fig_height: 3
+    fig_width: 5
+header-includes:
+  - \usepackage{booktabs}
+geometry: margin=0.6in
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(cache = TRUE)
+library(gridExtra)
+library(readr)
+library(dplyr)
+library(ggplot2)
+library(gmodels)
+```
+
+## Example: Cloud Seeding (Sleuth3 Case Study 3.1.1)
+
+Quote from book: "On each of 52 days that were deemed suitable for cloud seeding, a random mechanism was used to decide whether to seed the target cloud on that day or to leave it unseeded as a control. ... [P]recipitation was measured as the total rain volume falling from the cloud base following the airplane seeding run."
+
+```{r, message = FALSE}
+clouds <- read_csv("http://www.evanlray.com/data/sleuth3/case0301_cloud_seeding.csv")
+head(clouds, 4)
+```
+
+#### Starting Point
+
+Here are density plots and box plots, separately for each Treatment.
+
+```{r, fig.height = 2.9}
+ggplot(data = clouds, mapping = aes(x = Rainfall, color = Treatment)) +
+  geom_density()
+```
+
+Standard deviations for each group:
+
+```{r}
+clouds %>%
+  group_by(Treatment) %>%
+  summarize(
+    sd_rainfall = sd(Rainfall)
+  )
+```
+
+The standard deviations are very different, and the distributions are skewed right, so move down one step on the ladder.
+
+\newpage
+
+#### Down 1 Step: $\sqrt{Rainfall}$
+
+```{r}
+clouds <- clouds %>%
+  mutate(
+    sqrt_rainfall = sqrt(Rainfall)
+  )
+```
+
+
+```{r, fig.height = 2.9}
+ggplot(data = clouds, mapping = aes(x = sqrt_rainfall, color = Treatment)) +
+  geom_density()
+
+clouds %>%
+  group_by(Treatment) %>%
+  summarize(
+    sd_rainfall = sd(sqrt_rainfall)
+  )
+```
+
+These distributions are closer to symmetric -- probably good enough.
+
+The ratio of these standard deviations is less than 2 -- often used as a guide for when we're OK.
+
+However, we can make it even better if we go down another step.
+
+\newpage
+
+#### Down 2 Steps: $\log(Rainfall)$
+
+```{r}
+clouds <- clouds %>%
+  mutate(
+    log_rainfall = log(Rainfall)
+  )
+```
+
+```{r, fig.height = 2.9}
+ggplot(data = clouds, mapping = aes(x = log_rainfall, color = Treatment)) +
+  geom_density()
+
+clouds %>%
+  group_by(Treatment) %>%
+  summarize(
+    sd_rainfall = sd(log_rainfall)
+  )
+```
+
+Good enough!  We can conduct our analysis on this scale.
+
+\newpage
+
+#### Analysis on transformed scale
+
+```{r}
+clouds %>%
+  group_by(Treatment) %>%
+  summarize(
+    mean_log_rainfall = mean(log_rainfall)
+  )
+
+rainfall_fit <- lm(log_rainfall ~ Treatment, data = clouds)
+summary(rainfall_fit)
+confint(rainfall_fit)
+
+library(gmodels)
+fit.contrast(rainfall_fit, "Treatment", c(1, -1), conf.int = 0.95)
+```
+
+We can interpret these numbers either on the new, transformed, data scale or on the original data scale.
+
+\newpage
+
+#### 1. Interpret the group mean estimates above on the transformed scale (always works!):
+
+\vspace{6cm}
+
+#### 2. Interpret the group mean estimates above on the original data scale (works if we got to a place where distributions were approximately symmetric after transformation!):
+
+```{r}
+exp(5.13)
+exp(3.99)
+```
+
+\newpage
+
+#### 3. Interpret the estimated difference in means above on the transformed scale (always works!):
+
+\vspace{6cm}
+
+#### 4. Interpret the estimted difference in means above on the original data scale (works only if the transformation selected was the log transformation and the resulting distribution was approximately symmetric!):
+
+```{r}
+exp(1.143781)
+exp(0.240865)
+exp(2.046697)
+```
+

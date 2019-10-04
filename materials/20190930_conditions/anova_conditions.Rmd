@@ -1,0 +1,312 @@
+---
+title: "ANOVA: Conditions"
+subtitle: "Sleuth3 Chapter 3 and Section 5.5"
+date: "20190930"
+output:
+  pdf_document:
+    fig_height: 2.8
+    fig_width: 6
+  html_document:
+    fig_height: 3
+    fig_width: 5
+  word_document:
+    fig_height: 3
+    fig_width: 5
+header-includes:
+  - \usepackage{booktabs}
+geometry: margin=0.6in
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(cache = TRUE)
+```
+
+## Summary
+
+#### Model Statement:
+
+ * Observations are independent of each other, and observations in group $i$ follow a Normal($\mu_i$, $\sigma^2$) distribution
+
+```{r, echo = FALSE, fig.height = 1.3, message=FALSE}
+library(ggplot2)
+library(dplyr)
+library(readr)
+
+x_grid <- seq(from = 0, to = 20, length = 101)
+group_sd <- 2
+
+plot_df <- data.frame(
+  x = rep(x_grid, 3),
+  y = c(dnorm(x_grid, mean = 8, sd = group_sd),
+        dnorm(x_grid, mean = 10, sd = group_sd),
+        dnorm(x_grid, mean = 14, sd = group_sd)),
+  group = rep(c("Group 1: mean = 8, sd = 2", "Group 2: mean = 10, sd = 2", "Group 3: mean = 14, sd = 2"),
+    each = length(x_grid))
+)
+
+ggplot(data = plot_df, mapping = aes(x = x, y = y, color = group)) +
+  geom_line()
+  
+```
+
+#### Conditions to check, relative importance, and what to do if not met
+
+ * Observations are **independent** (knowing that one observation is above its group mean wouldn't give you any information about whether or not another observation is above its group mean)
+    * Very important
+    * Suspect if data are collected over time or we have multiple observations for very similar people (twins, baseline and post-treatment, ...)
+    * Use a different model
+ * **Normal** distribution
+    * Not that important, especially if $n$ is large
+    * Try a transformation; permutation or bootstrap methods for inference; don't worry too much
+ * **Equal variance** for all groups
+    * Very important
+    * Transform the data; permutation or bootstrap methods for inference; or use a different model
+ * **No outliers** (not a formal part of the model, but important to check in practice)
+    * Potentially important; do they affect the results?
+    * Try a transformation
+    * Run analysis both with and without outliers; REPORT BOTH ANALYSES
+
+In the next couple of days we will focus on data transformations.
+
+We saw permutation tests in the first week of class and will review them again later this week.  We will likely cover bootstrap methods next week.
+
+## Effects of condition violations
+
+ * Generally, estimates of group means are OK (unless outliers are severe and $n$ is small)
+ * Confidence intervals and p-values based on $t$ and $F$ distributions could be more affected
+
+For hypothesis tests:
+
+ * If conditions are met, the p-value accurately describes the probability of obtaining a test statistic at least as extreme as the statistic we observed, if the null hypothesis is true.
+ * If not, the probability of obtaining a test statistic at least as extreme as the statistic we observed may be higher or lower than the reported p-value.
+
+For confidence intervals:
+
+ * If conditions are met, for 95% of samples a 95% CI based on that sample will contain the parameter being estimated.
+ * If not, 95% CIs may contain the parameter for more or less than 95% of samples.
+
+\newpage
+
+#### Non-normal distributions (Figure 3.4 in Sleuth3)
+
+\includegraphics[width=0.85\textwidth]{coverage_2sample_nonnormal.png}
+
+#### Non-equal variances (Figure 3.5 in Sleuth3)
+
+\includegraphics[width=0.85\textwidth]{coverage_2sample_nonequal_var.png}
+
+\newpage
+
+#### What do normally distributed data look like?
+
+ * You should not expect a perfect bell curve, especially if your sample size is small
+ * Here are histograms and density plots of 30 different samples of size 15 from a Normal(0, 1) distribution:
+
+```{r, echo = FALSE, fig.height = 9}
+set.seed(13245)
+fake_data <- data.frame(
+  x = rnorm(15*30),
+  sample_ind = factor(rep(1:30, each = 15))
+)
+
+ggplot(data = fake_data, mapping = aes(x = x)) +
+  geom_histogram(bins = 30, mapping = aes(y = ..density..)) +
+  geom_density() +
+  facet_wrap( ~ sample_ind, ncol = 3) +
+  theme_bw()
+```
+
+\newpage
+
+## Example Data Sets
+
+#### Irises
+
+Here are density plots and box plots, separately for each Species.
+
+```{r, fig.height = 2.5}
+ggplot(data = iris, mapping = aes(x = Sepal.Width, color = Species)) +
+  geom_density()
+
+ggplot(data = iris, mapping = aes(x = Species, y = Sepal.Width)) +
+  geom_boxplot()
+```
+
+Standard deviations for each group:
+
+```{r}
+iris %>%
+  group_by(Species) %>%
+  summarize(
+    sd_sepal_width = sd(Sepal.Width)
+  )
+```
+
+\newpage
+
+Here are plots of residuals vs. group means for each group, as well as the standard deviations within each group:
+
+```{r}
+species_fit <- lm(Sepal.Width ~ Species, data = iris)
+iris <- iris %>%
+  mutate(
+    fitted = fitted(species_fit),
+    residual = residuals(species_fit)
+  )
+
+ggplot(data = iris, mapping = aes(x = fitted, y = residual, color = Species)) +
+  geom_point()
+```
+
+ * **Independent**?
+
+\vspace{2cm}
+
+ * **Normal distribution** within each group?
+
+\vspace{2cm}
+
+ * **Equal variance** for all groups?  (approximately)
+
+\vspace{2cm}
+
+ * **Outliers**?
+
+\vspace{2cm}
+
+\newpage
+
+#### Cloud Seeding (Sleuth3 Case Study 3.1.1)
+
+Quote from book: "On each of 52 days that were deemed suitable for cloud seeding, a random mechanism was used to decide whether to seed the target cloud on that day or to leave it unseeded as a control.  An airplane flew through the cloud in both cases.... [p]recipitation was measured as the total rain volume falling from the cloud base following the airplane seeding run."
+
+```{r, message = FALSE}
+clouds <- read_csv("http://www.evanlray.com/data/sleuth3/case0301_cloud_seeding.csv")
+head(clouds)
+```
+
+Here are density plots and box plots, separately for each Treatment.
+
+```{r, fig.height = 2.9}
+ggplot(data = clouds, mapping = aes(x = Rainfall, color = Treatment)) +
+  geom_density()
+
+ggplot(data = clouds, mapping = aes(x = Treatment, y = Rainfall)) +
+  geom_boxplot()
+```
+
+Standard deviations for each group:
+
+```{r}
+clouds %>%
+  group_by(Treatment) %>%
+  summarize(
+    sd_rainfall = sd(Rainfall)
+  )
+```
+
+Here is a plot of residuals vs. fitted/predicted responses for each group:
+
+```{r, fig.height=2.5}
+clouds_fit <- lm(Rainfall ~ Treatment, data = clouds)
+clouds <- clouds %>%
+  mutate(
+    fitted = fitted(clouds_fit),
+    residual = residuals(clouds_fit)
+  )
+
+ggplot(data = clouds, mapping = aes(x = fitted, y = residual, color = Treatment)) +
+  geom_point()
+```
+
+ * **Independent**?
+
+\vspace{2cm}
+
+ * **Normal distribution** within each group?
+
+\vspace{2cm}
+
+ * **Equal variance** for all groups?  (approximately)
+
+\vspace{2cm}
+
+ * **Outliers**?
+
+\vspace{2cm}
+
+\newpage
+
+#### Solar Radiation and Skin Cancer (Sleuth3 Exercise 3.23)
+
+We have data on yearly skin cancer rates (cases per 100,000 people) in Connecticut from 1938 to 1972.  We also have recorded whether each year came 2 years after high than average sunspot activity, or 2 years after lower than average sunspot activity.
+
+```{r, message = FALSE}
+cancer <- read_csv("http://www.evanlray.com/data/sleuth3/ex0323_skin_cancer.csv")
+head(cancer)
+```
+
+Here are density plots and box plots, separately for each level of SunspotActivity
+
+```{r, fig.height = 1.9}
+ggplot(data = cancer, mapping = aes(x = CancerRate, color = SunspotActivity)) +
+  geom_density()
+
+ggplot(data = cancer, mapping = aes(x = SunspotActivity, y = CancerRate)) +
+  geom_boxplot()
+```
+
+Standard deviations for each group:
+
+```{r}
+cancer %>%
+  group_by(SunspotActivity) %>%
+  summarize(
+    sd_rainfall = sd(CancerRate)
+  )
+```
+
+\newpage
+
+Here is a plot of residuals vs. fitted/predicted responses for each group:
+
+```{r, fig.height = 1.9}
+cancer_fit <- lm(CancerRate ~ SunspotActivity, data = cancer)
+cancer <- cancer %>%
+  mutate(
+    fitted = fitted(cancer_fit),
+    residual = residuals(cancer_fit)
+  )
+
+ggplot(data = cancer, mapping = aes(x = fitted, y = residual, color = SunspotActivity)) +
+  geom_point()
+```
+
+When time is involved, it can be informative to plot the residuals vs time:
+
+```{r, fig.height = 1.9}
+ggplot(data = cancer, mapping = aes(x = Year, y = residual)) +
+  geom_point() +
+  facet_wrap( ~ SunspotActivity)
+```
+
+
+ * **Independent**?
+
+\vspace{1.9cm}
+
+ * **Normal distribution** within each group?
+
+\vspace{1.9cm}
+
+ * **Equal variance** for all groups?  (approximately)
+
+\vspace{1.9cm}
+
+ * **Outliers**?
+
+\vspace{1.9cm}
+
+
+
+
