@@ -133,7 +133,7 @@ make_week_box("week3", FALSE, "Week 3: Sep 16 -- Sep 20", "
 ```
 
 ```{r, echo = FALSE, results='asis'}
-make_week_box("week4", TRUE, "Week 4: Sep 23 -- Sep 27", "
+make_week_box("week4", FALSE, "Week 4: Sep 23 -- Sep 27", "
 #### Mon, Sep 23
  * **In class**, we will work on:
     * Quiz on Sections 5.2 and 6.2
@@ -165,7 +165,7 @@ make_week_box("week4", TRUE, "Week 4: Sep 23 -- Sep 27", "
 ```
 
 ```{r, echo = FALSE, results='asis'}
-make_week_box("week5", TRUE, "Week 5: Sep 30 -- Oct 04", "
+make_week_box("week5", FALSE, "Week 5: Sep 30 -- Oct 04", "
 #### Mon, Sep 30
  * **In class**, we will work on:
     * Conditions for t and F based inference with the ANOVA model. [pdf](materials/20190930_conditions/anova_conditions.pdf)
@@ -184,9 +184,7 @@ make_week_box("week5", TRUE, "Week 5: Sep 30 -- Oct 04", "
 #### Fri, Oct 04
  * **In class**, we will work on:
     * Time to work on Lab 6
-    * Reminder about permutation tests
     * Review quizzes on conditions for ANOVA
-    * Alternative approaches to inference; reminder about permutation tests
  * **After class**, please:
 ")
 ```
@@ -195,7 +193,9 @@ make_week_box("week5", TRUE, "Week 5: Sep 30 -- Oct 04", "
 make_week_box("week6", TRUE, "Week 6: Oct 07 -- Oct 11", "
 #### Mon, Oct 07
  * **In class**, we will work on:
-    * Alternative approaches to inference; bootstrap
+    * Simple Linear Regression:
+        * Concepts: [pdf](materials/20191004_SLR/20191004_slr.pdf)
+        * R code and examples: [pdf](materials/20191004_SLR/20191004_slr_examples.pdf)
  * **After class**, please:
 
 
@@ -208,7 +208,12 @@ make_week_box("week6", TRUE, "Week 6: Oct 07 -- Oct 11", "
 #### Fri, Oct 11
  * **In class**, we will work on:
     * Alternative approaches to inference; bootstrap
+    * Confidence intervals for the mean for simple linear regression:
+        * Lecture notes to be posted.
+        * R code and examples: [pdf](materials/20191011_mean_CI/20191011_mean_CI.pdf)
+        * Lab 7: https://github.com/mhc-stat242-f2019/Lab7.git
  * **After class**, please:
+    * Have a great break!
 ")
 ```
 
@@ -220,11 +225,14 @@ make_week_box("week7", TRUE, "Week 7: Oct 14 -- Oct 18", "
 
 #### Wed, Oct 16
  * **In class**, we will work on:
+    * **No Quiz**
+    * Residuals and Prediction Intervals for Simple Linear Regression
  * **After class**, please:
 
 
 #### Fri, Oct 18
  * **In class**, we will work on:
+    * Conditions and Transformations for Simple Linear Regression
  * **After class**, please:
 ")
 ```
@@ -233,16 +241,19 @@ make_week_box("week7", TRUE, "Week 7: Oct 14 -- Oct 18", "
 make_week_box("week8", TRUE, "Week 8: Oct 21 -- Oct 25", "
 #### Mon, Oct 21
  * **In class**, we will work on:
+    * Wrap up transformations for simple linear regression
  * **After class**, please:
 
 
 #### Wed, Oct 23
  * **In class**, we will work on:
+    * Regression with both a quantitative and a categorical explanatory variable
  * **After class**, please:
 
 
 #### Fri, Oct 25
  * **In class**, we will work on:
+    * Regression with both a quantitative and a categorical explanatory variable
  * **After class**, please:
 ")
 ```
@@ -297,6 +308,7 @@ make_week_box("week11", TRUE, "Week 11: Nov 11 -- Nov 15", "
 
 #### Fri, Nov 15
  * **In class**, we will work on:
+    * Midterm 2?
  * **After class**, please:
 ")
 ```
@@ -305,11 +317,13 @@ make_week_box("week11", TRUE, "Week 11: Nov 11 -- Nov 15", "
 make_week_box("week12", TRUE, "Week 12: Nov 18 -- Nov 22", "
 #### Mon, Nov 18
  * **In class**, we will work on:
+    * Midterm 2?
  * **After class**, please:
 
 
 #### Wed, Nov 20
  * **In class**, we will work on:
+    * Midterm 2?
  * **After class**, please:
 
 

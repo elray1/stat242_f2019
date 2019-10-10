@@ -1,0 +1,213 @@
+---
+title: "R Examples: Confidence Intervals for the Mean in \"Simple\" Linear Regression"
+subtitle: "(Sleuth 3 Sections 7.4.2 and 7.4.3)"
+output:
+  pdf_document:
+    highlight: zenburn
+header-includes:
+   - \usepackage{soul}
+geometry: margin=0.6in
+---
+
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(eval = TRUE)
+library(readr)
+library(dplyr)
+library(ggplot2)
+library(mosaic)
+```
+
+## Goals for today
+
+ * Get an estimate for the mean response at a particular value $x$ of the explanatory variable by plugging in $x$ in the equation
+ * Get a *confidence interval* for the mean response at a particular value $x$ using $t$-based methods
+ * Make Bonferroni or Scheffe adjustments to get simultaneous confidence intervals for the mean response at multiple values of $x$.
+
+## Example
+
+We have a data set with information about 152 flights by Endeavour Airlines that departed from JFK airport in New York to either Nashville (BNA), Cincinnati (CVG), or Minneapolis-Saint Paul (MSP) in January 2012.
+
+```{r, echo=FALSE, message = FALSE}
+flights <- read_csv("flights_data.csv")
+```
+
+```{r}
+head(flights)
+nrow(flights)
+```
+
+#### R Code to get model fit
+
+```{r}
+model_fit <- lm(air_time ~ distance, data = flights)
+summary(model_fit)
+```
+
+\newpage
+
+#### Our Estimates for $\beta_0$ and $\beta_1$ are
+
+\vspace{0.5cm}
+
+$\hat{\beta}_0 =$
+
+\vspace{0.5cm}
+
+$\hat{\beta}_1 =$
+
+\vspace{0.5cm}
+
+Note: LaTeX code for $\hat{\beta}_1$ is `\hat{\beta}_1`.
+
+#### Our estimated mean function is
+
+\vspace{0.5cm}
+
+$\hat{\mu}(Y|X) = \hat{\beta}_0 + \hat{\beta}_1 X$ = 
+
+\vspace{0.5cm}
+
+#### The estimated (predicted) mean air time at a flight distance of 589 miles is
+
+\vspace{3cm}
+
+```{r}
+14.568 + 0.147 * 589
+```
+
+...or...
+
+```{r}
+predict_df <- data.frame(
+  distance = 589
+)
+predict_df
+
+predict(model_fit, newdata = predict_df)
+```
+
+\newpage
+
+#### Find and interpret a 95% confidence interval for the mean air time for flights traveling a distance of 589 miles.
+
+```{r}
+predict(model_fit, newdata = predict_df, interval = "confidence", se.fit = TRUE)
+```
+
+\vspace{8cm}
+
+This is just a $t$-based interval based on the estimate and its standard error (although the calculation of standard error is complicated...)
+
+```{r}
+qt(0.975, df = 152 - 2)
+
+101.150 - 1.976 * 1.526
+101.150 + 1.976 * 1.526
+```
+
+\newpage
+
+#### Find and interpret Bonferroni adjusted confidence intervals for the mean air time at flight distances of 589 miles, 765 miles, and 1029 miles, with a familywise confidence level of 95%.
+
+Approach 1 (easier): adjust confidence level we ask `predict` for.
+
+ * 3 CI's at a familywise confidence level of 95%
+ * Overall, miss for 5% of samples, $\alpha = 0.05$
+ * Each individual CI has $\alpha = 0.05/3 = 0.0167$
+ * Each individual CI has confidence level $(1 - 0.0167) \times 100\% = 98.3\%$
+
+```{r}
+predict_df <- data.frame(
+  distance = c(589, 765, 1029)
+)
+predict_df
+
+predict(model_fit,
+  newdata = predict_df,
+  interval = "confidence",
+  se.fit = TRUE,
+  level = 0.983
+)
+```
+
+\vspace{2cm}
+
+**Approach 2 (you don't ever need to do this): Manual calculation based on standard errors**
+
+```{r}
+(1 - 0.05/(2*3))
+qt(0.9917, df = 152 - 2)
+```
+
+```{r}
+# CI for X0 = 589 -- the other two are calculated similarly
+101.150 - 2.423 * 1.526
+101.150 + 2.423 * 1.526
+```
+
+\newpage
+
+#### Find and plot Scheffe adjusted CIs for the means at a grid of 100 values of x between 589 and 1029
+
+```{r, fig.height = 8.5, message = FALSE}
+library(lava) # contains the scheffe function
+predict_df <- data.frame(
+  distance = seq(from = 589, to = 1029, length = 100)
+)
+head(predict_df, 3)
+scheffe_cis <- scheffe(model_fit, predict_df)
+head(scheffe_cis, 3)
+
+predict_df <- predict_df %>% mutate(
+  scheffe_lwr = scheffe_cis[, 2],
+  scheffe_upr = scheffe_cis[, 3]
+)
+head(predict_df, 3)
+
+ggplot(data = flights, mapping = aes(x = distance, y = air_time)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  geom_line(data = predict_df, mapping = aes(x = distance, y = scheffe_lwr)) +
+  geom_line(data = predict_df, mapping = aes(x = distance, y = scheffe_upr)) +
+  theme_bw()
+```
+
+ * The upper black line shows the upper bounds for Scheffe-adjusted confidence intervals for the mean at 100 different distances, connected together (similar for lower)
+ * The grey shaded region shows unadjusted confidence intervals
+ * Interpretation:
+    * We are 95% confident that at every distance, the population mean air time at that distance is between the lines.
+    * Each sample would give us a different set of lines
+    * For 95% of samples, the population mean air time would be between the lines **at every distance** (if all conditions are satisfied).
+
+\newpage
+
+#### What if we had used Bonferroni intervals at each of the 100 distances?
+
+ * To get 95% familywise confidence level, each CI needs to have confidence level 99.95%
+
+```{r, fig.height = 5.25}
+bonferroni_cis <- predict(model_fit,
+  newdata = predict_df,
+  interval = "confidence",
+  level = 0.9995
+)
+
+predict_df <- predict_df %>% mutate(
+  bonferroni_lwr = bonferroni_cis[, 2],
+  bonferroni_upr = bonferroni_cis[, 3]
+)
+
+ggplot(data = flights, mapping = aes(x = distance, y = air_time)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  geom_line(data = predict_df, mapping = aes(x = distance, y = scheffe_lwr)) +
+  geom_line(data = predict_df, mapping = aes(x = distance, y = scheffe_upr)) +
+  geom_line(data = predict_df, mapping = aes(x = distance, y = bonferroni_lwr), color = "orange") +
+  geom_line(data = predict_df, mapping = aes(x = distance, y = bonferroni_upr), color = "orange") +
+  theme_bw()
+```
+
+ * Bonferroni:
+    * The more confidence intervals you're making, the wider Bonferroni-adjusted intervals are
+ * Scheffe:
+    * Intervals are always the same width, no matter how many you make

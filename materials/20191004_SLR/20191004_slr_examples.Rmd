@@ -1,0 +1,110 @@
+---
+title: "R Code and Examples for \"Simple\" Linear Regression"
+subtitle: "20191004 -- Sleuth 3 Chapter 7"
+output: pdf_document
+header-includes:
+   - \usepackage{soul}
+geometry: margin=0.6in
+---
+
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(eval = TRUE)
+library(readr)
+library(dplyr)
+library(ggplot2)
+library(mosaic)
+```
+
+## Example
+
+We have a data set with information about 152 flights by Endeavour Airlines that departed from JFK airport in New York to either Nashville (BNA), Cincinnati (CVG), or Minneapolis-Saint Paul (MSP) in January 2012.
+
+```{r, echo=FALSE, message = FALSE}
+flights <- read_csv("flights_data.csv")
+```
+
+```{r}
+head(flights, 4)
+```
+
+#### Fit the model and print a summary:
+
+```{r}
+model_fit <- lm(air_time ~ distance, data = flights)
+summary(model_fit)
+```
+
+#### 1. What model did we fit?  (This model describes the relationships in the population.)
+
+\vspace{2cm}
+
+#### 2. What is the equation describing the model's estimated mean air time as a function of distance?
+
+\newpage
+
+#### 3. What is the estimated intercept and its interpretation?
+
+\vspace{3cm}
+
+#### 4. Conduct a hypothesis test of the claim that when a flight travels 0 miles, its air time is 0 minutes.
+
+\vspace{4cm}
+
+#### 5. What is the estimated slope and its interpretation?
+
+\vspace{3cm}
+
+#### 6. Conduct a hypothesis test of the claim that a flight's air time is unrelated to the distance travelled.
+
+\vspace{4cm}
+
+\newpage
+
+#### 7. Conduct a hypothesis test of the claim that these planes are flying at an average speed that's the same as the typical cruising speed of commercial passenger aircraft.
+
+According to Wikipedia, the typical cruising speed of commercial passenger aircraft is about 560 miles per hour (https://en.wikipedia.org/wiki/Cruise_(aeronautics)).  After some unit changes, this works out to about 0.107 minutes per mile.
+
+```{r}
+# calculate t statistic
+(0.147 - 0.107) / 0.0044
+
+# calculate 2-sided p-value
+# pt(-9.09, df = 152 - 2) finds the probability of getting a t statisic <= -9.09
+pt(-9.09, df = 152 - 2) + pt(9.09, df = 152 - 2, lower.tail = FALSE)
+```
+
+\vspace{4cm}
+
+#### 8. Find and interpret a 95% confidence interval for the slope of the line
+
+```{r}
+# automatic calculations
+confint(model_fit)
+
+# manual calculations from the formula: get the multiplier for an individual 95% CI
+qt(0.975, df = 152 - 2)
+
+# calculate lower and upper endpoints of confidence interval
+0.147 - 1.976 * 0.00437
+0.147 + 1.976 * 0.00437
+```
+
+\newpage
+
+#### R Code to make scatterplot with estimated line overlaid
+
+```{r, fig.height = 3}
+ggplot(data = flights, mapping = aes(x = distance, y = air_time)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  theme_bw()
+```
+
+```{r, fig.height = 3}
+ggplot(data = flights, mapping = aes(x = distance, y = air_time)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  theme_bw()
+```
+
+
