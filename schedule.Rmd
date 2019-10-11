@@ -209,7 +209,7 @@ make_week_box("week6", TRUE, "Week 6: Oct 07 -- Oct 11", "
  * **In class**, we will work on:
     * Alternative approaches to inference; bootstrap
     * Confidence intervals for the mean for simple linear regression:
-        * Lecture notes to be posted.
+        * Lecture notes: [pdf](materials/20191011_mean_CI/lecture_notes.pdf)
         * R code and examples: [pdf](materials/20191011_mean_CI/20191011_mean_CI.pdf)
         * Lab 7: https://github.com/mhc-stat242-f2019/Lab7.git
  * **After class**, please:
