@@ -190,7 +190,7 @@ make_week_box("week5", FALSE, "Week 5: Sep 30 -- Oct 04", "
 ```
 
 ```{r, echo = FALSE, results='asis'}
-make_week_box("week6", TRUE, "Week 6: Oct 07 -- Oct 11", "
+make_week_box("week6", FALSE, "Week 6: Oct 07 -- Oct 11", "
 #### Mon, Oct 07
  * **In class**, we will work on:
     * Simple Linear Regression:
@@ -226,7 +226,7 @@ make_week_box("week7", TRUE, "Week 7: Oct 14 -- Oct 18", "
 #### Wed, Oct 16
  * **In class**, we will work on:
     * **No Quiz**
-    * Residuals and Prediction Intervals for Simple Linear Regression
+    * Residuals and Prediction Intervals for Simple Linear Regression: [pdf](materials/20191016_SLR_residuals/20191016_residuals.pdf)
  * **After class**, please:
 
 

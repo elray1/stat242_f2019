@@ -7,6 +7,7 @@
 <meta charset="utf-8" />
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
 
@@ -69,9 +70,7 @@ h6 {
 </style>
 
 
-</head>
 
-<body>
 
 <style type = "text/css">
 .main-container {
@@ -85,7 +84,6 @@ code {
 }
 img {
   max-width:100%;
-  height: auto;
 }
 .tabbed-pane {
   padding-top: 12px;
@@ -190,8 +188,6 @@ $(document).ready(function () {
 });
 </script>
 
-<div class="container-fluid main-container">
-
 <!-- tabsets -->
 
 <style type="text/css">
@@ -248,20 +244,17 @@ $(document).ready(function () {
 }
 </style>
 
-<script>
-$(document).ready(function () {
-  window.buildTabsets("TOC");
-});
-
-$(document).ready(function () {
-  $('.tabset-dropdown > .nav-tabs > li').click(function () {
-    $(this).parent().toggleClass('nav-tabs-open')
-  });
-});
-</script>
-
 <!-- code folding -->
 
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
 
 
 
@@ -329,8 +322,8 @@ $(document).ready(function () {
 </ul></li>
 <li><strong>After class</strong>, please:
 <ul>
-<li>Fill out this poll about when my office hours should be held: <a href="http://whenisgood.net/4gx9jzb" class="uri">http://whenisgood.net/4gx9jzb</a></li>
-<li>Sign up for our class at Piazza (anonymous question and answer forum): <a href="https://piazza.com/mtholyoke/fall2019/stat242" class="uri">https://piazza.com/mtholyoke/fall2019/stat242</a></li>
+<li>Fill out this poll about when my office hours should be held: <a href="http://whenisgood.net/4gx9jzb">http://whenisgood.net/4gx9jzb</a></li>
+<li>Sign up for our class at Piazza (anonymous question and answer forum): <a href="https://piazza.com/mtholyoke/fall2019/stat242">https://piazza.com/mtholyoke/fall2019/stat242</a></li>
 <li>Read Chapter 1 of The Statistical Sleuth 3rd Edition.</li>
 </ul></li>
 </ul>
@@ -447,7 +440,7 @@ $(document).ready(function () {
 <ul>
 <li>Quiz on material from Chapter 1 or Chapter 2</li>
 <li>More on <span class="math inline">\(t\)</span> tests for ANOVA. No new handouts.</li>
-<li>We developed a set of solutions to all the questions we asked related to stuff in Lab 2: <a href="https://github.com/mhc-stat242-f2019/Lab2-solutions.git" class="uri">https://github.com/mhc-stat242-f2019/Lab2-solutions.git</a></li>
+<li>We developed a set of solutions to all the questions we asked related to stuff in Lab 2: <a href="https://github.com/mhc-stat242-f2019/Lab2-solutions.git">https://github.com/mhc-stat242-f2019/Lab2-solutions.git</a></li>
 </ul></li>
 <li><strong>After class</strong>, please:
 <ul>
@@ -461,7 +454,7 @@ $(document).ready(function () {
 <ul>
 <li>Concepts behind t-based inference and F tests for ANOVA: <a href="materials/20190920_anova_t_F/20190920_anova_t_F.pdf">pdf</a></li>
 <li>R code for F tests for ANOVA: <a href="materials/20190920_anova_t_F/anova_F_R_code.pdf">pdf</a> (note: this is a first look at this that we will expand on next class)</li>
-<li>Lab 3: <a href="https://github.com/mhc-stat242-f2019/Lab3.git" class="uri">https://github.com/mhc-stat242-f2019/Lab3.git</a></li>
+<li>Lab 3: <a href="https://github.com/mhc-stat242-f2019/Lab3.git">https://github.com/mhc-stat242-f2019/Lab3.git</a></li>
 </ul></li>
 <li><strong>After class</strong>, please:
 <ul>
@@ -575,7 +568,7 @@ $(document).ready(function () {
 <a data-toggle="collapse" href="#week6" aria-expanded="true" aria-controls="collapseOne"> Week 6: Oct 07 – Oct 11</a>
 </h5>
 </div>
-<div id="week6" class="collapse in">
+<div id="week6" class="collapse">
 <div class="panel-body">
 <h4 id="mon-oct-07">Mon, Oct 07</h4>
 <ul>
@@ -634,7 +627,7 @@ $(document).ready(function () {
 <li><strong>In class</strong>, we will work on:
 <ul>
 <li><strong>No Quiz</strong></li>
-<li>Residuals and Prediction Intervals for Simple Linear Regression</li>
+<li>Residuals and Prediction Intervals for Simple Linear Regression: <a href="materials/20191016_SLR_residuals/20191016_residuals.pdf">pdf</a></li>
 </ul></li>
 <li><strong>After class</strong>, please:</li>
 </ul>
@@ -901,6 +894,23 @@ $(document).ready(function () {
 
 
 </script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
 
 <!-- dynamically load mathjax for compatibility with self-contained -->
 <script>

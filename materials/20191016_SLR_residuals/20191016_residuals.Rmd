@@ -1,0 +1,352 @@
+---
+title: "Residuals for \"Simple\" Linear Regression"
+subtitle: "Oct. 16 2019 -- Sleuth 3 Sections 7.3.1, 7.3.4, and 7.4.3"
+output:
+  pdf_document:
+    highlight: zenburn
+header-includes:
+   - \usepackage{soul}
+geometry: margin=0.6in
+---
+
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(eval = TRUE)
+library(readr)
+library(dplyr)
+library(ggplot2)
+library(mosaic)
+```
+
+## Previously
+
+ * Example: flight air times (response) as a function of distance (explanatory)
+
+```{r, echo = FALSE, message=FALSE, fig.height = 2.5}
+flights <- read_csv("flights_data.csv")
+
+library(ggridges)
+
+lm_fit <- lm(air_time ~ distance, data = flights)
+model_fit <- lm(air_time ~ distance, data = flights)
+
+ggplot(data = flights, mapping = aes(x = air_time, y = distance)) +
+  geom_abline(intercept = -(coef(lm_fit)[1])/(coef(lm_fit)[2]), slope = 1/coef(lm_fit)[2]) +
+  geom_density_ridges(mapping = aes(fill = factor(distance)), alpha = 0.4, jittered_points = TRUE, position = "points_jitter") +
+  scale_fill_discrete("distance") +
+  coord_flip() +
+  theme_ridges(center = TRUE)
+```
+
+ * Observations follow a normal distribution with mean that is a linear function of the explanatory variable
+ * A few ways of writing this:
+    * Y follows a normal distribution with mean $\mu = \beta_0 + \beta_1 X$
+    * $Y_i \sim \text{Normal}(\beta_0 + \beta_1 X_i, \sigma)$
+    * $Y_i = \beta_0 + \beta_1 X_i + \varepsilon_i, \text{ where } \varepsilon_i \sim \text{Normal}(, \sigma)$
+ * The last topic we covered was confidence intervals for the mean response at a given value of $X$:
+    * We are 95% confident that the mean air time for flights travelling 589 miles is between 98.1 min and 104.2 min.
+    * We are 95% confident that at every distance, the population mean air time at that distance is within the Scheffe-adjusted confidence bands.
+
+```{r, fig.height = 2.5, message = FALSE, echo = FALSE}
+library(lava) # contains the scheffe function
+
+predict_df <- data.frame(
+  distance = seq(from = 589, to = 1029, length = 100)
+)
+scheffe_cis <- scheffe(model_fit, predict_df)
+
+predict_df <- predict_df %>% mutate(
+  scheffe_lwr = scheffe_cis[, 2],
+  scheffe_upr = scheffe_cis[, 3]
+)
+
+ggplot(data = flights, mapping = aes(x = distance, y = air_time)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  geom_line(data = predict_df, mapping = aes(x = distance, y = scheffe_lwr)) +
+  geom_line(data = predict_df, mapping = aes(x = distance, y = scheffe_upr)) +
+  geom_errorbar(mapping = aes(x = 589, ymin = 98.1, ymax = 104.2), color = "orange", size = 1.5, width = 10) +
+  theme_bw()
+```
+
+## Today
+
+ * Individual responses don't fall exactly at the mean.  We can quantify how far from the line observations tend to fall
+ * After today, you should be able to:
+    * Calculate a residual from a simple linear regression model fit
+    * Know that the coefficient estimates $\hat{\beta}_0$ and $\hat{\beta}_1$ are found by minimizing the sum of squared residuals
+    * Use the residual standard error to get a rough sense of how close points tend to fall to the line
+    * Find and interpret a prediction interval using R commands
+    * Understand why prediction intervals are wider than confidence intervals
+
+\newpage
+
+## Example Data Set: US News and World Reports 2013 College Statistics
+
+Across colleges in the US, we have measurements of (among other variables):
+
+ * Acceptance rate (what proportion of applicants are admitted)
+ * Graduation rate (what proportion of students graduate within 6 years)
+
+Let's study the association between the acceptance rate (explanatory) and graduation rate (response).
+
+```{r, message = FALSE}
+library(readr)
+colleges <- read_csv("http://www.evanlray.com/data/sdm4/Graduation_rates_2013.csv")
+head(colleges)
+```
+
+```{r, fig.height=2}
+ggplot(data = colleges, mapping = aes(x = Acceptance, y = Grad)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  theme_bw()
+```
+
+```{r}
+linear_fit <- lm(Grad ~ Acceptance, data = colleges)
+summary(linear_fit)
+```
+
+\newpage
+
+## Residuals
+
+* $\definecolor{residual}{RGB}{230,159,0}\color{residual}\text{Residual}$ = $\definecolor{observed}{RGB}{0,158,115}\color{observed}\text{Observed Response}$ - $\definecolor{predicted}{RGB}{86,180,233}\color{predicted}\text{Predicted Response}$
+
+* $\definecolor{residual}{RGB}{230,159,0}\color{residual}res_i$ = $\definecolor{observed}{RGB}{0,158,115}\color{observed}Y_i$ - $\definecolor{predicted}{RGB}{86,180,233}\color{predicted}\widehat{\mu}(Y|X_i)$
+
+* $\definecolor{residual}{RGB}{230,159,0}\color{residual}res_i$ = $\definecolor{observed}{RGB}{0,158,115}\color{observed}Y_i$ - $\definecolor{predicted}{RGB}{86,180,233}\color{predicted}(\hat{\beta}_0 + \hat{\beta}_1 X_i)$
+
+```{r, echo=FALSE, message=FALSE, fig.height = 3, fig.width=6}
+obs_ind <- 9
+x <- colleges$Acceptance[obs_ind]
+y_obs <- colleges$Grad[obs_ind]
+
+linear_fit <- lm(Grad ~ Acceptance, data = colleges)
+y_hat <- predict(linear_fit, newdata = data.frame(Acceptance = x))
+
+ex_df <- data.frame(
+  x = x,
+  y_obs = y_obs,
+  y_hat = y_hat,
+  resid = y_obs - y_hat
+)
+
+offset <- 0.01
+offset2 <- 0.005
+y_mid <- mean(c(y_obs, y_hat))
+resid_df <- data.frame(
+  x = c(x, x + offset, x + offset, x + offset + offset2, x + offset, x + offset, x),
+  y = c(y_obs, y_obs, y_mid, y_mid, y_mid, y_hat, y_hat)
+)
+
+ggplot() +
+  geom_point(data = colleges, mapping = aes(x = Acceptance, y = Grad)) +
+  geom_smooth(data = colleges, mapping = aes(x = Acceptance, y = Grad), method = "lm", se = FALSE) +
+  geom_path(mapping = aes(x = x, y = y), color = "#e69f00", size = 1, data = resid_df) +
+  geom_point(mapping = aes(x = x, y = y_obs), color = "#009E73", size = 2, data = ex_df) +
+  geom_point(mapping = aes(x = x, y = y_hat), color = "#56B4E9", size = 2, data = ex_df) +
+  geom_label(mapping = aes(label = "Y[i]", x = x, y = y_obs), size = 3, nudge_x = -0.01, nudge_y = 0, color = "#009E73", parse = TRUE, data = ex_df) +
+  geom_label(mapping = aes(label = "hat(mu)(Y*\"|\"*X[i])", x = x, y = y_hat), size = 3, nudge_x = -0.015, nudge_y = 0, color = "#56B4E9", parse = TRUE, data = ex_df) +
+  geom_label(mapping = aes(label = "res[i]", x = x + offset + offset2, y = y_mid), size = 3, nudge_x = 0.01, color = "#e69f00", parse = TRUE, data = ex_df) +
+  theme_bw()
+```
+
+#### 1. The college highlighted in the figure above had an acceptance rate of 0.126, and a graduation rate of 0.96.  Find the predicted graduation rate for colleges with acceptance rates of 0.126 and the residual for this college.
+
+Find the predicted value:
+
+\vspace{2cm}
+
+```{r}
+0.978 - 0.292 * 0.126
+predict(linear_fit, newdata = data.frame(Acceptance = 0.126))
+```
+
+Find the residual:
+
+\vspace{1.5cm}
+
+## Model fit by least squares
+
+ * In general, smaller residuals are better (but not always -- to be discussed in more depth later?)
+ * Most common strategy for estimating $\beta_0$ and $\beta_1$ is by minimizing the Residual Sum of Squares:
+
+$$\hat{\beta}_0 \text{ and } \hat{\beta}_1 \text{ minimize } \sum_{i = 1}^n \{Y_i - (\beta_0 + \beta_1 X_i)\}^2$$
+
+ * There are also other approaches (to be discussed later?)
+
+\newpage
+
+## Accessing the Residuals in R
+
+```{r}
+colleges <- colleges %>%
+  mutate(
+    fitted = predict(linear_fit),
+    residual = residuals(linear_fit)
+  )
+
+head(colleges)
+
+# Verifying the first residual calculation: observed response - fitted response
+0.96 - 0.955
+```
+
+We can then make plots (more next class):
+
+```{r, message = FALSE, echo = FALSE, fig.height = 3.5}
+library(gridExtra)
+
+p_line <- ggplot(data = colleges, mapping = aes(x = Acceptance, y = Grad)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  ylim(c(0.87, 0.98)) +
+  theme_bw()
+
+p_resids <- ggplot(data = colleges, mapping = aes(x = Acceptance, y = residual)) + 
+  geom_point() +
+  geom_hline(yintercept = 0) +
+  ylim(c(-0.04, 0.04)) +
+  theme_bw()
+
+p_response_hist <- ggplot(data = colleges, mapping = aes(x = Grad)) +
+  geom_histogram(bins = 18, boundary = 0.87) +
+  coord_flip() +
+  xlim(c(0.87, 0.98)) +
+  theme_bw()
+
+p_resid_hist <- ggplot(data = colleges, mapping = aes(x = residual)) +
+  geom_histogram(bins = 18, boundary = 0.04) +
+  coord_flip() +
+  xlim(-0.04, 0.04) +
+  theme_bw()
+
+grid.arrange(
+  p_line,
+  p_response_hist,
+  p_resids,
+  p_resid_hist,
+  widths = unit(c(3, 1), "null"),
+  heights = unit(c(.11/0.08, 1), "null")
+)
+```
+
+ * **Question of the day:** How far do the points tend to be from the line?
+    * **Answer 1:** $\pm 2 \times (\text{Standard deviation of residuals})$ (quick and approximate)
+    * **Answer 2:** Prediction intervals (formal)
+
+\newpage
+
+## Answer 1: $\pm2 \times$ Standard Deviation of Residuals (Approximate)
+
+ * Model: $Y_i \sim \text{Normal}(\beta_0 + \beta_1 X_i, \sigma)$
+ * Parameter $\sigma$ (unknown!!) describes standard deviation of the normal distribution **in the population**
+ * Estimate it by
+
+$$\hat{\sigma} = \sqrt{\frac{\text{Sum of Squared Residuals}}{n - (\text{number of parameters for the mean})}} = \sqrt{\frac{\sum_{i = 1}^n \{Y_i - (\hat{\beta}_0 + \hat{\beta}_1 X_i)\}^2}{n - 2}}$$
+
+ * This is listed in the `summary` output as the "Residual standard error": 0.01617
+    * (this is reasonable terminology but not quite in agreement with our definition of standard error)
+
+Here is the histogram of the residuals from the last page with a Normal(0, 0.01617) distribution overlaid:
+
+```{r, echo = FALSE, fig.height = 2.5}
+ggplot(data = colleges, mapping = aes(x = residual)) +
+  geom_histogram(bins = 18, boundary = 0.04, mapping = aes(y = ..density..)) +
+  stat_function(fun = dnorm, args = list(sd = 0.01617), color = "orange") +
+  xlim(-0.04, 0.04) +
+  theme_bw()
+```
+
+ * Fact 1: If a variable follows a normal distribution, about 95% of observations will fall within $\pm 2$ standard deviations of the mean
+ * Fact 2: The mean of the residuals is 0
+
+#### 2. Based on the residual standard deviation, about how close are the observed responses to the fitted mean responses?
+
+```{r}
+2 * 0.01617
+```
+
+
+\newpage
+
+## Prediction Intervals
+
+#### Our Goal
+
+ * An interval that will contain the response $y_0$ for a new observation at a value $x_0$ of the explanatory variable
+ * Our best guess is the estimated mean $\hat{\mu}$
+ * The amount by which our guess is wrong is the residual for the new observation:
+
+$$\text{Observed Response - Estimated Mean}$$
+
+#### Two Contributions to Prediction Error
+
+\begin{align*}
+\text{Observed Response - Estimated Mean} &= \text{(Observed Response - Actual Mean) - (Estimated Mean - Actual Mean)}
+\end{align*}
+
+1. Variability of observed response around true population mean: $\sigma$, estimated by $\hat{\sigma} = \sqrt{\hat{\sigma}^2}$
+2. Variability of estimated mean around true population mean: estimated by $SE(\hat{\mu}) = \sqrt{\hat{\sigma}^2 \frac{1}{n} + \hat{\sigma}^2\frac{(x_0 - \bar{x})^2}{(n - 1)s_x^2}}$
+ * We put those two pieces together to get:
+    * $SE(\hat{\mu} - y_0) = \sqrt{\hat{\sigma}^2 + \hat{\sigma}^2\frac{1}{n} + \hat{\sigma}^2\frac{(x_0 - \bar{x})^2}{(n - 1)s_x^2}}$
+
+#### Prediction Intervals
+
+ * Prediction intervals for a new response are based on the error of the estimated mean from the response $y$ for a new individual observation
+    * $[\hat{\mu} - t^* SE(\hat{\mu} - y_0), \hat{\mu} + t^* SE(\hat{\mu} - y_0)]$
+    * For 95% of samples and 95% of new observations with the specified value of x, a CI calculated using this formula will contain the response for those new observations, $y_0 = \beta_0 + \beta_1 x_0 + \varepsilon_0$.
+
+#### Compare to Confidence Intervals (from last class)
+
+ * Confidence intervals for the mean were based on the error of the estimated mean from the actual population mean
+    * $[\hat{\mu} - t^* SE(\hat{\mu}), \hat{\mu} + t^* SE(\hat{\mu})]$ where
+    * For 95% of samples, a CI calculated using this formula will contain the population mean response at $x_0$, ${\mu} = \beta_0 + \beta_1 x_0$
+
+\newpage
+
+#### 3. Find and interpret a 95% prediction interval for the graduation rate of a college that was not in our data set before, and has an acceptance rate of 0.1.
+
+```{r}
+predict_df <- data.frame(
+  Acceptance = 0.1
+)
+
+predict(linear_fit, newdata = predict_df, interval = "prediction", se.fit = TRUE)
+```
+
+\vspace{5cm}
+
+Compare to a confidence interval for the mean:
+
+```{r}
+predict(linear_fit, newdata = predict_df, interval = "confidence", se.fit = TRUE)
+```
+
+\newpage
+
+#### No easy way to get Scheffe adjusted simultaneous intervals, but we can plot the individual prediction intervals at each value of x in our data set as follows:
+
+```{r, echo = FALSE}
+options(width = 100)
+```
+
+```{r, fig.height = 3}
+intervals <- predict(linear_fit, interval = "prediction") %>%
+  as.data.frame()
+
+head(intervals)
+colleges <- colleges %>%
+  bind_cols(
+    intervals
+  )
+head(colleges)
+
+ggplot(data = colleges, mapping = aes(x = Acceptance, y = Grad)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  geom_line(mapping = aes(y = lwr), linetype = 2) +
+  geom_line(mapping = aes(y = upr), linetype = 2) +
+  theme_bw()
+```
