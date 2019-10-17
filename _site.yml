@@ -9,6 +9,8 @@ navbar:
   right:
     - text: "Schedule"
       href: schedule.html
+    - text: "Labs"
+      href: labs.html
     - text: "Homework"
       href: homework.html
     - text: "Resources"
