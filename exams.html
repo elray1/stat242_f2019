@@ -7,6 +7,7 @@
 <meta charset="utf-8" />
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
 
@@ -69,9 +70,7 @@ h6 {
 </style>
 
 
-</head>
 
-<body>
 
 <style type = "text/css">
 .main-container {
@@ -85,7 +84,6 @@ code {
 }
 img {
   max-width:100%;
-  height: auto;
 }
 .tabbed-pane {
   padding-top: 12px;
@@ -190,8 +188,6 @@ $(document).ready(function () {
 });
 </script>
 
-<div class="container-fluid main-container">
-
 <!-- tabsets -->
 
 <style type="text/css">
@@ -248,20 +244,17 @@ $(document).ready(function () {
 }
 </style>
 
-<script>
-$(document).ready(function () {
-  window.buildTabsets("TOC");
-});
-
-$(document).ready(function () {
-  $('.tabset-dropdown > .nav-tabs > li').click(function () {
-    $(this).parent().toggleClass('nav-tabs-open')
-  });
-});
-</script>
-
 <!-- code folding -->
 
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
 
 
 
@@ -326,35 +319,45 @@ $(document).ready(function () {
 </thead>
 <tbody>
 <tr class="odd">
-<td><p>Quiz</p></td>
+<td>Quiz</td>
 <td><p>Chapter 1: <a href="exams/ch1/stat242_quizzes.pdf">pdf</a></p>
 <p>The are several other topics from Chapter 1 that are also important, but that didn’t make it onto quizzes. Please also read the book and review in-class materials.</p></td>
-<td><p>Solutions: <a href="exams/ch1/stat242_quiz_solutions.pdf">pdf</a></p></td>
+<td>Solutions: <a href="exams/ch1/stat242_quiz_solutions.pdf">pdf</a></td>
 </tr>
 <tr class="even">
-<td><p>Quiz</p></td>
-<td><p>Chapter 2: <a href="exams/ch2/stat242_quizzes.pdf">pdf</a></p></td>
-<td><p>Solutions: <a href="exams/ch2/stat242_quiz_solutions.pdf">pdf</a></p></td>
+<td>Quiz</td>
+<td>Chapter 2: <a href="exams/ch2/stat242_quizzes.pdf">pdf</a></td>
+<td>Solutions: <a href="exams/ch2/stat242_quiz_solutions.pdf">pdf</a></td>
 </tr>
 <tr class="odd">
-<td><p>Quiz</p></td>
-<td><p>Sections 5.2 and 6.2 (t tests): <a href="exams/Ch52_62/stat242_quizzes.pdf">pdf</a></p></td>
-<td><p>Solutions: <a href="exams/Ch52_62/stat242_quiz_solutions.pdf">pdf</a></p></td>
+<td>Quiz</td>
+<td>Sections 5.2 and 6.2 (t tests): <a href="exams/Ch52_62/stat242_quizzes.pdf">pdf</a></td>
+<td>Solutions: <a href="exams/Ch52_62/stat242_quiz_solutions.pdf">pdf</a></td>
 </tr>
 <tr class="even">
-<td><p>Quiz</p></td>
-<td><p>Sections 5.3 and 5.4 (F tests): <a href="exams/ch53_54/stat242_quizzes.pdf">pdf</a></p></td>
-<td><p>Solutions: <a href="exams/ch53_54/stat242_quiz_solutions.pdf">pdf</a></p></td>
+<td>Quiz</td>
+<td>Sections 5.3 and 5.4 (F tests): <a href="exams/ch53_54/stat242_quizzes.pdf">pdf</a></td>
+<td>Solutions: <a href="exams/ch53_54/stat242_quiz_solutions.pdf">pdf</a></td>
 </tr>
 <tr class="odd">
-<td><p>Quiz</p></td>
-<td><p>Sections 6.3 and 6.4 (multiple comparisons): <a href="exams/ch63_64/stat242_quizzes.pdf">pdf</a></p></td>
-<td><p>Solutions: <a href="exams/ch63_64/stat242_quiz_solutions.pdf">pdf</a></p></td>
+<td>Quiz</td>
+<td>Sections 6.3 and 6.4 (multiple comparisons): <a href="exams/ch63_64/stat242_quizzes.pdf">pdf</a></td>
+<td>Solutions: <a href="exams/ch63_64/stat242_quiz_solutions.pdf">pdf</a></td>
 </tr>
 <tr class="even">
-<td><p>Quiz</p></td>
-<td><p>Section 5.5 and Chapter 3 (ANOVA conditions): <a href="exams/ch55_3a/stat242_quizzes.pdf">pdf</a></p></td>
-<td><p>Solutions: <a href="exams/ch55_3a/stat242_quiz_solutions.pdf">pdf</a></p></td>
+<td>Quiz</td>
+<td>Section 5.5 and Chapter 3 (ANOVA conditions): <a href="exams/ch55_3a/stat242_quizzes.pdf">pdf</a></td>
+<td>Solutions: <a href="exams/ch55_3a/stat242_quiz_solutions.pdf">pdf</a></td>
+</tr>
+<tr class="odd">
+<td>Quiz</td>
+<td>Section 5.5 and Chapter 3 (ANOVA transformations): <a href="exams/ch55_3b/stat242_quizzes.pdf">pdf</a></td>
+<td>Solutions: <a href="exams/ch55_3b/stat242_quiz_solutions.pdf">pdf</a></td>
+</tr>
+<tr class="even">
+<td>Quiz</td>
+<td>Chapter 7 (Simple linear regression): <a href="exams/ch7/stat242_quizzes.pdf">pdf</a></td>
+<td>Solutions: <a href="exams/ch7/stat242_quiz_solutions.pdf">pdf</a></td>
 </tr>
 </tbody>
 </table>
@@ -376,6 +379,23 @@ $(document).ready(function () {
 
 
 </script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
 
 <!-- dynamically load mathjax for compatibility with self-contained -->
 <script>

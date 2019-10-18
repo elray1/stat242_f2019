@@ -1,0 +1,83 @@
+---
+title: ""
+subtitle: ""
+output:
+  pdf_document:
+    fig_height: 2.8
+    fig_width: 6
+    keep_tex: true
+  html_document:
+    fig_height: 3
+    fig_width: 5`
+  word_document:
+    fig_height: 3
+    fig_width: 5
+header-includes:
+  - \usepackage{booktabs}
+geometry: margin=0.6in
+---
+
+## Stat 242 Quiz -- Topics Drawn from Sections 5.5 and Chapter 3
+
+## What's Your Name? ____________________
+
+Researchers examined the time in minutes before an insulating fluid lost its insulating property when the fluid was exposed to each of two different voltages.  They had eight samples of the fluid, 3 of which were randomly assigned to receive 26 kV of electricity and 5 of which were randomly assigned to receive 28 kV of electricity.  The times until loss of insulating properties were skewed right with several outliers, so they performed a logarithmic transformation; after transformation the standard deviations within each group were similar.
+
+The R code and output below shows the results of their analysis:
+
+```{r, echo = FALSE, eval = TRUE, message=FALSE}
+library(dplyr)
+library(gmodels)
+
+options(width = 100)
+
+insulation <- data.frame(
+  voltage = c(rep("v26", 3), rep("v28", 5)),
+  time = c(5.79, 1579.2, 2323.70, 68.8, 108.29, 110.29, 426.07, 1067.60)
+) %>%
+  mutate(
+    log_time = log(time)
+  )
+```
+
+```{r}
+insulation %>%
+  group_by(voltage) %>%
+  summarize(
+    mean(log_time)
+  )
+```
+
+```{r}
+lm_fit <- lm(log_time ~ voltage, data = insulation)
+summary(lm_fit)
+confint(lm_fit)
+```
+
+\newpage
+
+#### 1. Interpret the estimated mean log times until loss of insulating properties calculated above in terms of what they say about a measure of the center of the distribution of times on the original data scale (in minutes).
+
+You may use the following R output:
+
+```{r}
+exp(5.62)
+exp(5.33)
+```
+
+We estimate that the median time before loss of insulating property in the "population" of samples of this fluid when exposed to 26 kV of electricity is 275.9 minutes.  We estimate that the population median when exposed to 28 kV of electricity is 206.4 minutes.
+
+\vspace{6cm}
+
+#### 2. The researchers calculated an estimate and a 95% confidence interval for the difference in mean log times.  Interpret what the confidence interval says about the relationship between a measure of the center of the distribution of times for each group on the original data scale (in minutes).  In your answer, include a description of the meaning of the phrase "95% confident".
+
+You may use the following R output:
+
+```{r}
+exp(-4.14)
+exp(3.55)
+```
+
+We are 95% confident that the median time until loss of insulating properties in the "population" when exposed to 26 kV of electricity is between 0.016 and 34.813 times the median when exposed to 28 kV of electricity
+
+For 95% of samples, a confidence interval calculated using this procedure would include the ratio of the medians for these groups.

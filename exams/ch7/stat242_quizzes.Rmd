@@ -1,0 +1,171 @@
+---
+title: ""
+subtitle: ""
+output:
+  pdf_document:
+    fig_height: 2.8
+    fig_width: 6
+    keep_tex: true
+  html_document:
+    fig_height: 3
+    fig_width: 5
+  word_document:
+    fig_height: 3
+    fig_width: 5
+header-includes:
+  - \usepackage{booktabs}
+geometry: margin=0.6in
+---
+
+## Stat 242 Quiz -- Topics Drawn from Chapter 7
+
+## What's Your Name? ____________________
+
+The English scientist Francis Galton studied the degree to which human traits were passed from one generation to the next.  In an 1885 study, he measured the heights of 933 adult children and their parents.  Galton multiplied the heights of all females in the data set by 1.08 to convert to a standardized height measurement, and then fit a regression line using the child's height as the response and the average of their parents' heights as the explanatory variable.  Here is a plot of the data and the results from the estimated regression line.
+
+```{r, echo = FALSE, message=FALSE, fig.height = 2.5, fig.width=2.5}
+library(readr)
+library(ggplot2)
+library(dplyr)
+galton <- read_csv("http://www.evanlray.com/data/sleuth3/ex0726_galton_regression.csv")
+
+galton <- galton %>%
+  mutate(
+    child_height = ifelse(Gender == "female", Height * 1.08, Height),
+    parent_average_height = 0.5 * Father + 0.5 * 1.08 * Mother
+  )
+
+ggplot(data = galton, mapping = aes(x = parent_average_height, y = child_height)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  theme_bw()
+```
+
+```{r}
+lm_fit <- lm(child_height ~ parent_average_height, data = galton)
+summary(lm_fit)
+```
+
+#### 1. What are the interpretations of the intercept and slope of the regression line in context?
+
+\vspace{4cm}
+
+**See question 2 on the other side.**
+
+\newpage
+
+#### 2. What would the values of the intercept and slope be if on average, a child's height was equal to the average of their parents' heights?
+
+\newpage
+
+## Stat 242 Quiz -- Topics Drawn from Chapter 7
+
+## What's Your Name? ____________________
+
+The English scientist Francis Galton studied the degree to which human traits were passed from one generation to the next.  In an 1885 study, he measured the heights of 933 adult children and their parents.  Galton multiplied the heights of all females in the data set by 1.08 to convert to a standardized height measurement, and then fit a regression line using the child's height as the response and the average of their parents' heights as the explanatory variable.  Here is a plot of the data and the results from the estimated regression line.
+
+```{r, echo = FALSE, message=FALSE, fig.height = 2.5, fig.width=2.5}
+library(readr)
+library(ggplot2)
+library(dplyr)
+galton <- read_csv("http://www.evanlray.com/data/sleuth3/ex0726_galton_regression.csv")
+
+galton <- galton %>%
+  mutate(
+    child_height = ifelse(Gender == "female", Height * 1.08, Height),
+    parent_average_height = 0.5 * Father + 0.5 * 1.08 * Mother
+  )
+
+ggplot(data = galton, mapping = aes(x = parent_average_height, y = child_height)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  theme_bw()
+```
+
+```{r}
+lm_fit <- lm(child_height ~ parent_average_height, data = galton)
+summary(lm_fit)
+```
+
+#### 1. State the hypotheses for a test of the claim that each increase of 1 inch in the average height of parents is associated with a 1 inch increase in the mean heights of the children born to those parents.
+
+\vspace{3cm}
+
+**See question 2 on the other side.**
+
+\newpage
+
+#### 2. Show the set up for calculating the test statistic for the test you defined in part 1.  Your answer should include all numbers, but you do not need to simplify.
+
+\vspace{3cm}
+
+#### 3. Draw a picture illustrating how the p-value for this test is calculated.  What are the degrees of freedom for the test?
+
+\vspace{3cm}
+
+#### 4. The p-value for this test works out to $4.3 \times 10^{-12}$.  State the conclusion of the test in context.
+
+```{r, eval = FALSE, echo = FALSE}
+tstat <- (0.71392 - 1)/0.04076
+2 * pt(tstat, df = 931)
+```
+
+\newpage
+
+
+## Stat 242 Quiz -- Topics Drawn from Chapter 7
+
+## What's Your Name? ____________________
+
+The English scientist Francis Galton studied the degree to which human traits were passed from one generation to the next.  In an 1885 study, he measured the heights of 933 adult children and their parents.  Galton multiplied the heights of all females in the data set by 1.08 to convert to a standardized height measurement, and then fit a regression line using the child's height as the response and the average of their parents' heights as the explanatory variable.  Here is a plot of the data and the results from the estimated regression line.
+
+```{r, echo = FALSE, message=FALSE, fig.height = 2.5, fig.width=2.5}
+library(readr)
+library(ggplot2)
+library(dplyr)
+galton <- read_csv("http://www.evanlray.com/data/sleuth3/ex0726_galton_regression.csv")
+
+galton <- galton %>%
+  mutate(
+    child_height = ifelse(Gender == "female", Height * 1.08, Height),
+    parent_average_height = 0.5 * Father + 0.5 * 1.08 * Mother
+  )
+
+ggplot(data = galton, mapping = aes(x = parent_average_height, y = child_height)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  theme_bw()
+```
+
+```{r}
+lm_fit <- lm(child_height ~ parent_average_height, data = galton)
+summary(lm_fit)
+```
+
+#### 1. Show how you would find the estimated mean height for children born to parents whose average height is 65 inches.  Your answer should include only numbers, no symbols -- but you do not need to simplify your expression.
+
+\vspace{3cm}
+
+**See question 2 on the other side.**
+
+\newpage
+
+```{r, echo = FALSE, eval = FALSE}
+pred_df <- data.frame(
+  parent_average_height = 65
+)
+
+predict(lm_fit, newdata = pred_df, interval = "confidence")
+predict(lm_fit, newdata = pred_df, interval = "prediction")
+```
+
+#### 2. I calculated a 95% confidence interval based on an average parent height of 65 inches, and I got [65.9, 66.6].  Interpret this interval in context.
+
+\vspace{3cm}
+
+#### 3. I calculated a 95% prediction interval based on an average parent height of 65 inches, and I got [61.8, 70.6].  Interpret this interval in context.
+
+\vspace{3cm}
+
+#### 4. Why is the prediction interval wider than the confidence interval?
+

@@ -1,0 +1,228 @@
+---
+title: ""
+subtitle: ""
+output:
+  pdf_document:
+    fig_height: 2.8
+    fig_width: 6
+    keep_tex: true
+  html_document:
+    fig_height: 3
+    fig_width: 5
+  word_document:
+    fig_height: 3
+    fig_width: 5
+header-includes:
+  - \usepackage{booktabs}
+geometry: margin=0.6in
+---
+
+## Stat 242 Quiz -- Topics Drawn from Chapter 7
+
+## What's Your Name? ____________________
+
+The English scientist Francis Galton studied the degree to which human traits were passed from one generation to the next.  In an 1885 study, he measured the heights of 933 adult children and their parents.  Galton multiplied the heights of all females in the data set by 1.08 to convert to a standardized height measurement, and then fit a regression line using the child's height as the response and the average of their parents' heights as the explanatory variable.  Here is a plot of the data and the results from the estimated regression line.
+
+```{r, echo = FALSE, message=FALSE, fig.height = 2.5, fig.width=2.5}
+library(readr)
+library(ggplot2)
+library(dplyr)
+galton <- read_csv("http://www.evanlray.com/data/sleuth3/ex0726_galton_regression.csv")
+
+galton <- galton %>%
+  mutate(
+    child_height = ifelse(Gender == "female", Height * 1.08, Height),
+    parent_average_height = 0.5 * Father + 0.5 * 1.08 * Mother
+  )
+
+ggplot(data = galton, mapping = aes(x = parent_average_height, y = child_height)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  theme_bw()
+```
+
+```{r}
+lm_fit <- lm(child_height ~ parent_average_height, data = galton)
+summary(lm_fit)
+```
+
+#### 1. What are the interpretations of the intercept and slope of the regression line in context?
+
+Intercept: It is estimated that the mean height of children born to parents with an average height 0 inches is 19.8 inches.
+
+Slope: It is estimated that a 1-inch increase in the average height of parents is associated with an increase of about 0.7 inches in the mean heights of children born to those parents.
+
+\vspace{2cm}
+
+**See question 2 on the other side.**
+
+\newpage
+
+#### 2. What would the values of the intercept and slope be if on average, a child's height was equal to the average of their parents' heights?
+
+Intercept ($\beta_0$) = 0, slope ($\beta_1$) = 1
+
+\newpage
+
+## Stat 242 Quiz -- Topics Drawn from Chapter 7
+
+## What's Your Name? ____________________
+
+The English scientist Francis Galton studied the degree to which human traits were passed from one generation to the next.  In an 1885 study, he measured the heights of 933 adult children and their parents.  Galton multiplied the heights of all females in the data set by 1.08 to convert to a standardized height measurement, and then fit a regression line using the child's height as the response and the average of their parents' heights as the explanatory variable.  Here is a plot of the data and the results from the estimated regression line.
+
+```{r, echo = FALSE, message=FALSE, fig.height = 2.5, fig.width=2.5}
+library(readr)
+library(ggplot2)
+library(dplyr)
+galton <- read_csv("http://www.evanlray.com/data/sleuth3/ex0726_galton_regression.csv")
+
+galton <- galton %>%
+  mutate(
+    child_height = ifelse(Gender == "female", Height * 1.08, Height),
+    parent_average_height = 0.5 * Father + 0.5 * 1.08 * Mother
+  )
+
+ggplot(data = galton, mapping = aes(x = parent_average_height, y = child_height)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  theme_bw()
+```
+
+```{r}
+lm_fit <- lm(child_height ~ parent_average_height, data = galton)
+summary(lm_fit)
+```
+
+#### 1. State the hypotheses for a test of the claim that each increase of 1 inch in the average height of parents is associated with a 1 inch increase in the mean heights of the children born to those parents.
+
+$H_0: \beta_1 = 1$. Each increase of 1 inch in the average height of parents is associated with a 1 inch increase in the mean heights of the children born to those parents.
+
+$H_A: \beta_1 \neq 1$. Each increase of 1 inch in the average height of parents is associated with a change that is something other than a 1 inch increase in the mean heights of the children born to those parents.
+
+\vspace{0.5cm}
+
+**See question 2 on the other side.**
+
+\newpage
+
+#### 2. Show the set up for calculating the test statistic for the test you defined in part 1.  Your answer should include all numbers, but you do not need to simplify.
+
+$t = \frac{\text{Estimate} - \text{Hypothesized Value}}{SE(\text{Estimate})} = \frac{0.71 - 1}{0.04}$
+
+\vspace{2cm}
+
+#### 3. Draw a picture illustrating how the p-value for this test is calculated.  What are the degrees of freedom for the test?
+
+The degrees of freedom is $n - (\text{number of parameters for the mean}) = 933 - 2 = 931$.  The p-value is calculated as the shaded area in the picture below, which gives the probability of obtaining a t statistic at least as extreme as what was obtained from our sample, if the null hypothesis was true.  (Note that $\frac{0.71 - 1}{0.04}$ works out to -7.25.  This picture is not to scale, but shows the idea.)
+
+```{r, echo = FALSE, message=FALSE, cache = TRUE, fig.height = 3}
+tval <- 3
+x_grid_1 <- seq(from = -4, to = -tval, length = 101)
+x_grid_2 <- seq(from = tval, to = 4, length = 101)
+
+region_to_shade1 <- data.frame(
+  x = c(-4, x_grid_1, -tval),
+  y = c(0, dt(x_grid_1, df = 14, log = FALSE), 0)
+)
+
+region_to_shade2 <- data.frame(
+  x = c(tval, x_grid_2, 4),
+  y = c(0, dt(x_grid_2, df = 14, log = FALSE), 0)
+)
+
+ggplot(data = data.frame(x = c(-4, 4)), mapping = aes(x = x)) +
+  stat_function(fun = dt, args = list(df = 14)) +
+  geom_polygon(
+    mapping = aes(x = x, y = y),
+    fill = "cornflowerblue",
+    data = region_to_shade1) +
+  geom_polygon(
+    mapping = aes(x = x, y = y),
+    fill = "cornflowerblue",
+    data = region_to_shade2) +
+  geom_vline(xintercept = tval) +
+  geom_vline(xintercept = -tval) +
+  coord_cartesian(xlim = c(-4, 4), ylim = c(0, 0.4), expand = FALSE) +
+  scale_x_continuous(breaks = c(-4, -3, 0, 3, 4), labels = c("", expression(frac(0.71-1,0.04)), 0, expression(bgroup("|",frac(0.71-1,0.04),"|")), "")) +
+  theme_bw()
+```
+
+#### 4. The p-value for this test works out to $4.3 \times 10^{-12}$.  State the conclusion of the test in context.
+
+```{r, eval = FALSE, echo = FALSE}
+tstat <- (0.71392 - 1)/0.04076
+2 * pt(tstat, df = 931)
+```
+
+The data provide very strong evidence against the null hypothesis that each increase of 1 inch in the average height of parents is associated with a 1 inch increase in the mean heights of the children born to those parents.
+
+\newpage
+
+
+## Stat 242 Quiz -- Topics Drawn from Chapter 7
+
+## What's Your Name? ____________________
+
+The English scientist Francis Galton studied the degree to which human traits were passed from one generation to the next.  In an 1885 study, he measured the heights of 933 adult children and their parents.  Galton multiplied the heights of all females in the data set by 1.08 to convert to a standardized height measurement, and then fit a regression line using the child's height as the response and the average of their parents' heights as the explanatory variable.  Here is a plot of the data and the results from the estimated regression line.
+
+```{r, echo = FALSE, message=FALSE, fig.height = 2.5, fig.width=2.5}
+library(readr)
+library(ggplot2)
+library(dplyr)
+galton <- read_csv("http://www.evanlray.com/data/sleuth3/ex0726_galton_regression.csv")
+
+galton <- galton %>%
+  mutate(
+    child_height = ifelse(Gender == "female", Height * 1.08, Height),
+    parent_average_height = 0.5 * Father + 0.5 * 1.08 * Mother
+  )
+
+ggplot(data = galton, mapping = aes(x = parent_average_height, y = child_height)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  theme_bw()
+```
+
+```{r}
+lm_fit <- lm(child_height ~ parent_average_height, data = galton)
+summary(lm_fit)
+```
+
+#### 1. Show how you would find the estimated mean height for children born to parents whose average height is 65 inches.  Your answer should include only numbers, no symbols -- but you do not need to simplify your expression.
+
+$19.8 + 0.7 \times 65$
+
+\vspace{2.5cm}
+
+**See question 2 on the other side.**
+
+\newpage
+
+```{r, echo = FALSE, eval = FALSE}
+pred_df <- data.frame(
+  parent_average_height = 65
+)
+
+predict(lm_fit, newdata = pred_df, interval = "confidence")
+predict(lm_fit, newdata = pred_df, interval = "prediction")
+```
+
+#### 2. I calculated a 95% confidence interval based on an average parent height of 65 inches, and I got [65.9, 66.6].  Interpret this interval in context.
+
+We are 95% confident that the mean height of children born to parents with an average height of 65 inches is between 65.9 inches and 66.6 inches.
+
+I did not ask you to explain what you mean by 95% confident in this case, but you should know that the interpretation is "For 95% of samples, an interval computed in this way will contain the mean height of children born to parents with an average height of 65 inches is between 65.9 inches and 66.6 inches."
+
+\vspace{0.5cm}
+
+#### 3. I calculated a 95% prediction interval based on an average parent height of 65 inches, and I got [61.8, 70.6].  Interpret this interval in context.
+
+We are 95% confident that the height of a child born to parents with an average height of 65 inches will be between 61.8 inches and 70.6 inches.
+
+I did not ask you to explain what you mean by 95% confident in this case, but you should know that the interpretation is "For 95% of samples and for 95% of children born to parents with an average height of 65 inches, an interval computed in this way will contain that child's height."
+
+\vspace{3cm}
+
+#### 4. Why is the prediction interval wider than the confidence interval?
+
+The confidence interval is for the mean height of children born to parents with an average height of 65 inches, but the prediction interval is for the height of an individual child.  The prediction interval accounts for variability of individuals around the mean, and therefore must be wider than the confidence interval, which is just for the mean.

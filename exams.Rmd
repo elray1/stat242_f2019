@@ -27,3 +27,9 @@ Review materials and solutions to quizzes and exams will be posted here.
 | Quiz | Section 5.5 and Chapter 3 (ANOVA conditions):            | Solutions: [pdf](exams/ch55_3a/stat242_quiz_solutions.pdf)    |
 |      | [pdf](exams/ch55_3a/stat242_quizzes.pdf)                 |                                                               |
 +------+----------------------------------------------------------+---------------------------------------------------------------+
+| Quiz | Section 5.5 and Chapter 3 (ANOVA transformations):       | Solutions: [pdf](exams/ch55_3b/stat242_quiz_solutions.pdf)    |
+|      | [pdf](exams/ch55_3b/stat242_quizzes.pdf)                 |                                                               |
++------+----------------------------------------------------------+---------------------------------------------------------------+
+| Quiz | Chapter 7 (Simple linear regression):                    | Solutions: [pdf](exams/ch7/stat242_quiz_solutions.pdf)        |
+|      | [pdf](exams/ch7/stat242_quizzes.pdf)                     |                                                               |
++------+----------------------------------------------------------+---------------------------------------------------------------+
