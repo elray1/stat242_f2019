@@ -1,0 +1,455 @@
+---
+title: "Simple Linear Regression: Misc. Topics"
+subtitle: "Sleuth3 Chapters 7, 8"
+output:
+  pdf_document:
+    fig_height: 2.8
+    fig_width: 6
+  html_document:
+    fig_height: 3
+    fig_width: 5
+  word_document:
+    fig_height: 3
+    fig_width: 5
+header-includes:
+  - \usepackage{booktabs}
+  - \usepackage{vwcol}
+geometry: margin=0.5in
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(cache = FALSE)
+library(ggplot2)
+library(readr)
+library(dplyr)
+library(gridExtra)
+options(width = 100)
+```
+
+## Simple Linear Regression Model and Conditions
+
+ * Observations follow a normal distribution with mean that is a linear function of the explanatory variable
+ * $Y_i \sim \text{Normal}(\beta_0 + \beta_1 X_i, \sigma)$
+
+**Conditions:** spells "LINE-O"
+
+ * **Linear** relationship between explanatory and response variables: $\mu(Y|X) = \beta_0 + \beta_1 X$
+ * **Independent** observations (knowing that one observation is above its mean wouldn't give you any information about whether or not another observation is above its mean)
+ * **Normal** distribution of responses around the line
+ * **Equal standard deviation** of response for all values of X
+ * **no Outliers** (not a formal part of the model, but important to check in practice)
+
+## Some things that are not problems
+
+```{r, echo = FALSE}
+set.seed(501234)
+n <- 10000
+
+fake_data <- data.frame(
+  x = rnorm(n)
+) %>%
+  mutate(
+    y = rnorm(n, mean = 1 + x, sd = 0.25)
+  )
+```
+
+#### Standard deviations may look narrower at the ends of the X axis due to fewer data points there
+
+```{r}
+ggplot(data = fake_data, mapping = aes(x = x, y = y)) +
+  geom_point()
+```
+
+```{r}
+lm_fit <- lm(y ~ x, data = fake_data)
+fake_data <- fake_data %>%
+  mutate(
+    residual = residuals(lm_fit)
+  )
+
+ggplot(data = fake_data, mapping = aes(x = x, y = residual)) +
+  geom_point()
+```
+
+```{r}
+group_0 <- fake_data %>%
+  filter(-0.5 <= x & x <= 0.5)
+
+group_0 %>%
+  summarize(
+    sd(residual),
+    residual_range = max(residual) - min(residual)
+  )
+
+group_greater3 <- fake_data %>%
+  filter(x > 3)
+
+group_greater3 %>%
+  summarize(
+    sd(residual),
+    residual_range = max(residual) - min(residual)
+  )
+```
+
+Why?  A large sample will start to fill in the tails of the distribution, creating the appearance of more spread even though the distribution is the same.
+
+```{r, echo = FALSE, warning=FALSE}
+set.seed(5)
+
+sample_1 <- data.frame(
+  x = rnorm(10000)
+)
+
+sample_2 <- data.frame(
+  x = rnorm(10)
+)
+
+p1 <- ggplot(data = sample_1, mapping = aes(x = x)) +
+  geom_histogram(mapping = aes(y = ..density..), bins = 30) +
+  stat_function(fun = dnorm) +
+  xlim(-4, 4) +
+  ggtitle("Sample of Size 10,000 from Normal(0, 1) Distribution")
+
+p2 <- ggplot(data = sample_2, mapping = aes(x = x)) +
+  geom_histogram(mapping = aes(y = ..density..), bins = 20) +
+  stat_function(fun = dnorm) +
+  xlim(-4, 4) +
+  ggtitle("Sample of Size 10 from Normal(0, 1) Distribution")
+
+grid.arrange(p1, p2)
+```
+
+\newpage
+
+#### Areas with less data
+
+Old Faithful is a geyser in Wyoming.  X = duration in minutes of one eruption.  Y = how long until the next eruption.
+
+```{r, echo = FALSE, message = FALSE}
+old_faithful <- read_csv("~/Documents/teaching/personal_site/elray1.github.io/data/base_r/faithful.csv")
+```
+
+```{r, fig.height = 2}
+ggplot(data = old_faithful, mapping = aes(x = eruption_duration_min, y = time_to_next_eruption_min)) +
+  geom_point()
+```
+
+```{r, fig.height = 2}
+lm_fit <- lm(time_to_next_eruption_min ~ eruption_duration_min, data = old_faithful)
+
+old_faithful <- old_faithful %>%
+  mutate(
+    residual = residuals(lm_fit)
+  )
+
+ggplot(data = old_faithful, mapping = aes(x = eruption_duration_min, y = residual)) +
+  geom_point()
+
+ggplot(data = old_faithful, mapping = aes(x = residual)) +
+  geom_histogram()
+```
+
+Why?  The model does not say anything about the distribution of the explanatory variable.  It can have gaps.  What matters is that at each value of $X$, $Y$ follows a normal distribution.
+
+\newpage
+
+## Checking Normality
+
+ * First Step: Fit the model, get the residuals, and make a histogram or density plot.
+ * Be cautious if outliers or long tails show up
+ * Possibly also: a Q-Q plot
+
+#### Example
+
+Let's look at modeling a movie's international gross earnings in inflation-adjusted 2013 dollars (`intgross_2013`) as a function of its budget (`budget_2013`).
+
+```{r, warning=FALSE, message=FALSE, echo = FALSE}
+movies <- read_csv("http://www.evanlray.com/data/bechdel/bechdel.csv") %>%
+  filter(mpaa_rating %in% c("G", "PG", "PG-13", "R"),
+    !is.na(intgross_2013),
+    !is.na(budget_2013)) %>%
+  select("year", "title", "intgross_2013", "budget_2013")
+```
+
+```{r, fig.height = 1.5}
+ggplot(data = movies, mapping = aes(x = budget_2013, y = intgross_2013)) +
+  geom_point()
+```
+
+```{r, fig.height = 1.5}
+lm_fit <- lm(intgross_2013 ~ budget_2013, data = movies)
+movies <- movies %>%
+  mutate(
+    residual = residuals(lm_fit)
+  )
+
+ggplot(data = movies, mapping = aes(x = residual)) +
+  geom_density()
+```
+
+Is this close to a normal distribution?
+
+**No**: In comparison to a normal distribution (orange), it is skewed right and **heavy tailed**:
+
+ * More movies have residuals close to 0 relative to the normal distribution
+ * More movies have residuals that are extremely large or extremely small relative to the normal distribution
+
+**Heavy tailed distributions are the one time when a lack of normality can cause problems.**
+
+```{r, fig.height = 1.5}
+ggplot(data = movies, mapping = aes(x = residual)) +
+  geom_density() +
+  stat_function(fun = dnorm, args = list(mean = 0, sd = summary(lm_fit)$sigma), color = "orange")
+```
+
+\newpage
+
+#### To diagnose: a Q-Q plot.
+
+ * Q-Q stands for Quantile-Quantile
+ * Compare quantiles (percentiles) of the residuals to the corresponding quantiles (percentiles) from a normal distribution
+ * If the distribution of the residuals is approximately normal, points will fall along a line.
+ * If the distribution of the residuals is heavy tailed, the small residuals will be too small and the large residuals will be too large
+
+```{r, fig.height = 2}
+ggplot(data = movies, mapping = aes(sample = residual)) +
+    stat_qq() +
+    stat_qq_line() +
+    ggtitle("Residuals Q-Q")
+```
+
+What we'd like to see:
+
+```{r, fig.height = 1.5}
+fake_data <- data.frame(
+  x = rnorm(1000, mean = 0, sd = 10000)
+)
+
+ggplot(data = fake_data, mapping = aes(x = x)) +
+  geom_histogram()
+
+ggplot(data = fake_data, mapping = aes(sample = x)) +
+    stat_qq() +
+    stat_qq_line() +
+    ggtitle("Fake Data Q-Q")
+```
+
+I use Q-Q plots as an indicator of whether I need to investigate more carefully; exact linearity in the Q-Q plot is not critical.  (**An exactly normal distribution is not critical**)
+
+\newpage
+
+In this case, the problem can be fixed with a data transformation that also reduces the severity of the outliers.
+
+```{r}
+movies <- movies %>% mutate(
+  intgross_2013_0.2 = intgross_2013^{0.2},
+  budget_2013_0.2 = budget_2013^{0.2}
+)
+```
+
+```{r, fig.height = 1.5}
+ggplot(data = movies, mapping = aes(x = budget_2013_0.2, y = intgross_2013_0.2)) +
+  geom_point()
+```
+
+```{r, fig.height = 1.4}
+lm_fit <- lm(intgross_2013_0.2 ~ budget_2013_0.2, data = movies)
+movies <- movies %>%
+  mutate(
+    residual = residuals(lm_fit)
+  )
+
+ggplot(data = movies, mapping = aes(x = budget_2013_0.2, y = residual)) +
+  geom_point()
+
+ggplot(data = movies, mapping = aes(x = residual)) +
+  geom_density()
+
+ggplot(data = movies, mapping = aes(sample = residual)) +
+    stat_qq() +
+    stat_qq_line() +
+    ggtitle("Residuals Q-Q")
+```
+
+This is not perfect, but it is much better.  Good enough.
+
+\newpage
+
+## Outliers
+
+Suppose we were still worried about that movie with the largest budget (I'm not). We should:
+
+ * Figure out what movie it is and investigate whether there might have been a data entry error
+ * Fit the model both with and without that observation and **report both sets of results**.
+
+Which movie is it?  Use `filter` to find out:
+
+```{r}
+movies %>%
+  filter(budget_2013_0.2 > 50)
+```
+
+ * It was Avatar (larger budget).  We confirm from our sources that the budget and gross earnings for Avatar were insane.
+
+ * Fit the model with Avatar:
+
+```{r}
+lm_fit <- lm(intgross_2013_0.2 ~ budget_2013_0.2, data = movies)
+summary(lm_fit)
+```
+
+ * Drop Avatar, fit it again without Avatar (`!=` means "not equal to")
+
+```{r}
+movies_no_Avatar <- movies %>%
+  filter(title != "Avatar") 
+
+lm_fit_no_Avatar <- lm(intgross_2013_0.2 ~ budget_2013_0.2, data = movies_no_Avatar)
+summary(lm_fit_no_Avatar)
+```
+
+With Avatar included in the model, we estimate that a 1-unit increase in Budget$^{0.2}$ is associated with an increase of about 1.07580 in gross international earnings raised to the power of 0.2.
+
+With Avatar not included in the model, we estimate that a 1-unit increase in Budget$^{0.2}$ is associated with an increase of about 1.07236 in gross international earnings raised to the power of 0.2.
+
+Our conclusions about the association between a movie's budget and its gross international earnings are substantively the same whether or not Avatar is included.
+
+\newpage
+
+## $R^2$: The most useless statistic in statistics
+
+Remember our example from last week with acceptance rate (explanatory variable) and graduation rate (response variable) for colleges in the US:
+
+```{r, message = FALSE, echo = FALSE}
+library(readr)
+colleges <- read_csv("http://www.evanlray.com/data/sdm4/Graduation_rates_2013.csv")
+
+linear_fit <- lm(Grad ~ Acceptance, data = colleges)
+
+colleges <- colleges %>%
+  mutate(
+    fitted = predict(linear_fit),
+    residual = residuals(linear_fit)
+  )
+```
+
+```{r, message = FALSE, echo = FALSE, fig.height = 3.5}
+library(gridExtra)
+
+p_line <- ggplot(data = colleges, mapping = aes(x = Acceptance, y = Grad)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  ylim(c(0.87, 0.98)) +
+  theme_bw()
+
+p_resids <- ggplot(data = colleges, mapping = aes(x = Acceptance, y = residual)) + 
+  geom_point() +
+  geom_hline(yintercept = 0) +
+  ylim(c(-0.04, 0.04)) +
+  theme_bw()
+
+p_response_hist <- ggplot(data = colleges, mapping = aes(x = Grad)) +
+  geom_histogram(bins = 18, boundary = 0.87) +
+  coord_flip() +
+  xlim(c(0.87, 0.98)) +
+  theme_bw()
+
+p_resid_hist <- ggplot(data = colleges, mapping = aes(x = residual)) +
+  geom_histogram(bins = 18, boundary = 0.04) +
+  coord_flip() +
+  xlim(-0.04, 0.04) +
+  theme_bw()
+
+grid.arrange(
+  p_line,
+  p_response_hist,
+  p_resids,
+  p_resid_hist,
+  widths = unit(c(3, 1), "null"),
+  heights = unit(c(.11/0.08, 1), "null")
+)
+```
+
+ * Notice from the plots that the variance of the response variable is larger than the variance of the residuals.
+
+```{r}
+colleges %>%
+  summarize(
+    var_Grad = var(Grad),
+    var_resid = var(residual),
+    var_resid_correct_df = sum((residual - mean(residual))^2)/(24 - 2)
+  )
+```
+
+Our data set had $n = 24$ observations; the second variance of the residuals uses this correct degrees of freedom.
+
+ * $\frac{\text{Var(Residuals)}}{\text{Var(Response)}}$ can be interpreted as the proportion of the variance in the response variable that is still "left over" after fitting the model
+
+```{r}
+0.000250 / 0.000573
+0.000261 / 0.000573
+```
+
+44% or 46% of the variability in Graduation Rates is still there in the residuals.
+ 
+ * $R^2 = 1 - \frac{\text{Var(Residuals)}}{\text{Var(Response)}}$ can be interpreted as the proportion of the variance in the response variable that is accounted for by the linear regression on acceptance rate.
+
+```{r}
+1 - 0.000250 / 0.000573
+1 - 0.000261 / 0.000573
+```
+
+56% or 54% of the variability in Graduation Rates is accounted for by the linear regression on acceptance rate.
+
+\newpage
+
+```{r}
+summary(linear_fit)
+```
+
+ * "Multiple R-squared" is the proportion of variability in the response accounted for by the model, but with the wrong degrees of freedom.
+
+ * "Adjusted R-squared" is the proportion of variability in the response accounted for by the model, but with the correct degrees of freedom.
+
+Neither one of these is actually a useful indicator of anything.  A model with low $R^2$ can still be useful.  A model with high $R^2$ can still be wrong.
+
+I never look at $R^2$.
+
+\newpage
+
+# Summary
+
+ * **Linear** relationship between explanatory and response variables: $\mu(Y|X) = \beta_0 + \beta_1 X$
+    * **How to check:**
+        * Look at scatter plots of the original data
+        * Look at scatter plots of residuals vs. explanatory variable
+    * **If not satisfied:**
+        * Try a transformation
+        * Fit a non-linear relationship
+ * **Independent** observations (knowing that one observation is above its mean wouldn't give you any information about whether or not another observation is above its mean)
+    * **How to check:**
+        * Be cautious of *time* effects or *cluster* effects
+    * **If not satisfied:**
+        * Use a different model that accounts for dependence
+ * **Normal** distribution of responses around the line
+    * **How to check:**
+        * Histogram or density plot of residuals; be cautious of outliers and/or long tails.
+        * If any doubts, look at a Q-Q plot
+    * **If not satisfied:**
+        * Don't worry too much, unless the distribution is heavy tailed
+        * If the distribution is heavy tailed (fairly rare), try a transformation or use a different method that is less affected by outliers
+ * **Equal standard deviation** of response for all values of X
+    * **How to check:**
+        * Look at scatter plots of the original data
+        * Look at scatter plots of residuals vs. explanatory variable
+    * **If not satisfied:**
+        * Try a transformation (usually works)
+        * Use weighted least squares
+ * **no Outliers** (not a formal part of the model, but important to check in practice)
+    * **How to check:**
+        * Look at scatter plots of the original data
+        * Look at scatter plots of residuals vs. explanatory variable
+    * **If not satisfied:**
+        * Try to figure out what caused the outlier, and correct if a data entry error
+        * Try a transformation
+        * Conduct the analysis both with and without the outlier, **report both sets of results**

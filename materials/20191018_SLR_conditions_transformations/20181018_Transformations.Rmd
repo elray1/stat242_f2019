@@ -1,0 +1,481 @@
+---
+title: "Simple Linear Regression: Conditions and Transformations"
+subtitle: "Oct. 18, 2019 -- Sleuth3 Chapter 8"
+output:
+  pdf_document:
+    highlight: zenburn
+geometry: margin=1.5cm
+header-includes:
+  - \usepackage{booktabs}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(dplyr)
+library(ggplot2)
+library(gridExtra)
+```
+
+
+## Simple Linear Regression Model and Conditions
+
+ * Observations follow a normal distribution with mean that is a linear function of the explanatory variable
+ * $Y_i \sim \text{Normal}(\beta_0 + \beta_1 X_i, \sigma)$
+
+**Conditions:** spells "LINE-O"
+
+ * **Linear** relationship between explanatory variable and (population mean of) response variable: $\mu = \beta_0 + \beta_1 X$
+ * **Independent** observations (knowing that one observation is above its mean wouldn't give you any information about whether or not another observation is above its mean)
+ * **Normal** distribution of responses around the line
+ * **Equal standard deviation** of response for all values of X
+    * Denote this standard deviation by $\sigma$
+ * **no Outliers** (not a formal part of the model, but important to check in practice)
+
+## Transformations
+
+ * Transformations can sometimes help with the following issues:
+    * skewed distributions (but skewness is only a problem if it is very serious)
+    * unequal standard deviation for different values of X
+    * outliers (but usually only if this is a side effect of serious skewness)
+    * non-linear relationship
+
+## Reminder of the Ladder of Powers
+
+ * We start at $y$ and go up or down the ladder.
+
+\begin{table}[!h]
+\centering
+\begin{tabular}{c c p{8cm}}
+\toprule
+Transformation & R Code & Comments \\
+\toprule
+\vdots & \\
+\midrule
+$e^y$ & \verb&exp(y)& & Exactly where on the ladder the exponential transformation belongs depends on the magnitude of the data, but somewhere around here... \\
+\midrule
+$y^2$ & \verb&y^2& & \\
+\midrule
+$y$ &  & Start here (no transformation) \\
+\midrule
+$\sqrt{y}$ & \verb&sqrt(y)& & \\
+\midrule
+$y^{``0"}$ & \verb&log(y)& & We use $\log(y)$ here \\
+\midrule
+$-1/\sqrt{y}$ & \verb&-1/sqrt(y)& & The $-$ keeps the values of $y$ in order \\
+\midrule
+$-1/y$ & \verb&-1/y& & \\
+\midrule
+$-1/y^2$ & \verb&-1/y^2& & \\
+\midrule
+\vdots & \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+ * Which direction?
+    * If a variable is skewed right, move it down the ladder (pull down large values)
+    * If a variable is skewed left, move it up the ladder (pull up small values)
+
+```{r, echo = FALSE}
+example <- data.frame(
+  y = c(1, 2, 3, 4),
+  y_squared = c(1, 2, 3, 4)^2,
+  y_cubed = c(1, 2, 3, 4)^3,
+  sqrt_y = c(1, 2, 3, 4)^0.5,
+  log_y = log(c(1, 2, 3, 4))
+)
+```
+
+```{r, fig.height = 5, echo = FALSE}
+p0 <- ggplot(data = example, mapping = aes(x = y_cubed, y = 0)) +
+  geom_point() +
+  ggtitle("2 Steps Up from Goal: very skewed right") +
+  ylab("") +
+  theme(axis.text.y=element_blank(), axis.ticks.y = element_blank())
+
+p1 <- ggplot(data = example, mapping = aes(x = y_squared, y = 0)) +
+  geom_point() +
+  ggtitle("1 Step Up from Goal: skewed right") +
+  ylab("") +
+  theme(axis.text.y=element_blank(), axis.ticks.y = element_blank())
+
+p2 <- ggplot(data = example, mapping = aes(x = y, y = 0)) +
+  geom_point() +
+  ggtitle("Goal: symmetric") +
+  ylab("") +
+  theme(axis.text.y=element_blank(), axis.ticks.y = element_blank())
+
+p3 <- ggplot(data = example, mapping = aes(x = sqrt_y, y = 0)) +
+  geom_point() +
+  ggtitle("1 Step Down from Goal: skewed left") +
+  ylab("") +
+  theme(axis.text.y=element_blank(), axis.ticks.y = element_blank())
+
+p4 <- ggplot(data = example, mapping = aes(x = log_y, y = 0)) +
+  geom_point() +
+  ggtitle("2 Steps Down from Goal: very skewed left") +
+  ylab("") +
+  theme(axis.text.y=element_blank(), axis.ticks.y = element_blank())
+
+grid.arrange(p0, p1, p2, p3, p4, ncol = 1)
+```
+
+\newpage
+
+#### What to do is based on scatter plots
+
+Figure from The Statistical Sleuth.
+
+\includegraphics[width=6in]{sleuth3_display_86.png}
+
+#### Start with the response
+
+Start exploring transformations by looking at the response variable, looking to fix:
+ * Residuals skewed
+ * Non-constant variance (heteroskedasticity)
+
+\newpage
+
+## Example
+
+Let's look at modeling a movie's international gross earnings in inflation-adjusted 2013 dollars (`intgross_2013`).  Our explanatory variable is the movie's budget, `budget_2013`.
+
+```{r, warning=FALSE, message=FALSE, echo = FALSE}
+library(readr)
+library(dplyr)
+library(ggplot2) # general plotting functionality
+library(GGally) # includes the ggpairs function, pairs plots via ggplot2
+library(gridExtra) # for grid.arrange, which arranges the plots next to each other
+
+options(na.action = na.exclude, digits = 7)
+
+movies <- read_csv("http://www.evanlray.com/data/bechdel/bechdel.csv") %>%
+  filter(mpaa_rating %in% c("G", "PG", "PG-13", "R"),
+    !is.na(intgross_2013),
+    !is.na(budget_2013)) %>%
+  select(intgross_2013, budget_2013)
+```
+
+### Linear Fit
+
+```{r}
+fit <- lm(intgross_2013 ~ budget_2013, data = movies)
+
+movies <- movies %>%
+  mutate(
+    residuals = residuals(fit),
+    fitted = predict(fit)
+  )
+
+p1 <- ggplot(data = movies, mapping = aes(x = budget_2013, y = intgross_2013)) +
+  geom_point() +
+  geom_smooth() +
+  geom_smooth(method = "lm", color = "orange", se = FALSE) +
+  ggtitle("Response vs. Explanatory")
+
+p2 <- ggplot(data = movies, mapping = aes(x = budget_2013, y = residuals)) +
+  geom_point() +
+  geom_smooth() +
+  ggtitle("Residuals vs. Explanatory")
+
+p3 <- ggplot(data = movies, mapping = aes(x = residuals)) +
+  geom_density() +
+  ggtitle("Residuals")
+
+p4 <- ggplot(data = movies, mapping = aes(x = budget_2013)) +
+  geom_density() +
+  ggtitle("Explanatory")
+
+p5 <- ggplot(data = movies, mapping = aes(x = intgross_2013)) +
+  geom_density() +
+  ggtitle("Response")
+
+grid.arrange(p1, p2, p3, p4, p5, ncol = 2)
+```
+
+#### In this example, what are the problems and how are we going to fix them?
+
+\newpage
+
+### Trying $\sqrt{\text{intgross\_2013}}$
+
+```{r, fig.height = 6}
+movies <- movies %>% mutate(
+  sqrt_intgross_2013 = sqrt(intgross_2013)
+)
+
+fit <- lm(sqrt_intgross_2013 ~ budget_2013, data = movies)
+```
+
+I've hidden the code for the plots, but here they are:
+
+```{r, echo = FALSE}
+movies <- movies %>%
+  mutate(
+    residuals = residuals(fit),
+    fitted = predict(fit)
+  )
+
+p1 <- ggplot(data = movies, mapping = aes(x = budget_2013, y = sqrt_intgross_2013)) +
+  geom_point() +
+  geom_smooth() +
+  geom_smooth(method = "lm", color = "orange", se = FALSE) +
+  ggtitle("Response vs. Explanatory")
+
+p2 <- ggplot(data = movies, mapping = aes(x = budget_2013, y = residuals)) +
+  geom_point() +
+  geom_smooth() +
+  ggtitle("Residuals vs. Explanatory")
+
+p3 <- ggplot(data = movies, mapping = aes(x = residuals)) +
+  geom_density() +
+  ggtitle("Residuals")
+
+p4 <- ggplot(data = movies, mapping = aes(x = budget_2013)) +
+  geom_density() +
+  ggtitle("Explanatory")
+
+p5 <- ggplot(data = movies, mapping = aes(x = sqrt_intgross_2013)) +
+  geom_density() +
+  ggtitle("Response")
+
+grid.arrange(p1, p2, p3, p4, p5, ncol = 2)
+```
+
+#### What do we think?
+
+\newpage
+
+
+## Trying $\log(\text{intgross\_2013})$
+
+
+```{r, fig.height = 6}
+movies <- movies %>% mutate(
+  log_intgross_2013 = log(intgross_2013)
+)
+
+fit <- lm(log_intgross_2013 ~ budget_2013, data = movies)
+```
+
+I've hidden the code for the plots, but here they are:
+
+```{r, echo = FALSE}
+movies <- movies %>%
+  mutate(
+    residuals = residuals(fit),
+    fitted = predict(fit)
+  )
+
+p1 <- ggplot(data = movies, mapping = aes(x = budget_2013, y = log_intgross_2013)) +
+  geom_point() +
+  geom_smooth() +
+  geom_smooth(method = "lm", color = "orange", se = FALSE) +
+  ggtitle("Response vs. Explanatory")
+
+p2 <- ggplot(data = movies, mapping = aes(x = budget_2013, y = residuals)) +
+  geom_point() +
+  geom_smooth() +
+  ggtitle("Residuals vs. Explanatory")
+
+p3 <- ggplot(data = movies, mapping = aes(x = residuals)) +
+  geom_density() +
+  ggtitle("Residuals")
+
+p4 <- ggplot(data = movies, mapping = aes(x = budget_2013)) +
+  geom_density() +
+  ggtitle("Explanatory")
+
+p5 <- ggplot(data = movies, mapping = aes(x = log_intgross_2013)) +
+  geom_density() +
+  ggtitle("Response")
+
+grid.arrange(p1, p2, p3, p4, p5, ncol = 2)
+```
+
+#### What do we think?
+
+\newpage
+
+
+## Trying $\text{intgross\_2013}^{0.25}$
+
+```{r, fig.height = 6}
+movies <- movies %>% mutate(
+  intgross_2013_0.25 = intgross_2013^{0.25}
+)
+
+fit <- lm(intgross_2013_0.25 ~ budget_2013, data = movies)
+```
+
+I've hidden the code for the plots, but here they are:
+
+```{r, echo = FALSE}
+movies <- movies %>%
+  mutate(
+    residuals = residuals(fit),
+    fitted = predict(fit)
+  )
+
+p1 <- ggplot(data = movies, mapping = aes(x = budget_2013, y = intgross_2013_0.25)) +
+  geom_point() +
+  geom_smooth() +
+  geom_smooth(method = "lm", color = "orange", se = FALSE) +
+  ggtitle("Response vs. Explanatory")
+
+p2 <- ggplot(data = movies, mapping = aes(x = budget_2013, y = residuals)) +
+  geom_point() +
+  geom_smooth() +
+  ggtitle("Residuals vs. Explanatory")
+
+p3 <- ggplot(data = movies, mapping = aes(x = residuals)) +
+  geom_density() +
+  ggtitle("Residuals")
+
+p4 <- ggplot(data = movies, mapping = aes(x = budget_2013)) +
+  geom_density() +
+  ggtitle("Explanatory")
+
+p5 <- ggplot(data = movies, mapping = aes(x = intgross_2013_0.25)) +
+  geom_density() +
+  ggtitle("Response")
+
+grid.arrange(p1, p2, p3, p4, p5, ncol = 2)
+```
+
+\newpage
+
+## Transformations of both variables...
+
+```{r}
+movies <- movies %>% mutate(
+  intgross_2013_0.25 = intgross_2013^{0.25},
+  budget_2013_0.25 = budget_2013^{0.25}
+)
+
+fit <- lm(intgross_2013_0.25 ~ budget_2013_0.25, data = movies)
+```
+
+I've hidden the code for the plots, but here they are:
+
+```{r, echo = FALSE}
+movies <- movies %>%
+  mutate(
+    residuals = residuals(fit),
+    fitted = predict(fit)
+  )
+
+p1 <- ggplot(data = movies, mapping = aes(x = budget_2013_0.25, y = intgross_2013_0.25)) +
+  geom_point() +
+  geom_smooth() +
+  geom_smooth(method = "lm", color = "orange", se = FALSE) +
+  ggtitle("Response vs. Explanatory")
+
+p2 <- ggplot(data = movies, mapping = aes(x = budget_2013_0.25, y = residuals)) +
+  geom_point() +
+  geom_smooth() +
+  ggtitle("Residuals vs. Explanatory")
+
+p3 <- ggplot(data = movies, mapping = aes(x = residuals)) +
+  geom_density() +
+  ggtitle("Residuals")
+
+p4 <- ggplot(data = movies, mapping = aes(x = budget_2013_0.25)) +
+  geom_density() +
+  ggtitle("Explanatory")
+
+p5 <- ggplot(data = movies, mapping = aes(x = intgross_2013_0.25)) +
+  geom_density() +
+  ggtitle("Response")
+
+grid.arrange(p1, p2, p3, p4, p5, ncol = 2)
+```
+
+\newpage
+
+## Making Predictions in Models with Transformed Variables
+
+Suppose we want to estimate the mean earnings for the population of movies with budgets of 100 million dollars.
+
+We need to do the following steps:
+
+ * Transform 100 million dollars to the power of 0.25 to get the input to our model
+ * Use the model to get the estimated mean of earnings to the power of 0.25
+ * Raise the estimated mean to the power of 4 to get estimated mean earnings
+
+```{r}
+# set up data frame with value of budget at which we want to make a prediction
+predict_df <- data.frame(
+  budget_2013 = 100000000
+)
+
+# transform budget to get the input to our linear model
+predict_df <- predict_df %>%
+  mutate(
+    budget_2013_0.25 = budget_2013^0.25
+  )
+
+# predictions based on transformed budget for the test set
+# the result is a prediction of (intgross_2013)^0.25
+predict_df <- predict_df %>%
+  mutate(
+    predicted_intgross_2013_0.25 = predict(fit, newdata = predict_df)
+  )
+
+# undo the transformation of the response to get predictions of intgross_2013
+predict_df <- predict_df %>%
+  mutate(
+    predicted_intgross_2013 = predicted_intgross_2013_0.25^4
+  )
+
+# take a look at the results
+predict_df
+```
+
+\newpage
+
+We can apply the same ideas to confidence intervals for the mean gross earnings or prediction intervals for the gross earnings of a particular movie.
+
+```{r}
+predict(fit, newdata = predict_df, interval = "confidence")
+124.60^4
+128.05^4
+```
+
+\vspace{7cm}
+
+```{r}
+predict(fit, newdata = predict_df, interval = "prediction")
+74.54^4
+178.11^4
+```
+
+\newpage
+
+Check out how these compare to the data:
+
+```{r}
+predict_df <- predict_df %>%
+  mutate(
+    CI_lower = 124.60^4,
+    CI_upper = 128.05^4,
+    PI_lower = 74.54^4,
+    PI_upper = 178.11^4
+  )
+
+predict_df
+
+ggplot() +
+  geom_point(data = movies, mapping = aes(x = budget_2013, y = intgross_2013)) +
+  geom_errorbar(data = predict_df,
+    mapping = aes(x = budget_2013, ymin = PI_lower, ymax = PI_upper),
+    color = "cornflowerblue",
+    size = 1, # how many pixels wide is the error bar; 1 pixel is often good
+    width = 10000000) + # in the units of the X variable; in most data sets you'd use a smaller width
+  geom_errorbar(data = predict_df,
+    mapping = aes(x = budget_2013, ymin = CI_lower, ymax = CI_upper),
+    color = "orange",
+    size = 1, # how many pixels wide is the error bar; 1 pixel is often good
+    width = 10000000) # in the units of the X variable; in most data sets you'd use a smaller width
+```
+

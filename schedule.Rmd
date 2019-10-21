@@ -232,7 +232,7 @@ make_week_box("week7", TRUE, "Week 7: Oct 14 -- Oct 18", "
 
 #### Fri, Oct 18
  * **In class**, we will work on:
-    * Conditions and Transformations for Simple Linear Regression
+    * Conditions and Transformations for Simple Linear Regression: [pdf](materials/20191018_SLR_conditions_transformations/20181018_Transformations.pdf)
  * **After class**, please:
 ")
 ```
@@ -241,19 +241,22 @@ make_week_box("week7", TRUE, "Week 7: Oct 14 -- Oct 18", "
 make_week_box("week8", TRUE, "Week 8: Oct 21 -- Oct 25", "
 #### Mon, Oct 21
  * **In class**, we will work on:
-    * Wrap up transformations for simple linear regression
+    * Quiz
+    * Miscellaneous topics from simple linear regression: [pdf](materials/20191021_more_slr_conditions/slr_conditions_misc.pdf)
+    * Start Lab 9
  * **After class**, please:
 
 
 #### Wed, Oct 23
  * **In class**, we will work on:
-    * Regression with both a quantitative and a categorical explanatory variable
+    * Quiz
+    * Work on Lab 9
  * **After class**, please:
 
 
 #### Fri, Oct 25
  * **In class**, we will work on:
-    * Regression with both a quantitative and a categorical explanatory variable
+    * Quadratic Regression
  * **After class**, please:
 ")
 ```
@@ -262,16 +265,21 @@ make_week_box("week8", TRUE, "Week 8: Oct 21 -- Oct 25", "
 make_week_box("week9", TRUE, "Week 9: Oct 28 -- Nov 01", "
 #### Mon, Oct 28
  * **In class**, we will work on:
+    * Quiz
+    * Regression with both a quantitative and a categorical explanatory variable
  * **After class**, please:
 
 
 #### Wed, Oct 30
  * **In class**, we will work on:
+    * Quiz
+    * Regression with both a quantitative and a categorical explanatory variable
  * **After class**, please:
 
 
 #### Fri, Nov 01
  * **In class**, we will work on:
+    * Regression with both a quantitative and a categorical explanatory variable
  * **After class**, please:
 ")
 ```
