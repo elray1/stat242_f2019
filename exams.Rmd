@@ -33,3 +33,6 @@ Review materials and solutions to quizzes and exams will be posted here.
 | Quiz | Chapter 7 (Simple linear regression):                    | Solutions: [pdf](exams/ch7/stat242_quiz_solutions.pdf)        |
 |      | [pdf](exams/ch7/stat242_quizzes.pdf)                     |                                                               |
 +------+----------------------------------------------------------+---------------------------------------------------------------+
+| Quiz | Chapter 8 (Simple linear regression conditions):         | Solutions: [pdf](exams/ch8/stat242_quiz_solutions.pdf)        |
+|      | [pdf](exams/ch8/stat242_quizzes.pdf)                     |                                                               |
++------+----------------------------------------------------------+---------------------------------------------------------------+
