@@ -1,0 +1,174 @@
+---
+title: ""
+subtitle: ""
+output:
+  pdf_document:
+    fig_height: 2.8
+    fig_width: 6
+    keep_tex: true
+  html_document:
+    fig_height: 3
+    fig_width: 5
+  word_document:
+    fig_height: 3
+    fig_width: 5
+header-includes:
+  - \usepackage{booktabs}
+geometry: margin=0.6in
+---
+
+## Stat 242 Quiz -- Topics Drawn from Chapters 9 and 10
+
+## What's Your Name? ____________________
+
+The HELP study was a clinical trial for adult inpatients recruited from a detoxification unit. Patients with no primary care physician were randomized to receive a multidisciplinary assessment and a brief motivational intervention or usual care, with the goal of linking them to primary medical care.  As part of the study, a number of measurements were taken on the participants at baselne.  Here we will look at the following three variables:
+
+ * `substance` is the primary substance of abuse: a variable with three levels (`alcohol`, `cocaine`, and `heroin`)
+ * `mcs` is the SF-36 Mental Component Score (measured at baseline, lower scores indicate worse mental health status)
+ * `i1` is the average number of drinks (standard units) consumed per day, in the past 30 days (measured at baseline)
+
+We will use `i1` (or its square root transformation) as the response and `substance` and `mcs` as explanatory variables.
+
+#### 1. The first section of the R appendix shows some initial plots of the data.  Explain why these plots suggest a transformation of the response variable.  You don't need to discuss all conditions, just the condition or conditions that are violated and for which a transformation would help.
+
+The scatter plot shows outliers, with a few people having much larger values for number of drinks consumed than the rest.  The density plot of earnings by ratings category shows that the distributions are skewed to the right with a few outlying  values.  It appears that the standard deviation is larger for the alcohol group than for the other two groups.
+
+\newpage
+
+#### 2. Write down the estimated equation for the relationship between mcs, substance, and the square root of i1 based on Model 1 (see page 3 of the R appendix).
+
+$\hat{\mu}(\sqrt{i1} | mcs, substance) = 5.58 - 2.11 substancecocaine - 2.92 substanceheroin - 0.02 mcs$
+
+\vspace{2cm}
+
+#### 3. Your answer to part 2 involves a variable called `substancecocaine`.  What is that variable?  Give as specific a definition as possible.
+
+$substancecocaine = \begin{cases} 1 \text{ if substance = cocaine} \\ 0 \text{ otherwise} \end{cases}$
+
+\newpage
+
+
+## Stat 242 Quiz -- Topics Drawn from Chapters 9 and 10
+
+## What's Your Name? ____________________
+
+The HELP study was a clinical trial for adult inpatients recruited from a detoxification unit. Patients with no primary care physician were randomized to receive a multidisciplinary assessment and a brief motivational intervention or usual care, with the goal of linking them to primary medical care.  As part of the study, a number of measurements were taken on the participants at baselne.  Here we will look at the following three variables:
+
+ * `substance` is the primary substance of abuse: a variable with three levels (`alcohol`, `cocaine`, and `heroin`)
+ * `mcs` is the SF-36 Mental Component Score (measured at baseline, lower scores indicate worse mental health status)
+ * `i1` is the average number of drinks (standard units) consumed per day, in the past 30 days (measured at baseline)
+
+We will use `i1` (or its square root transformation) as the response and `substance` and `mcs` as explanatory variables.
+
+## Here is a picture of the data, with lines that have *different slopes* overlaid on top.
+
+```{r, echo = FALSE, message = FALSE}
+library(mosaicData)
+library(dplyr)
+library(ggplot2)
+
+HELPrct <- HELPrct %>%
+  mutate(sqrt_i1 = sqrt(i1))
+
+lm_fit2 <- lm(sqrt_i1 ~ substance * mcs, data = HELPrct)
+
+int_alc <- coef(lm_fit2)[1]
+slope_alc <- coef(lm_fit2)[4]
+int_coc <- coef(lm_fit2)[1] + coef(lm_fit2)[2]
+slope_coc <- coef(lm_fit2)[4] + coef(lm_fit2)[5]
+int_her <- coef(lm_fit2)[1] + coef(lm_fit2)[3]
+slope_her <- coef(lm_fit2)[4] + coef(lm_fit2)[6]
+
+ggplot(data = HELPrct, mapping = aes(x = mcs, y = sqrt_i1, color = substance)) +
+  geom_point(alpha = 0.5) +
+  geom_abline(intercept = int_alc, slope = slope_alc, color = "orange", size = 1.5) +
+  geom_abline(intercept = int_coc, slope = slope_coc, color = "cornflowerblue", size = 1.5) +
+  geom_abline(intercept = int_her, slope = slope_her, color = "purple", size = 1.5) +
+  scale_colour_manual(values = c("orange", "cornflowerblue", "purple")) +
+  xlim(0, 65) +
+  theme_bw()
+```
+
+#### 1. State how each of the quantities below can be expressed in terms of the estimated coefficients from one of the models on pages 3 and 4 of the R appendix.  Your answers should involve only numbers, but you don't need to simplify sums.
+
+Intercept of the line for alcohol: 5.707
+
+Slope of the line for alcohol: -0.022
+
+Intercept of the line for cocaine: 5.707 - 2.13
+
+Slope of the line for cocaine: -0.022 + 0.001
+
+Intercept of the line for heroin: 5.707 - 3.39
+
+Slope of the line for heroin: -0.022 + 0.016
+
+
+\newpage
+
+## Stat 242 Quiz -- Topics Drawn from Chapters 9 and 10
+
+## What's Your Name? ____________________
+
+The HELP study was a clinical trial for adult inpatients recruited from a detoxification unit. Patients with no primary care physician were randomized to receive a multidisciplinary assessment and a brief motivational intervention or usual care, with the goal of linking them to primary medical care.  As part of the study, a number of measurements were taken on the participants at baselne.  Here we will look at the following three variables:
+
+ * `substance` is the primary substance of abuse: a variable with three levels (`alcohol`, `cocaine`, and `heroin`)
+ * `mcs` is the SF-36 Mental Component Score (measured at baseline, lower scores indicate worse mental health status)
+ * `i1` is the average number of drinks (standard units) consumed per day, in the past 30 days (measured at baseline)
+
+We will use `i1` (or its square root transformation) as the response and `substance` and `mcs` as explanatory variables.
+
+#### 1. State and interpret a 95% confidence interval for the coefficient estimate labeled as `mcs` in Model 1 (see page 3 of the R appendix).  What does the phrase "95% confident" mean in this context?
+
+We are 95% confident that in the population of people similar to those in this study, a 1 unit increase in mcs while holding fixed the substance being treated is associated with a decrease between about 0.033 and 0.003 in the average of the square root of the number of alcoholic drinks consumed.  For 95% of samples, an interval computed in this way would contain the slope of the lines in the population.
+
+\vspace{1cm}
+
+#### 2. What is the interpretation of the coefficient estimate labeled as `substancecocaine` in Model 2 (see page 4 of the R appendix)?
+
+It is estimated that in the population of people similar to those in study, the intercept of a line describing the relationship between mental component score and square root of number of drinks consumed is about 2.1 units smaller among those being treated for cocaine than for those being treated for alcohol abuse.
+
+...or...
+
+It is estimated that in the population of people similar to those in study, among those people with mental component scores of 0 the mean of the square root of the number of alcoholic drinks consumed is about 2.1 units smaller among those being treated for cocaine than for those being treated for alcohol abuse.
+
+
+\vspace{2cm}
+
+#### 3. What is the interpretation of the coefficient estimate labeled as `substancecocaine:mcs` in Model 2 (see page 4 of the R appendix).
+
+It is estimated that in the population of people similar to those in study, the slope of a line describing the relationship between mental component score and square root of number of drinks consumed is about 0.001 units larger among those being treated for cocaine than for those being treated for alcohol abuse.
+
+(I find the wording of a more direct interpretation to be laborious enough that it's not worth getting into; interpretation in terms of a difference in slopes is fine here.)
+
+\newpage
+
+## Stat 242 Quiz -- Topics Drawn from Chapters 9 and 10
+
+## What's Your Name? ____________________
+
+The HELP study was a clinical trial for adult inpatients recruited from a detoxification unit. Patients with no primary care physician were randomized to receive a multidisciplinary assessment and a brief motivational intervention or usual care, with the goal of linking them to primary medical care.  As part of the study, a number of measurements were taken on the participants at baselne.  Here we will look at the following three variables:
+
+ * `substance` is the primary substance of abuse: a variable with three levels (`alcohol`, `cocaine`, and `heroin`)
+ * `mcs` is the SF-36 Mental Component Score (measured at baseline, lower scores indicate worse mental health status)
+ * `i1` is the average number of drinks (standard units) consumed per day, in the past 30 days (measured at baseline)
+
+We will use `i1` (or its square root transformation) as the response and `substance` and `mcs` as explanatory variables.
+
+#### 1. Based on Model 1, conduct a test where the null hypothesis corresponds to the claim that in the population of people similar to those in this study, there is no linear association between `mcs` and the square root of the number of drinks consumed in the last 30 days, after accounting for the association between substance and number of drinks consumed.  State the hypotheses in terms of equations involving the parameters of Model 1 and draw a conclusion in context.
+
+$H_0: \beta_3^{M1} = 0$
+
+$H_A: \beta_3^{M1} \neq 0$
+
+The p-value for this test is 0.017.  The data provide moderately strong evidence against the null hypothesis of no association between mental component score and number of drinks consumed after accounting for the association between substance and number of drinks consumed.
+
+\newpage
+
+#### 2. Conduct a test where the null hypothesis corresponds to the claim that in the population of people similar to those in this study, across all three substances a single slope is adequate to describe the relationship between mental component score and the square root of the number of alcoholic drinks consumed.  State the hypotheses in terms of equations involving the parameters of Model 2 and draw a conclusion in context.
+
+$H_0: \beta_4^{M2} = \beta_5^{M2} = 0$
+
+$H_A:$ At least one of $\beta_4^{M2}$ and $\beta_5^{M2}$ is not equal to 0.
+
+The p-value for this test is 0.69.  The data do not provide any evidence against the null hypothesis that a single slope would be adequate to describe the relationship bertween mental component score and the square root of the number of drinks consumed.

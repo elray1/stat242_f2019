@@ -36,3 +36,6 @@ Review materials and solutions to quizzes and exams will be posted here.
 | Quiz | Chapter 8 (Simple linear regression conditions):         | Solutions: [pdf](exams/ch8/stat242_quiz_solutions.pdf)        |
 |      | [pdf](exams/ch8/stat242_quizzes.pdf)                     |                                                               |
 +------+----------------------------------------------------------+---------------------------------------------------------------+
+| Quiz | Chapters 9 and 10 (Multiple Lines):                      |Solutions: [pdf](exams/ch9_10_lines/stat242_quiz_solutions.pdf)|
+|      | [pdf](exams/ch9_10_lines/stat242_quizzes.pdf)            |                                                               |
++------+----------------------------------------------------------+---------------------------------------------------------------+

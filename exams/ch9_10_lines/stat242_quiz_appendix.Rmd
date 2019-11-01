@@ -1,0 +1,117 @@
+---
+title: ""
+subtitle: ""
+output:
+  pdf_document:
+    fig_height: 2.8
+    fig_width: 6
+    keep_tex: true
+  html_document:
+    fig_height: 3
+    fig_width: 5
+  word_document:
+    fig_height: 3
+    fig_width: 5
+header-includes:
+  - \usepackage{booktabs}
+geometry: margin=0.6in
+---
+
+## Stat 242 Quiz -- Topics Drawn from Chapters 9 and 10
+
+## *R Output Appendix*
+
+The HELP study was a clinical trial for adult inpatients recruited from a detoxification unit. Patients with no primary care physician were randomized to receive a multidisciplinary assessment and a brief motivational intervention or usual care, with the goal of linking them to primary medical care.  As part of the study, a number of measurements were taken on the participants at baselne.  Here we will look at the following three variables:
+
+ * `substance` is the primary substance of abuse: a variable with three levels (`alcohol`, `cocaine`, and `heroin`)
+ * `mcs` is the SF-36 Mental Component Score (measured at baseline, lower scores indicate worse mental health status)
+ * `i1` is the average number of drinks (standard units) consumed per day, in the past 30 days (measured at baseline)
+
+We will use `i1` as the response and `substance` and `mcs` as explanatory variables.
+
+```{r, echo=FALSE, message=FALSE}
+library(mosaicData)
+library(ggplot2)
+library(dplyr)
+library(gridExtra)
+```
+
+## Initial plots
+
+```{r, fig.height = 3, fig.width = 7.5}
+p1 <- ggplot(data = HELPrct, mapping = aes(x = mcs, y = i1, color = substance)) +
+  geom_smooth(method = "lm") +
+  geom_point()
+
+p2 <- ggplot(data = HELPrct, mapping = aes(x = i1, color = substance)) +
+  geom_density()
+
+grid.arrange(p1, p2, ncol = 2)
+```
+
+\newpage
+
+## Plots with transformed response variable
+
+```{r, echo = TRUE}
+HELPrct <- HELPrct %>%
+  mutate(sqrt_i1 = sqrt(i1))
+
+ggplot(data = HELPrct, mapping = aes(x = mcs, y = sqrt_i1, color = substance)) +
+  geom_smooth(method = "lm") +
+  geom_point()
+
+lm_fit <- lm(sqrt_i1 ~ substance + mcs, data = HELPrct)
+
+HELPrct <- HELPrct %>%
+  mutate(
+    residual = residuals(lm_fit)
+  )
+
+ggplot(data = HELPrct, mapping = aes(x = mcs, y = residual)) +
+  geom_point()
+
+ggplot(data = HELPrct, mapping = aes(x = residual, color = substance)) + 
+  geom_density()
+```
+
+## Summary Output -- Model 1
+
+```{r}
+lm_fit1 <- lm(sqrt_i1 ~ substance + mcs, data = HELPrct)
+summary(lm_fit1)
+confint(lm_fit1)
+```
+
+Define the following notation for the coefficients in Model 1:
+
+* $\beta_0^{M1}$ labeled `(Intercept)`
+* $\beta_1^{M1}$ labeled `substancecocaine`
+* $\beta_2^{M1}$ labeled `substanceheroin`
+* $\beta_3^{M1}$ labeled `mcs`
+
+\newpage
+
+## Summary Output -- Model 2
+
+```{r}
+lm_fit2 <- lm(sqrt_i1 ~ substance * mcs, data = HELPrct)
+summary(lm_fit2)
+confint(lm_fit2)
+```
+
+
+Define the following notation for the coefficients in Model 2:
+
+* $\beta_0^{M2}$ labeled `(Intercept)`
+* $\beta_1^{M2}$ labeled `substancecocaine`
+* $\beta_2^{M2}$ labeled `substanceheroin`
+* $\beta_3^{M2}$ labeled `mcs`
+* $\beta_4^{M2}$ labeled `substancecocaine:mcs`
+* $\beta_5^{M2}$ labeled `substanceheroin:mcs`
+
+## ANOVA comparison of Model 1 and Model 2
+
+```{r}
+anova(lm_fit1, lm_fit2)
+```
