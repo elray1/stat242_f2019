@@ -1,0 +1,207 @@
+---
+title: "Regression with More Than 2 Levels in a Categorical Variable"
+subtitle: "Oct 30 2019 -- Sleuth3 Chapters 9, 10"
+output:
+  pdf_document:
+    fig_height: 2.8
+    fig_width: 6
+  html_document:
+    fig_height: 3
+    fig_width: 5
+  word_document:
+    fig_height: 3
+    fig_width: 5
+header-includes:
+  - \usepackage{booktabs}
+  - \usepackage{vwcol}
+geometry: margin=0.5in
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(cache = FALSE)
+library(ggplot2)
+library(readr)
+library(dplyr)
+library(gridExtra)
+options(width = 100)
+```
+
+#### Example
+
+Let's look at modeling a movie's international gross earnings in inflation-adjusted 2013 dollars (`intgross_2013`) as a function of its budget (`budget_2013`) and its MPAA ratings category (`mpaa_rating`, 4 levels: "G", "PG", "PG-13", and "R").
+
+```{r, warning=FALSE, message=FALSE, echo = FALSE}
+movies <- read_csv("http://www.evanlray.com/data/bechdel/bechdel.csv") %>%
+  filter(mpaa_rating %in% c("G", "PG", "PG-13", "R"),
+    !is.na(intgross_2013),
+    !is.na(budget_2013)) %>%
+  select("year", "title", "intgross_2013", "budget_2013", "mpaa_rating")
+```
+
+```{r, fig.height = 2}
+ggplot(data = movies, mapping = aes(x = budget_2013, y = intgross_2013, color = mpaa_rating)) +
+  geom_point()
+```
+
+```{r, fig.height = 4}
+ggplot(data = movies, mapping = aes(x = budget_2013, y = intgross_2013)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  facet_wrap(~ mpaa_rating)
+```
+
+\newpage
+
+ * Both variables are skewed right, with serious outliers.
+ * Let's try transforming both variables.
+ * This is essentially the same process we went through the other day, but now I am looking at 2 sets of diagnostic plots:
+    * scatter plot of residuals vs budget (looking for: no trends in residuals, constant variance, no outliers)
+    * residuals vs MPAA rating (looking for: equal variance across different groups, no outliers)
+
+```{r}
+movies <- movies %>% mutate(
+  sqrt_intgross_2013 = sqrt(intgross_2013),
+  sqrt_budget_2013 = sqrt(budget_2013)
+)
+```
+
+```{r}
+lm_fit <- lm(sqrt_intgross_2013 ~ mpaa_rating + sqrt_budget_2013, data = movies)
+movies <- movies %>%
+  mutate(
+    residual = residuals(lm_fit)
+  )
+
+ggplot(data = movies, mapping = aes(x = sqrt_budget_2013, y = residual)) +
+  geom_point()
+
+ggplot(data = movies, mapping = aes(x = residual, color = mpaa_rating)) +
+  geom_density()
+```
+
+\newpage
+
+```{r}
+movies <- movies %>% mutate(
+  log_intgross_2013 = log(intgross_2013),
+  log_budget_2013 = log(budget_2013)
+)
+```
+
+```{r}
+lm_fit <- lm(log_intgross_2013 ~ mpaa_rating + log_budget_2013, data = movies)
+movies <- movies %>%
+  mutate(
+    residual = residuals(lm_fit)
+  )
+
+ggplot(data = movies, mapping = aes(x = log_budget_2013, y = residual)) +
+  geom_point()
+
+ggplot(data = movies, mapping = aes(x = residual, color = mpaa_rating)) +
+  geom_density()
+```
+
+\newpage
+
+```{r}
+movies <- movies %>% mutate(
+  intgross_2013_0.25 = intgross_2013^0.25,
+  budget_2013_0.25 = budget_2013^0.25
+)
+```
+
+```{r}
+lm_fit <- lm(intgross_2013_0.25 ~ mpaa_rating + budget_2013_0.25, data = movies)
+movies <- movies %>%
+  mutate(
+    residual = residuals(lm_fit)
+  )
+
+ggplot(data = movies, mapping = aes(x = budget_2013_0.25, y = residual)) +
+  geom_point()
+
+ggplot(data = movies, mapping = aes(x = residual, color = mpaa_rating)) +
+  geom_density()
+```
+
+\newpage
+
+```{r}
+ggplot(data = movies,
+    mapping = aes(x = budget_2013_0.25, y = intgross_2013_0.25, color = mpaa_rating, shape = mpaa_rating)) +
+  geom_point(alpha = 0.3) +
+  geom_smooth(method = "lm", se = FALSE) +
+  theme_bw()
+```
+
+```{r}
+lm_fit <- lm(intgross_2013_0.25 ~ mpaa_rating + budget_2013_0.25, data = movies)
+summary(lm_fit)
+```
+
+The `mpaa_rating` variable had four levels: "G", "PG", "PG-13", "R"
+
+There are now 3 indicator variables for the PG, PG-13, and R catagories:
+
+`mpaa_ratingPG` = $\begin{cases} 1 \text{ if mpaa\_rating = PG} \\ 0 \text{ otherwise (for all other categories)} \end{cases}$
+
+`mpaa_ratingPG-13` = $\begin{cases} 1 \text{ if mpaa\_rating = PG-13} \\ 0 \text{ otherwise (for all other categories)} \end{cases}$
+
+`mpaa_ratingR` = $\begin{cases} 1 \text{ if mpaa\_rating = R} \\ 0 \text{ otherwise (for all other categories)} \end{cases}$
+
+\newpage
+
+#### 1. Write down a single equation for the estimated mean transformed international gross earnings as a function of the MPAA rating category and the transformed budget.
+
+\vspace{3cm}
+
+#### 2. Write down separate equations for the estimated mean transformed international gross earnings as a function of the transformed budget for the G, PG, and PG-13 ratings categories
+
+\vspace{4cm}
+
+#### 3. What is the interpretation of the coefficient labelled "`mpaa_ratingPG`" in the R output above?
+
+\vspace{4cm}
+
+#### 4. Conduct a hypothesis test where the null hypothesis is the claim that in the population of all movies, the intercept of a line describing the relationship between transformed budget and transformed international gross earnings is the same for both G and PG movies.
+
+\newpage
+
+#### Are the slopes the same?
+
+```{r}
+fit_different_slopes <- lm(intgross_2013_0.25 ~ budget_2013_0.25 * mpaa_rating, data = movies)
+summary(fit_different_slopes)
+```
+
+#### 5. Write down a single equation for the estimated mean transformed international gross earnings as a function of the MPAA rating category and the transformed budget.
+
+\vspace{4cm}
+
+#### 6. Write down separate equations for the estimated mean transformed international gross earnings as a function of the transformed budget for the G and PG ratings categories.
+
+\newpage
+
+#### 7. How strong of evidence do the data provide against the null hypothesis that the slopes of lines describing the relationship between transformed budget and transformed international gross earnings are the same across all four MPAA ratings categories?
+
+```{r}
+anova(lm_fit, fit_different_slopes)
+0.5^7
+```
+
+\vspace{4cm}
+
+#### 8. Do the data provide strong evidence of a difference in slopes between the G and PG categories?  Between the G and PG-13 categories?  Between the G and R categories?
+
+\vspace{7cm}
+
+## Summary of ideas for today
+
+ * When considering transformations with multiple explanatory variables, look at plots of residuals vs. each explanatory variable
+ * If a categorical variable has $I$ categories, there are $I - 1$ corresponding indicator variables in the model describing offsets from a baseline category.
+ * Although the same variable may appear in different models, the coefficient estimates, interpretations, and p-values depend on what other variables are included
+ * F tests about multiple coefficients and t tests about the individual coefficients can give seemingly contradictory results - trust the F test more
+
+
+

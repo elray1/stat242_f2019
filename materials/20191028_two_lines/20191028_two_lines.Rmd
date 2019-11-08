@@ -1,0 +1,257 @@
+---
+title: "Two Lines: Crocodiles!!"
+output:
+  pdf_document:
+    keep_tex: true
+header-includes:
+   - \usepackage{soul}
+   - \usepackage{booktabs}
+geometry: margin=0.6in
+---
+
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(eval = TRUE)
+library(readr)
+library(dplyr)
+library(ggplot2)
+library(mosaic)
+require(readr)
+```
+
+## Multiple Regression
+
+**ANOVA models have**:
+
+ * a quantitative response variable (sepal width of a flower) and
+ * one categorical explanatory variable (species)
+ * Separate mean sepal width for each species, individual values normally distributed around the mean
+
+**Simple linear regression models have**:
+
+ * a quantitative response variable (college graduation rate) and 
+ * one quantitative explanatory variable (college acceptance rate)
+ * Mean graduation rate is a linear function of acceptance rate, individual values normally distributed around the mean
+
+**Multiple regression models have**:
+
+ * a quantitative response variable and
+ * more than one explanatory variable, may be a mix of categorical and quantitative
+ * Examples:
+    * $\mu(Y|X_1, X_2) = \beta_0 + \beta_1 X_1 + \beta_2 X_2$
+    * $\mu(Y|X_1, X_2, X_3, X_4) = \beta_0 + \beta_1 X_1 + \beta_2 X_2 + \beta_3 X_3 + \beta_4 X_4$
+    * $\mu(Y|X_1, X_2) = \beta_0 + \beta_1 \log(X_1) + \beta_2 \log(X_2)$
+    * $\mu(Y|X_1, X_2) = \beta_0 + \beta_1 X_1 + \beta_2 X_2 + \beta_3 X_1 \times X_2 + \beta_4 X_1^2$
+
+We will start by combining one categorical explanatory variable and one quantitative explanatory variable.
+
+## Example of Two Lines
+
+```{r, message = FALSE, echo = FALSE}
+# set seed and sample_frac to get both species in the first few rows.
+set.seed(123)
+
+crocs <- read_csv("http://www.evanlray.com/data/sdm4/Crocodile_lengths.csv") %>%
+  mutate(Species = factor(Species)) %>%
+  sample_frac(size = 1) %>%
+  as.data.frame()
+```
+
+We have measurements of the head length (cm) and total body length (cm) of 32 crocodiles of two different species:
+
+```{r}
+head(crocs)
+nrow(crocs)
+```
+
+```{r, fig.height=2}
+ggplot(data = crocs) +
+  geom_point(mapping = aes(x = Body, y = Head, color = Species)) +
+  theme_bw()
+```
+
+\newpage
+
+## 2 lines by filtering to create separate data sets
+
+```{r}
+aus_crocs <- crocs %>% filter(Species == "Australian")
+aus_fit <- lm(Head ~ Body, data = aus_crocs)
+summary(aus_fit)
+```
+
+```{r}
+ind_crocs <- crocs %>% filter(Species == "Indian")
+ind_fit <- lm(Head ~ Body, data = ind_crocs)
+summary(ind_fit)
+```
+
+#### Questions we'd like to be able to answer (but can't with this output):
+
+1. How strong is the evidence that the intercepts for these lines are different?
+2. How strong is the evidence that the slopes for these lines are different?
+
+\newpage
+
+## 2 parallel lines (same slope)
+
+* Our Goal: Equations for two lines
+\begin{align*}
+\text{Estimated Mean Head Length for Australian Crocs } &= \hat{\beta}_0^{Australian} + \hat{\beta}_{1} \times (\text{Body Length}) \\
+\text{Estimated Mean Head Length for Indian Crocs } &= \hat{\beta}_0^{Indian} + \hat{\beta}_{1} \times (\text{Body Length})
+\end{align*}
+
+ * Note: Different intercepts, same slope.
+
+```{r, echo = TRUE, fig.height=2}
+parallel_lines_fit <- lm(Head ~ Body + Species, data = crocs)
+summary(parallel_lines_fit)
+
+crocs <- crocs %>%
+  mutate(
+    fitted = predict(parallel_lines_fit)
+  )
+
+ggplot(data = crocs) +
+  geom_point(mapping = aes(x = Body, y = Head, color = Species)) +
+  geom_line(mapping = aes(x = Body, y = fitted, color = Species))
+```
+
+* R gives us a single combined equation:
+$$\text{Estimated Mean Head Length} = \hat{\mu} = \hat{\beta}_0 + \hat{\beta}_{1} \text{Body} + \hat{\beta}_2 \text{SpeciesIndian}$$
+
+$$\hat{\mu} = 2.27 + 0.13 \text{Body} + 8.89 \text{SpeciesIndian}$$
+
+\newpage
+
+#### What is the `SpeciesIndian` variable?
+
+* Behind the scenes, R creates a new **indicator variable** called `SpeciesIndian`:
+
+$$\text{{\tt SpeciesIndian}} = \begin{cases} 1 & \text{ if the species for crocodile $i$ is Indian.} \\
+0 & \text{ otherwise (in this case, the species is Australian)} \end{cases}
+$$
+
+* R doesn't modify the data frame (it creates a secret copy in the background), but it would look like this:
+
+```{r, echo = FALSE}
+crocs <- mutate(crocs,
+  SpeciesIndian = as.integer(Species == "Indian"))
+```
+
+```{r, echo = TRUE}
+head(crocs)
+```
+
+Above, we obtained this estimated equation:
+
+$$\hat{\mu} = 2.27 + 0.13 (\text{Body}) + 8.89 \text{SpeciesIndian}$$
+
+#### What is the estimated equation describing the relationship between body length and head length, for Australian crocodiles?
+
+\vspace{2cm}
+
+#### What is the estimated equation describing the relationship between body length and head length, for Indian crocodiles?
+
+\vspace{2cm}
+
+#### What is the interpretation of $\widehat{\beta}_0 = 2.27$?
+
+\vspace{2cm}
+
+#### What is the interpretation of $\widehat{\beta}_1 = 0.13$?
+
+\vspace{2cm}
+
+#### What is the interpretation of $\widehat{\beta}_2 = 8.89$?
+
+\newpage
+
+#### Using the output from the summary function, conduct a test of the claim that a single regression line can be used to describe the relationship between body length and head length in the population of all Australian and Indian crocodiles.
+
+\vspace{3cm}
+
+#### Conduct a test of the claim that neither species nor body length are associated with head length in the population of all Australian and Indian crocodiles.  (Note: formally, this is a test only of linear association with body length.)
+
+\vspace{3cm}
+
+#### Find and interpret a 95% confidence interval for $\beta_2$, the coefficient of `SpeciesIndian`.
+
+```{r}
+confint(parallel_lines_fit)
+```
+
+\vspace{3cm}
+
+#### Find and interpret a 95% confidence interval for the mean head length of the sub-population of Australian crocodiles that have a total body length of 400cm.
+
+```{r}
+predict_data <- data.frame(
+  Species = "Australian",
+  Body = 400
+)
+
+predict(parallel_lines_fit, newdata = predict_data, interval = "confidence")
+```
+
+\newpage
+
+## 1 model, 2 lines (different slopes)
+
+ * Our Goal: Equations for two lines
+\begin{align*}
+\text{Estimated Mean Head Length for Australian Crocs } &= \hat{\beta}_0^{Australian} + \hat{\beta}_{1}^{Australian} \times (\text{Body Length}) \\
+\text{Estimated Mean Head Length for Indian Crocs } &= \hat{\beta}_0^{Indian} + \hat{\beta}_{1}^{Indian} \times (\text{Body Length})
+\end{align*}
+
+ * Note: Different intercepts and slopes.
+
+ * To allow for different slopes, you have two options for the formula (the model that it fits is the same either way, the second is just a shorthand for the first):
+    * `Body + Species + Body:Species`
+    * `Body * Species`
+
+ * The term `Body:Species` is called the **interaction** between `Body` and `Species`.  It is just the product of those two variables.
+
+```{r, echo = TRUE, fig.height=2}
+two_lines_fit <- lm(Head ~ Body + Species + Body:Species, data = crocs)
+summary(two_lines_fit)
+
+crocs <- crocs %>%
+  mutate(
+    fitted = predict(two_lines_fit)
+  )
+
+ggplot(data = crocs) +
+  geom_point(mapping = aes(x = Body, y = Head, color = Species)) +
+  geom_line(mapping = aes(x = Body, y = fitted, color = Species))
+```
+
+#### What is the estimated equation for the mean from this model?
+
+\vspace{2.5cm}
+
+#### What is the estimated equation describing the relationship between body length and head length, for Australian crocodiles?
+
+\vspace{2.5cm}
+
+#### What is the estimated equation describing the relationship between body length and head length, for Indian crocodiles?
+
+\vspace{2.5cm}
+
+#### What is the interpretation of $\widehat{\beta}_0 = 3.463$?
+
+\vspace{2.5cm}
+
+#### What is the interpretation of $\widehat{\beta}_1 = 7.075$?
+
+\vspace{2.5cm}
+
+#### What is the interpretation of $\widehat{\beta}_2 = 0.125$?
+
+\vspace{2.5cm}
+
+#### What is the interpretation of $\widehat{\beta}_3 = 0.006$?
+
+\newpage
+
+#### Using the output from the summary function, conduct a test of the claim that the *slope* of the line describing the relationship between body length and head length in the population of all Australian crocodiles is the same as the *slope* of the line describing the relationship between body length and head length in the population of all Indian crocodiles.
+

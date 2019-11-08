@@ -218,7 +218,7 @@ make_week_box("week6", FALSE, "Week 6: Oct 07 -- Oct 11", "
 ```
 
 ```{r, echo = FALSE, results='asis'}
-make_week_box("week7", TRUE, "Week 7: Oct 14 -- Oct 18", "
+make_week_box("week7", FALSE, "Week 7: Oct 14 -- Oct 18", "
 #### Mon, Oct 14
  * **No Class**: Midsemester Break.  Safe travels!
 
@@ -238,7 +238,7 @@ make_week_box("week7", TRUE, "Week 7: Oct 14 -- Oct 18", "
 ```
 
 ```{r, echo = FALSE, results='asis'}
-make_week_box("week8", TRUE, "Week 8: Oct 21 -- Oct 25", "
+make_week_box("week8", FALSE, "Week 8: Oct 21 -- Oct 25", "
 #### Mon, Oct 21
  * **In class**, we will work on:
     * Quiz
@@ -256,7 +256,7 @@ make_week_box("week8", TRUE, "Week 8: Oct 21 -- Oct 25", "
 
 #### Fri, Oct 25
  * **In class**, we will work on:
-    * Quadratic Regression
+    * Quadratic Regression: [pdf](materials/20191025_quadratic_reg/20191025_quadratic_reg.pdf)
  * **After class**, please:
 ")
 ```
@@ -266,20 +266,20 @@ make_week_box("week9", TRUE, "Week 9: Oct 28 -- Nov 01", "
 #### Mon, Oct 28
  * **In class**, we will work on:
     * Quiz
-    * Regression with both a quantitative and a categorical explanatory variable
+    * Regression with both a quantitative and a categorical explanatory variable: [pdf](materials/20191028_two_lines/20191028_two_lines.pdf)
  * **After class**, please:
 
 
 #### Wed, Oct 30
  * **In class**, we will work on:
     * Quiz
-    * Regression with both a quantitative and a categorical explanatory variable
+    * Regression with both a quantitative and a categorical explanatory variable: [pdf](materials/20191030_gt2_categories/20191030_gt2_categories.pdf)
  * **After class**, please:
 
 
 #### Fri, Nov 01
  * **In class**, we will work on:
-    * Regression with both a quantitative and a categorical explanatory variable
+    * Lab 11
  * **After class**, please:
 ")
 ```
@@ -288,16 +288,20 @@ make_week_box("week9", TRUE, "Week 9: Oct 28 -- Nov 01", "
 make_week_box("week10", TRUE, "Week 10: Nov 04 -- Nov 08", "
 #### Mon, Nov 04
  * **In class**, we will work on:
+    * Two-way ANOVA:
+        * hand out: [pdf](materials/20191104_2_way_anova/20191104_2_way_anova.pdf)
  * **After class**, please:
 
 
 #### Wed, Nov 06
  * **In class**, we will work on:
+    * Two-way ANOVA, continuing hand out from last class
  * **After class**, please:
 
 
 #### Fri, Nov 08
  * **In class**, we will work on:
+    * Lab 12, on 2-way anova
  * **After class**, please:
 ")
 ```
@@ -306,17 +310,22 @@ make_week_box("week10", TRUE, "Week 10: Nov 04 -- Nov 08", "
 make_week_box("week11", TRUE, "Week 11: Nov 11 -- Nov 15", "
 #### Mon, Nov 11
  * **In class**, we will work on:
+    * Quiz
+    * Diagnostics outliers and high leverage observations
+    * Start on multiple regression: pairs plots, added variable plots
  * **After class**, please:
 
 
 #### Wed, Nov 13
  * **In class**, we will work on:
+    * Quiz
+    * Multiple Regression
  * **After class**, please:
 
 
 #### Fri, Nov 15
  * **In class**, we will work on:
-    * Midterm 2?
+    * Multiple Regression
  * **After class**, please:
 ")
 ```
@@ -325,7 +334,7 @@ make_week_box("week11", TRUE, "Week 11: Nov 11 -- Nov 15", "
 make_week_box("week12", TRUE, "Week 12: Nov 18 -- Nov 22", "
 #### Mon, Nov 18
  * **In class**, we will work on:
-    * Midterm 2?
+    * Multiple Regression
  * **After class**, please:
 
 
@@ -337,6 +346,7 @@ make_week_box("week12", TRUE, "Week 12: Nov 18 -- Nov 22", "
 
 #### Fri, Nov 22
  * **In class**, we will work on:
+    * Bootstrap Inference?  Or logistic regression?
  * **After class**, please:
 ")
 ```
@@ -345,6 +355,7 @@ make_week_box("week12", TRUE, "Week 12: Nov 18 -- Nov 22", "
 make_week_box("week13", TRUE, "Week 13: Nov 25 -- Nov 29", "
 #### Mon, Nov 25
  * **In class**, we will work on:
+    * Bootstrap Inference?  Or logistic regression?
  * **After class**, please:
 
 
@@ -361,6 +372,7 @@ make_week_box("week13", TRUE, "Week 13: Nov 25 -- Nov 29", "
 make_week_box("week14", TRUE, "Week 14: Dec 02 -- Dec 06", "
 #### Mon, Dec 02
  * **In class**, we will work on:
+    * Bootstrap Inference?  Or logistic regression?
  * **After class**, please:
 
 
@@ -383,6 +395,7 @@ make_week_box("week14", TRUE, "Week 14: Dec 02 -- Dec 06", "
 make_week_box("week15", TRUE, "Week 15: Dec 09 -- Dec 13", "
 #### Mon, Dec 09
  * **In class**, we will work on:
+    * Something?
  * **After class**, please:
 
 

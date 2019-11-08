@@ -1,0 +1,227 @@
+---
+title: "2 Way ANOVA"
+subtitle: "Nov. 4 2019 -- Highlights from Sleuth3 Chapter 13"
+output:
+  pdf_document:
+    highlight: zenburn
+header-includes:
+  - \usepackage{booktabs}
+  - \usepackage{vwcol}
+geometry: margin=0.5in
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(cache = FALSE)
+library(ggplot2)
+library(readr)
+library(dplyr)
+library(gridExtra)
+options(width = 100)
+```
+
+Here are two examples of two-way ANOVA problems (quantitative response, two categorical explanatory variables):
+
+**Example 1:** a calibration experiment was performed to explore the relationship between:
+
+ * the recorded `counts` from a gas chromatograph (response) -- we use log counts to stabilize variance across groups
+ * `concentration` of a compound (Low, Medium, or High) and `flow_rate` through the chromatograph (Slow or Fast)
+
+```{r, echo = FALSE, message = FALSE}
+chromatography <- read_csv("http://www.evanlray.com/data/sdm3/Chapter_29/Ch29_Chromatography.csv")
+names(chromatography) <- c("concentration", "flow_rate", "counts")
+chromatography <- chromatography %>%
+  mutate(
+    concentration = factor(concentration, levels = c("Low", "Medium", "High"), labels = c("Low", "Medium", "High")),
+    log_counts = log(counts)
+  )
+```
+
+```{r, fig.height = 2}
+ggplot(data = chromatography, mapping = aes(x = concentration, y = log_counts, color = flow_rate)) +
+  geom_boxplot() +
+  theme_bw()
+```
+
+**Example 2:** A motivated paper airplane thrower recorded the following for each of 32 plane tosses:
+
+ * The `Distance` travelled (response)
+ * The `Design` (dart or glider) and whether or not flaps were put on the wings (Flaps or None)
+
+```{r, echo = FALSE, message = FALSE}
+planes <- read_csv("~/Documents/teaching/personal_site/elray1.github.io/data/sdm3/Chapter_29/Ch29_Paper_Planes.csv") %>% filter(Paper == "Copier")
+```
+
+```{r, fig.height = 2}
+ggplot(data = planes, mapping = aes(x = flaps, y = Distance, color = Design)) +
+  geom_boxplot() +
+  theme_bw()
+```
+
+#### 1. For each of the examples above would an additive model or an interactions model be more appropriate?  How can you tell based on the plots?
+
+\newpage
+
+Here is another way to represent the data in the examples above that is sometimes used.
+
+```{r, fig.height = 2}
+chromatography_group_means <- chromatography %>%
+  group_by(concentration, flow_rate) %>%
+  summarize(
+    mean_log_counts = mean(log_counts)
+  )
+
+chromatography_group_means
+
+ggplot(data = chromatography_group_means,
+    mapping = aes(x = concentration, y = mean_log_counts, color = flow_rate, group = flow_rate)) +
+  geom_line() +
+  theme_bw()
+```
+
+Code suppressed, but I did the same thing for the second example:
+
+```{r, fig.height = 2, echo = FALSE}
+planes_group_means <- planes %>%
+  group_by(Design, flaps) %>%
+  summarize(
+    mean_distance = mean(Distance)
+  )
+
+ggplot(data = planes_group_means,
+    mapping = aes(x = flaps, y = mean_distance, color = Design, group = Design)) +
+  geom_line() +
+  theme_bw()
+```
+
+The line segments will be parallel if an additive model is appropriate, and have different slopes if an interactions model is appropriate.
+
+**I'm showing you this because you will see it in other places, but I do not prefer this display for two reasons:**
+
+ 1. It "hides" variability around the mean, which is a critical part of the model!!
+ 2. It uses lines to connect values of a discrete variable along the horizontal axis.  Visually, lines imply variable represented on the horizontal axis is continuous.  But it's discrete!  There is not necessarily a meaningful in-between in the middle of "flaps" and "no flaps" -- and even if there was, no guarantee the relationship with the response follows a linear path between those points.
+
+\newpage
+
+**Additive Model:** `lm(response ~ explanatory1 + explanatory2, data = data)`
+
+## Fit group means on transformed scale
+
+```{r}
+additive_fit <- lm(log_counts ~ concentration + flow_rate, data = chromatography)
+summary(additive_fit)
+```
+
+#### 2. What model did we just fit?  Define all explanatory variables in your model statement.
+
+\vspace{4cm}
+
+#### 3. Express the population mean for each combination of levels for the explanatory variables in terms of coefficients from the model in part 2.
+
+`concentration` = "Low", `flow_rate` = "Fast":
+
+\vspace{0.05cm}
+
+`concentration` = "Medium", `flow_rate` = "Fast":
+
+\vspace{0.05cm}
+
+`concentration` = "High", `flow_rate` = "Fast":
+
+\vspace{0.05cm}
+
+`concentration` = "Low", `flow_rate` = "Slow":
+
+\vspace{0.05cm}
+
+`concentration` = "Medium", `flow_rate` = "Slow":
+
+\vspace{0.05cm}
+
+`concentration` = "High", `flow_rate` = "Slow":
+
+\newpage
+
+#### 4. Find and interpret a confidence interval for $\beta_3$.
+
+```{r}
+confint(additive_fit)
+```
+
+\vspace{6cm}
+
+
+#### 5. Conduct a test of the claim that for a given flow rate, the mean log counts is the same at all three concentrations.
+
+```{r}
+fit_flow_only <- lm(log_counts ~ flow_rate, data = chromatography)
+anova(fit_flow_only, additive_fit)
+```
+
+\newpage
+
+**Interactions Model:** `lm(response ~ explanatory1 * explanatory2, data = data)`
+
+In this case, it's clear from the plot that an additive model is good enough.  The following is just to demonstrate the set up and ideas.  (I would not do the analysis below in real life!)
+
+## Fit group means on transformed scale
+
+```{r}
+interactions_fit <- lm(log_counts ~ concentration * flow_rate, data = chromatography)
+summary(interactions_fit)
+```
+
+#### 6. What model did we just fit?  Define all explanatory variables in your model statement.
+
+\vspace{3cm}
+
+#### 7. Express the population mean for each combination of levels for the explanatory variables in terms of coefficients from the model in part 2.
+
+`concentration` = "Low", `flow_rate` = "Fast":
+
+\vspace{0.05cm}
+
+`concentration` = "Medium", `flow_rate` = "Fast":
+
+\vspace{0.05cm}
+
+`concentration` = "High", `flow_rate` = "Fast":
+
+\vspace{0.05cm}
+
+`concentration` = "Low", `flow_rate` = "Slow":
+
+\vspace{0.05cm}
+
+`concentration` = "Medium", `flow_rate` = "Slow":
+
+\vspace{0.05cm}
+
+`concentration` = "High", `flow_rate` = "Slow":
+
+\newpage
+
+#### 8. Give the interpretations of the following coefficient estimates in the interactions model:
+
+ * $\hat{\beta}_0 = 9.208$:
+ 
+\vspace{3cm}
+
+ * $\hat{\beta}_1 = 1.387$:
+
+\vspace{3cm}
+
+ * $\hat{\beta}_3 = 0.107$:
+
+\vspace{3cm}
+
+ * $\hat{\beta}_4 = 0.035$:
+
+\vspace{3cm}
+
+#### 9. Conduct a test of the claim that the difference in mean log counts between the "Slow" and "Fast" flow rates is the same across the Low and Medium concentrations.
+
+\vspace{3cm}
+
+#### 10. Does the result of your hypothesis test in part 9 prove that the difference in mean log counts between the "Slow" and "Fast" flow rates is the same across the Low and Medium concentrations?
+
+

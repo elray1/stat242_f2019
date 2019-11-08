@@ -1,0 +1,71 @@
+---
+title: "Quadratic Regression"
+subtitle: "Oct. 25 2019"
+output:
+  pdf_document:
+    fig_height: 2.8
+    fig_width: 6
+  html_document:
+    fig_height: 3
+    fig_width: 5
+  word_document:
+    fig_height: 3
+    fig_width: 5
+header-includes:
+  - \usepackage{booktabs}
+  - \usepackage{vwcol}
+geometry: margin=0.5in
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(cache = FALSE)
+library(ggplot2)
+library(readr)
+library(dplyr)
+library(gridExtra)
+options(width = 100)
+```
+
+#### Summary
+
+ * Sometimes there is actually a quadratic relationship between two variables: $\mu(Y | X) = \beta_0 + \beta_1 X + \beta_2 X^2$
+ * Fit with `lm(response ~ poly(explanatory, degree = 2, raw = TRUE), data = data)`
+
+#### Galileo's data on falling things (Sleuth3 Case study 10.1.1)
+
+ * Galileo showed that the trajectory of a body falling with horizontal velocity is a parabola.
+ * Rolled ink-covered bronze ball down an inclined plane
+ * Measured vertical height and horizontal distance in units of punti (1 punto is 169/180 mm)
+
+\includegraphics{sleuth3_display_10_1.png}
+
+```{r, echo = FALSE}
+galileo <- Sleuth3::case1001
+```
+
+```{r, fig.height = 3, fig.width=4}
+ggplot(data = galileo, mapping = aes(x = Height, y = Distance)) +
+  geom_point() +
+  theme_bw()
+```
+
+\newpage
+
+```{r}
+quadratic_fit <- lm(Distance ~ poly(Height, degree = 2, raw = TRUE), data = galileo)
+summary(quadratic_fit)
+```
+
+```{r, fig.height = 3, fig.width=4}
+ggplot(data = galileo, mapping = aes(x = Height, y = Distance)) +
+  geom_point() +
+  geom_smooth(method = "lm", formula = y ~ poly(x, degree = 2, raw = TRUE), se = FALSE) +
+  theme_bw()
+```
+
+#### 1. What model did we fit?
+
+\vspace{2cm}
+
+#### 2. What is the estimated equation describing the relationship between height and "population" mean distance?
+
