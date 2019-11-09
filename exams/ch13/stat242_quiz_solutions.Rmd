@@ -1,0 +1,177 @@
+---
+title: ""
+subtitle: ""
+output:
+  pdf_document:
+    fig_height: 2.8
+    fig_width: 6
+    keep_tex: true
+  html_document:
+    fig_height: 3
+    fig_width: 5
+  word_document:
+    fig_height: 3
+    fig_width: 5
+header-includes:
+  - \usepackage{booktabs}
+geometry: margin=0.6in
+---
+
+## Stat 242 Quiz -- Topics Drawn from Chapter 13
+
+## What's Your Name? ____________________
+
+A right-handed person threw darts, varying two conditions:
+
+ * `Distance`: either Far, Middle, or Near
+ * `Hand`: which hand was used to throw the darts, either Left or Right
+
+The accuracy of each throw was measured, in inches away from the target (so a higher value for accuracy indicates a less accurate throw).  Six darts were thrown in each condition, in random order.
+
+```{r, echo = FALSE, message = FALSE}
+library(dplyr)
+library(ggplot2)
+library(readr)
+darts <- read_csv("~/Documents/teaching/personal_site/elray1.github.io/data/sdm3/Chapter_29/Ch29_Darts.csv")
+```
+
+Here's a plot of the data:
+
+```{r}
+ggplot(data = darts, mapping = aes(x = Distance, color = Hand, y = Accuracy)) +
+  geom_boxplot() +
+  theme_bw()
+```
+
+#### 1. Explain why this is a 2-way ANOVA problem
+
+We have a quantitative response variable (accuracy) and two categorical explanatory variables (distance and hand).
+
+\vspace{1cm}
+
+#### 2. Does the plot above suggest the use of an additive model or an interactions model?  Justify your answer with reference to a specific characteristic of the plot.
+
+This plot suggests that we will need a model with interactions.  The difference in mean accuracy between the left and right hands is larger at a far distance than it is at a middle or near distance.
+
+\newpage
+
+## Stat 242 Quiz -- Topics Drawn from Chapter 13
+
+## What's Your Name? ____________________
+
+A right-handed person threw darts, varying two conditions:
+
+ * `Distance`: either Far, Middle, or Near
+ * `Hand`: which hand was used to throw the darts, either Left or Right
+
+The accuracy of each throw was measured, in inches away from the target (so a higher value for accuracy indicates a less accurate throw).  Six darts were thrown in each condition, in random order.  Here's relevant output from two model fits.
+
+```{r, echo = FALSE, message = FALSE}
+library(dplyr)
+library(ggplot2)
+library(readr)
+darts <- read_csv("~/Documents/teaching/personal_site/elray1.github.io/data/sdm3/Chapter_29/Ch29_Darts.csv")
+```
+
+```{r}
+lm_fit_additive <- lm(Accuracy ~ Hand + Distance, data = darts)
+summary(lm_fit_additive)
+lm_fit_interaction <- lm(Accuracy ~ Hand * Distance, data = darts)
+summary(lm_fit_interaction)
+anova(lm_fit_additive, lm_fit_interaction)
+```
+
+#### 1. What is the `DistanceMiddle` variable referenced in the R summary output above?
+
+$\text{DistanceMiddle} = \begin{cases} 1 \text{ if the given throw was for the middle distance} \\ 0 \text{ otherwise} \\ \end{cases}$
+
+\vspace{1cm}
+
+#### 2. Based on the model with interactions, what is the estimated mean accuracy for dart throws using the left hand at a far distance?  Your answer should involve only numbers, but you do not need to simplify.
+
+7.52
+
+\vspace{1cm}
+
+#### 3. Based on the model with interactions, what is the estimated mean accuracy for dart throws using the right hand at a far distance?  Your answer should involve only numbers, but you do not need to simplify.
+
+7.52 - 3.62
+
+\vspace{1cm}
+
+#### 4. Based on the model with interactions, what is the estimated mean accuracy for dart throws using the right hand at a medium distance?  Your answer should involve only numbers, but you do not need to simplify.
+
+7.52 - 3.62 - 2.57 + 2.25
+
+\newpage
+
+## Stat 242 Quiz -- Topics Drawn from Chapter 13
+
+## What's Your Name? ____________________
+
+A right-handed person threw darts, varying two conditions:
+
+ * `Distance`: either Far, Middle, or Near
+ * `Hand`: which hand was used to throw the darts, either Left or Right
+
+The accuracy of each throw was measured, in inches away from the target (so a higher value for accuracy indicates a less accurate throw).  Six darts were thrown in each condition, in random order.  Here's relevant output from two model fits.
+
+```{r, echo = FALSE, message = FALSE}
+library(dplyr)
+library(ggplot2)
+library(readr)
+darts <- read_csv("~/Documents/teaching/personal_site/elray1.github.io/data/sdm3/Chapter_29/Ch29_Darts.csv")
+```
+
+```{r}
+lm_fit_additive <- lm(Accuracy ~ Hand + Distance, data = darts)
+summary(lm_fit_additive)
+lm_fit_interaction <- lm(Accuracy ~ Hand * Distance, data = darts)
+summary(lm_fit_interaction)
+anova(lm_fit_additive, lm_fit_interaction)
+```
+
+#### 1. Conduct a test of the claim that no interaction is required between the hand used and the distance thrown.  Your hypotheses should be stated in terms of equations involving the parameters from the model with interactions.  State your conclusions in terms of strength of evidence against the null hypothesis.
+
+$H_0: \beta_4 = \beta_5 = 0$
+
+$H_A:$ At least one of $\beta_4$ and $\beta_5$ is not equal to 0
+
+The p-value for this test is 0.001.  The data provide very strong evidence against the null hypothesis that in the population of dart throws by this individual, no interaction is required between the hand used and the distance thrown.
+
+\newpage
+
+## Stat 242 Quiz -- Topics Drawn from Chapter 13
+
+## What's Your Name? ____________________
+
+A right-handed person threw darts, varying two conditions:
+
+ * `Distance`: either Far, Middle, or Near
+ * `Hand`: which hand was used to throw the darts, either Left or Right
+
+The accuracy of each throw was measured, in inches away from the target (so a higher value for accuracy indicates a less accurate throw).  Six darts were thrown in each condition, in random order.  Here's relevant output from two model fits.
+
+```{r, echo = FALSE, message = FALSE}
+library(dplyr)
+library(ggplot2)
+library(readr)
+darts <- read_csv("~/Documents/teaching/personal_site/elray1.github.io/data/sdm3/Chapter_29/Ch29_Darts.csv")
+```
+
+```{r}
+lm_fit_additive <- lm(Accuracy ~ Hand + Distance, data = darts)
+summary(lm_fit_additive)
+lm_fit_interaction <- lm(Accuracy ~ Hand * Distance, data = darts)
+summary(lm_fit_interaction)
+anova(lm_fit_additive, lm_fit_interaction)
+```
+
+#### 1. Conduct a test of the claim that the mean accuracy is the same for throws using the left hand at a far distance as it is for throws using the right hand at a far distance.  Your hypotheses should be stated in terms of equations involving the parameters from the model with interactions.  State your conclusions in terms of strength of evidence against the null hypothesis.
+
+$H_0: \beta_1 = 0$
+
+$H_A: \beta_1 \neq 0$
+
+The p-value for this test is $5.49 \times 10^{-9}$.  The data provide extremely strong evidence against the null hypothesis that in the population of dart throws by this individual, the mean accuracy is the same for throws using the left hand at a far distance as it is for throws using the right hand at a far distance.
+
