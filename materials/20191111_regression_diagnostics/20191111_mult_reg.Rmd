@@ -1,0 +1,287 @@
+---
+title: "Chapter 11: Multiple Regression, Pairs Plots"
+output:
+  pdf_document:
+    keep_tex: true
+    highlight: zenburn
+header-includes:
+   - \usepackage{soul}
+   - \usepackage{booktabs}
+documentclass: extarticle
+geometry: margin=0.6in
+---
+
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(eval = TRUE)
+library(readr)
+library(dplyr)
+library(ggplot2)
+library(mosaic)
+library(gridExtra)
+library(carData)
+Duncan <- carData::Duncan
+Duncan$occupation <- rownames(Duncan)
+```
+
+## Duncan's Occupational Prestige Data
+
+#### Intro to data
+
+We have a data set with measurements on 45 different U.S. occupations as of 1950 (descriptions from Fox and Weisberg, 2011):
+
+ * `type`: Type of occupation. A factor with the following levels: `prof`, professional and managerial; `wc`, white-collar; `bc`, blue-collar.
+ * `income`: Percentage of occupational incumbents in the 1950 US Census who earned $3,500 or more per year (about $37,500 in 2019 US dollars).
+ * `education`: Percentage of occupational incumbents in 1950 who were high school graduates (this might be more like having a college degree in current times?)
+ * `prestige`: Percentage of respondents in a social survey who rated the occupation as "good" or better in prestige
+ 
+```{r}
+head(Duncan, 3)
+```
+
+References:
+
+ * Fox, J. and Weisberg, S. (2011) An R Companion to Applied Regression, Second Edition, Sage.
+ * Duncan, O. D. (1961) A socioeconomic index for all occupations. In Reiss, A. J., Jr. (Ed.) Occupations and Social Status. Free Press [Table VI-1].
+
+Let's consider a model for occupational prestige as a function of income, education, and type of occupation.
+
+**Option 1 for Plots: plotly**
+
+ * Formatting very similar to, but not exactly the same as, ggplot2
+ * **Can't show output in pdf, only for html output or interactive use**
+ * Can't be used for any more variables than we have in this example.
+ * If plotly code doesn't give you what you want right away, it can be essentially impossible to fix (not a fully developed and functional package).
+
+```{r, eval = FALSE}
+library(plotly)
+plot_ly(Duncan, x = ~income, y = ~education, z = ~prestige, color = ~type) %>%
+  add_markers()
+```
+
+Here's a screenshot, will demo live:
+
+\includegraphics[height=2.5in]{plotly_screenshot.png}
+
+\newpage
+
+**Option 2 for Plots: Pairs Plots**
+
+```{r, warning=FALSE, message = FALSE}
+library(GGally) # contains the ggpairs function
+
+# I like to plot only variables I'm interested in at the moment, with the response last
+ggpairs(Duncan %>% select(type, income, education, prestige))
+```
+
+Compare the plot in the third column and fourth row to the following:
+
+```{r, fig.width=2, fig.height = 1.5}
+ggplot(data = Duncan, mapping = aes(x = education, y = prestige)) +
+  geom_point()
+```
+
+Is there any evidence of outliers or influential observations?
+
+\newpage
+
+## A first model - income only explanatory variable
+
+```{r}
+lm_fit_1 <- lm(prestige ~ income, data = Duncan)
+summary(lm_fit_1)
+```
+
+```{r, fig.height = 2}
+ggplot(data = Duncan, mapping = aes(x = income, y = prestige)) +
+  geom_point() +
+  geom_smooth(method = "lm")
+```
+
+#### What is the equation of the estimated line?
+
+\vspace{3cm}
+
+#### What is the interpretation of the coefficient estimate for income?
+
+\newpage
+
+## Second Model: income and education as explanatory variables
+
+```{r}
+lm_fit_2 <- lm(prestige ~ income + education, data = Duncan)
+summary(lm_fit_2)
+```
+
+#### What's the estimated equation for the mean from this model?
+
+\vspace{3cm}
+
+#### This can be visualized as a plane
+
+Plotly code suppressed because it's awful.
+
+```{r, echo = FALSE, eval = FALSE}
+income_grid <- seq(from = min(Duncan$income), to = max(Duncan$income), length = 11)
+education_grid <- seq(from = min(Duncan$education), to = max(Duncan$education), length = 11)
+x_grid <- expand.grid(
+  income = income_grid,
+  education = education_grid
+)
+
+z <- predict(lm_fit_2, newdata = x_grid)
+dim(z) <- c(11, 11)
+z <- t(z)
+
+plot_ly(showscale = FALSE) %>% #, color = ~type) %>%
+  add_markers(data = Duncan, x = ~income, y = ~education, z = ~ prestige) %>%
+  add_surface(x = ~income_grid, y = ~education_grid, z = ~ z, opacity = 0.8)
+```
+
+\includegraphics[height=3in]{plotly_ss_1plane.png}
+
+#### What is the interpretation of the coefficient estimate for income?
+
+\vspace{6cm}
+
+Here is a plot showing the estimated relationship between income and prestige, for three different values of education:
+
+```{r, echo = FALSE}
+income_grid <- seq(from = min(Duncan$income), to = max(Duncan$income), length = 11)
+education_grid <- c(10, 50, 100)
+x_grid <- expand.grid(
+  income = income_grid,
+  education = education_grid
+)
+x_grid$prestige <- predict(lm_fit_2, newdata = x_grid)
+ggplot(data = x_grid, mapping = aes(x = income, y = prestige, color = factor(education))) +
+  scale_color_viridis_d(begin = 0.15, end = 0.85, option = "B") +
+  geom_line()
+```
+
+\newpage
+
+## Third Model: All 3 explanatory variables!
+
+```{r}
+lm_fit_3 <- lm(prestige ~ income + education + type, data = Duncan)
+summary(lm_fit_3)
+```
+
+Plotly code suppressed because it's awful.
+
+```{r, echo = FALSE, eval = FALSE}
+income_grid <- seq(from = min(Duncan$income), to = max(Duncan$income), length = 11)
+education_grid <- seq(from = min(Duncan$education), to = max(Duncan$education), length = 11)
+x_grid <- expand.grid(
+  income = income_grid,
+  education = education_grid
+)
+
+x_grid$type <- "bc"
+z_bc <- predict(lm_fit_3, newdata = x_grid)
+dim(z_bc) <- c(11, 11)
+z_bc <- t(z_bc)
+
+x_grid$type <- "prof"
+z_prof <- predict(lm_fit_3, newdata = x_grid)
+dim(z_prof) <- c(11, 11)
+z_prof <- t(z_prof)
+
+x_grid$type <- "wc"
+z_wc <- predict(lm_fit_3, newdata = x_grid)
+dim(z_wc) <- c(11, 11)
+z_wc <- t(z_wc)
+
+color_bc = factor(rep("bc", length(z_bc)))
+color_bc = rep(0, length(z_bc))
+dim(color_bc) <- c(11, 11)
+color_prof = rep(1, length(z_prof))
+dim(color_prof) <- c(11, 11)
+color_wc = rep(2, length(z_wc))
+dim(color_wc) <- c(11, 11)
+colors <- c("#66c2a5", "#fc8d62", "#8da0cb")
+
+plot_ly(color = colors, showscale = FALSE) %>% #, color = ~type) %>%
+  add_markers(data = Duncan %>% filter(type == "bc"), x = ~income, y = ~education, z = ~ prestige, color = "bc") %>% #~ type, colors = colors) %>% #8da0cb
+  add_markers(data = Duncan %>% filter(type == "prof"), x = ~income, y = ~education, z = ~ prestige, color = "prof") %>% #~ type, colors = colors) %>%
+  add_markers(data = Duncan %>% filter(type == "wc"), x = ~income, y = ~education, z = ~ prestige, color = "wc") %>% #~ type, colors = colors) %>%
+  add_surface(x = ~income_grid, y = ~education_grid, z = ~ z_bc, color = color_bc, cmin = 0, cmax = 2, colorscale = list(c(0,1),c("#66c2a5","#66c2a5")), opacity = 0.8) %>%
+  add_surface(x = ~income_grid, y = ~education_grid, z = ~ z_prof, color = color_prof, cmin = 0, cmax = 2, colorscale = list(c(0,1),c("#fc8d62","#fc8d62")), opacity = 0.8) %>%
+  add_surface(x = ~income_grid, y = ~education_grid, z = ~ z_wc, color = color_wc, cmin = 0, cmax = 1, colorscale = list(c(0,1),c("#8da0cb","#8da0cb")), opacity = 0.8)
+```
+
+\includegraphics[height=2.5in]{plotly_ss_3planes.png}
+
+#### What is the estimated equation for the mean from this model fit?
+
+\vspace{2cm}
+
+#### What is the interpretation of the estimated coefficient for income?
+
+\newpage
+
+#### Diagnostic Plots
+
+```{r, fig.height = 1.75}
+Duncan <- Duncan %>%
+  mutate(
+    obs_index = row_number(),
+    h = hatvalues(lm_fit_3),
+    studres = rstudent(lm_fit_3),
+    D = cooks.distance(lm_fit_3)
+  )
+
+ggplot(data = Duncan, mapping = aes(x = obs_index, y = h)) +
+  geom_point() +
+  geom_hline(yintercept = 2 * 5 / nrow(Duncan)) +
+  ylim(0, 1) +
+  ggtitle("Leverage")
+
+ggplot(data = Duncan, mapping = aes(x = obs_index, y = studres)) +
+  geom_point() +
+  ggtitle("Studentized Residuals")
+
+ggplot(data = Duncan, mapping = aes(x = obs_index, y = D)) +
+  geom_point() +
+  ggtitle("Cook's Distance")
+```
+
+```{r}
+obs_to_investigate <- c(6, 16, 27)
+```
+
+\newpage
+
+```{r, echo = FALSE}
+options(width = 150)
+```
+
+```{r}
+Duncan[obs_to_investigate, ]
+```
+
+```{r}
+Duncan <- Duncan %>%
+  mutate(
+    suspicious = ifelse(row_number() %in% obs_to_investigate, "suspicious", "seems ok")
+  )
+
+ggplot(data = Duncan, mapping = aes(x = education, y = income, color = suspicious)) +
+  geom_point()
+```
+
+\newpage
+
+```{r}
+Duncan_minus_suspicious <- Duncan[-obs_to_investigate, ]
+lm_fit_without_suspicious <- lm(prestige ~ income + education + type, data = Duncan_minus_suspicious)
+summary(lm_fit_without_suspicious)
+```
+
+```{r}
+Duncan_minus_minister <- Duncan[-6, ]
+lm_fit_without_minister <- lm(prestige ~ income + education + type, data = Duncan_minus_minister)
+summary(lm_fit_without_minister)
+```
+
+#### What do we say?

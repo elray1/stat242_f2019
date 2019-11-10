@@ -1,0 +1,158 @@
+---
+title: "Chapter 11: Outliers and Influential Observations"
+subtitle: "Nov. 11, 2019"
+output:
+  pdf_document:
+    keep_tex: true
+    highlight: zenburn
+header-includes:
+   - \usepackage{soul}
+   - \usepackage{booktabs}
+documentclass: extarticle
+geometry: margin=0.6in
+---
+
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(eval = TRUE)
+library(readr)
+library(dplyr)
+library(ggplot2)
+library(mosaic)
+library(gridExtra)
+
+anscombe <- read_csv("http://www.evanlray.com/data/base_r/anscombe_quintet.csv")
+```
+
+### Recall Anscombe's Data
+
+```{r, echo = FALSE}
+fit1 <- lm(y1 ~ x1, data = anscombe)
+fit2 <- lm(y2 ~ x2, data = anscombe)
+fit3 <- lm(y3 ~ x3, data = anscombe)
+fit4 <- lm(y4 ~ x4, data = anscombe)
+fit5 <- lm(y5 ~ x5, data = anscombe)
+
+anscombe_long <- data.frame(
+  x = c(anscombe$x1, anscombe$x2, anscombe$x3, anscombe$x4, anscombe$x5),
+  y = c(anscombe$y1, anscombe$y2, anscombe$y3, anscombe$y4, anscombe$y5),
+  residual = c(residuals(fit1), residuals(fit2), residuals(fit3), residuals(fit4), residuals(fit5)),
+  data_set = rep(paste("Data Set", 1:5), each = nrow(anscombe))
+)
+
+grid.arrange(
+  ggplot(data = anscombe_long, mapping = aes(x = x, y = y)) +
+    geom_point() +
+    geom_smooth(method = "lm", se = FALSE) +
+    facet_wrap(~factor(data_set), nrow = 1) +
+    theme_bw(),
+  ggplot(data = anscombe_long, mapping = aes(x = x, y = residual)) +
+    geom_point() +
+    geom_smooth(method = "lm", se = FALSE) +
+    facet_wrap(~factor(data_set), nrow = 1) +
+    ylab("residual\n") +
+    theme_bw()
+)
+```
+
+* For today, let's focus on Data Sets 3 and 4.  We will see how to identify the problematic observations from the diagnostics.
+
+* In data set 3, observation 3 is the one with a big Y!
+
+```{r}
+anscombe$y3[3]
+```
+
+* In data set 4, observation 8 is the one with a big X!
+
+```{r}
+anscombe$x4[8]
+```
+
+\newpage
+
+## Data Set 3
+
+ * Every statistical software package will give you different plots by default.  Here is my preferred option:
+
+```{r, fig.height = 1.65}
+fit3 <- lm(y3 ~ x3, data = anscombe)
+anscombe <- anscombe %>%
+  mutate(
+    obs_index = row_number(),
+    h3 = hatvalues(fit3),
+    studres3 = rstudent(fit3),
+    D3 = cooks.distance(fit3)
+  )
+
+# 2p/n; p = 2 since we have beta_0 and beta_1 in our simple linear regression model
+2 * 2 / nrow(anscombe)
+
+ggplot(data = anscombe, mapping = aes(x = obs_index, y = h3)) +
+  geom_point() +
+  geom_hline(yintercept = 2 * 2 / nrow(anscombe)) +
+  ggtitle("Leverage - Data Set 3")
+
+ggplot(data = anscombe, mapping = aes(x = obs_index, y = studres3)) +
+  geom_point() +
+  ggtitle("Studentized Residuals - Data Set 3")
+
+ggplot(data = anscombe, mapping = aes(x = obs_index, y = D3)) +
+  geom_point() +
+  ggtitle("Cook's Distance - Data Set 3")
+```
+
+
+\newpage
+
+## Data Set 4
+
+```{r, fig.height = 1.55}
+fit4 <- lm(y4 ~ x4, data = anscombe)
+anscombe <- anscombe %>%
+  mutate(
+    obs_index = row_number(),
+    h4 = hatvalues(fit4),
+    studres4 = rstudent(fit4),
+    D4 = cooks.distance(fit4)
+  )
+
+# 2p/n; p = 2 since we have beta_0 and beta_1 in our simple linear regression model
+2 * 2 / nrow(anscombe)
+
+ggplot(data = anscombe, mapping = aes(x = obs_index, y = h4)) +
+  geom_point() +
+  geom_hline(yintercept = 2 * 2 / nrow(anscombe)) +
+  ggtitle("Leverage - Data Set 4")
+
+ggplot(data = anscombe, mapping = aes(x = obs_index, y = studres4)) +
+  geom_point() +
+  ggtitle("Studentized Residuals - Data Set 4")
+
+ggplot(data = anscombe, mapping = aes(x = obs_index, y = D4)) +
+  geom_point() +
+  ggtitle("Cook's Distance - Data Set 4")
+```
+
+The lower two plots look OK... what's up with that warning?
+
+```{r}
+anscombe$h4
+anscombe$studres4
+anscombe$D4
+```
+
+\newpage
+
+## R Code: Default Plots
+
+You can get a set of different diagnostic plots more easily, but I find the plot involving Cook's distance and Leverage less intuitive:
+
+```{r, fig.height = 4, fig.width = 4}
+plot(fit3)
+```
+
+Note: to get the plots to all show up in the knitted pdf, I had to set figure height and width in the code chunk declaration:
+
+````markdown
+`r ''````{r, fig.height = 4, fig.width = 4}
+````

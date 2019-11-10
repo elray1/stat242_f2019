@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Project Description</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/paper.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 64px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 69px;
+  margin-top: -69px;
+}
+.section h2 {
+  padding-top: 69px;
+  margin-top: -69px;
+}
+.section h3 {
+  padding-top: 69px;
+  margin-top: -69px;
+}
+.section h4 {
+  padding-top: 69px;
+  margin-top: -69px;
+}
+.section h5 {
+  padding-top: 69px;
+  margin-top: -69px;
+}
+.section h6 {
+  padding-top: 69px;
+  margin-top: -69px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Stat 242</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="schedule.html">Schedule</a>
+</li>
+<li>
+  <a href="labs.html">Labs</a>
+</li>
+<li>
+  <a href="homework.html">Homework</a>
+</li>
+<li>
+  <a href="resources.html">Resources</a>
+</li>
+<li>
+  <a href="exams.html">Quizzes/Exams</a>
+</li>
+<li>
+  <a href="project.html">Project</a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Project Description</h1>
+
+</div>
+
+
+<p>For the project you will create, in groups of 2 or 3, a thorough analysis of a particular dataset using a multiple regression model.</p>
+<p>There are three final delivarables for the project:</p>
+<ul>
+<li>A final report describing your problem, the analysis you conducted, and your conclusions (submitted as a group)</li>
+<li>Supplementary materials with R output and diagnostic plots for your model (submitted as a group)</li>
+<li>A group dynamic report (submitted individually)</li>
+</ul>
+<p>The report and supplementary materials should both be generated by an R markdown document, and I will ask you to submit both the R markdown document and the resulting knitted pdf.</p>
+<div id="deadlines" class="section level3">
+<h3>Deadlines</h3>
+<ul>
+<li><strong>5:00 PM Tues Nov 12:</strong> Group memberships. <a href="https://forms.gle/Q1QnBwyYaQsnETn37">Fill out this google form</a> with your preference for group members: . Groups should have 2 or 3 members. Only one person per proposed group needs to do this. If you don’t have a group, just fill out the form and let me know that. I will assign you to a group. <strong>Note that I reserve the right to shuffle group members and you may not get your preferred group!</strong></li>
+<li><strong>5:00 PM Sat Nov 16:</strong> Project proposals and description of data sources. Submit by uploading to google drive and sending me an email (cc’ing all group members) letting me know you have done that.</li>
+<li><strong>5:00 PM Tue Nov 26:</strong> At this check point, you should have written at least a couple of paragraphs introducing the problem you are working on, read in your data set, and made at least 2 plots of the data. Submit by uploading to google drive and sending me an email (cc’ing all group members) letting me know you have done that.</li>
+<li><strong>5:00 PM Sat Dec 07:</strong> At this check point, you should have fit a multiple regression model, checked residual diagnostics, and taken steps to address any evident problems. Submit by uploading to google drive and sending me an email (cc’ing all group members) letting me know you have done that.</li>
+<li><strong>11:59 AM (noon) Tue Dec 17:</strong> Final submission of R markdown file and pdf for report and supplementary materials. Submit by uploading to google drive and sending me an email (cc’ing all group members) letting me know you have done that.</li>
+<li><strong>11:59 AM (noon) Tue Dec 17:</strong> Group dynamic report by email, <strong>sent only to me</strong>.</li>
+</ul>
+</div>
+<div id="project-proposals" class="section level3">
+<h3>Project Proposals</h3>
+<p>You must propose two distinct projects. This is so that if one of them isn’t feasible, we can go with the other. Put your preferred project first. Each proposed project should have the following three elements:</p>
+<ol style="list-style-type: decimal">
+<li>A question that you find interesting and which may be addressed (at least in part) through the analysis of data. Your question should be complex enough that there are at least 3 explanatory variables to consider. Your response variable should be quantitative. Recent projects have considered the following questions:</li>
+</ol>
+
+<ol start="2" style="list-style-type: decimal">
+<li><p>A data set that can be used to answer the question you posed in part 1. I’m looking for either a link to the data set, or an attached spreadsheet or similar file.</p></li>
+<li><p>A description of which specific variable in your data set will be your response (this variable should be quantitative!!) and which will be your explanatory variables.</p></li>
+</ol>
+<p>Your proposals do not have to be extensive! A paragraph or two for each proposal is fine. I just need enough detail to decide if your proposed project is feasible.</p>
+<p>Count on brainstorming a few serious ideas before you can groom one of them into a mature proposal. For the most part, the choice of topic is left up to you. Try to pick something that’s interesting yet substantial and worth studying. Please try to avoid time series data since we have not studied models to handle.</p>
+</div>
+<div id="finding-data" class="section level3">
+<h3>Finding Data</h3>
+<p>Finding the right data to answer your particular question is part of your responsibility for this assignment. Public data sets are available from hundreds of different websites, on virtually any topic. You might not be able to find the exact data that you want – but you should be able to find data that is relevant to your topic. You may also want to refine your research question so that it can be more clearly addressed by the data that you found. But be creative! Go find the data that you want!</p>
+<p>Below is a list of places to get started, but this list should be considered grossly non-exhaustive:</p>
+<ul>
+<li>Gapminder <a href="http://www.gapminder.org" class="uri">http://www.gapminder.org</a></li>
+<li>Data.gov <a href="https://www.data.gov/" class="uri">https://www.data.gov/</a></li>
+<li>StatLib at Carnegie Mellon <a href="http://lib.stat.cmu.edu/datasets/" class="uri">http://lib.stat.cmu.edu/datasets/</a></li>
+<li>U.S. Bureau of Labor Statistics <a href="https://www.bls.gov/" class="uri">https://www.bls.gov/</a></li>
+<li>U.S. Census Bureau <a href="https://www.census.gov/" class="uri">https://www.census.gov/</a></li>
+<li>University of Edinburgh <a href="http://www.inf.ed.ac.uk/teaching/courses/dme/html/datasets0405.html" class="uri">http://www.inf.ed.ac.uk/teaching/courses/dme/html/datasets0405.html</a></li>
+<li>Comprehensive Epidemiologic Data Resource (CEDR) <a href="https://oriseapps.orau.gov/cedr/" class="uri">https://oriseapps.orau.gov/cedr/</a></li>
+<li>Kaggle: <a href="https://www.kaggle.com/" class="uri">https://www.kaggle.com/</a></li>
+<li>UCI Machine Learning Repository: <a href="https://archive.ics.uci.edu/ml/datasets/" class="uri">https://archive.ics.uci.edu/ml/datasets/</a></li>
+<li>Google public data repository: <a href="https://www.google.com/publicdata/directory" class="uri">https://www.google.com/publicdata/directory</a></li>
+<li>World Health Organization data: <a href="http://www.who.int/gho/database/en/" class="uri">http://www.who.int/gho/database/en/</a></li>
+<li>Center for Disease Control data: <a href="http://www.cdc.gov/datastatistics/" class="uri">http://www.cdc.gov/datastatistics/</a></li>
+</ul>
+<p>Keep the following in mind as you select your topic and dataset:</p>
+<ul>
+<li>You need to have enough data to make meaningful inferences. There is no magic number of individuals required for all projects. But aim for at least 200 individuals and make sure there are at least 20 individuals in each category of each of your categorical variables (if you have any).</li>
+<li>You need to measure a quantitative outcome, with at least two other variables included in the dataset (ideally at least one of which is quantitative). This will allow you to use multiple linear regression for your primary analyses. While categorical outcome data are interesting and important, we will only discuss methods for categorical response variables briefly in this course.</li>
+</ul>
+</div>
+<div id="guidelines-for-the-final-report" class="section level3">
+<h3>Guidelines for the final report</h3>
+<p>Overall, the project report should be written in clear, concise prose. No R code should be shown (I will show you how to hide R code that is in an R markdown document so that it runs but is not displayed in the knitted document).</p>
+<p>We will use a structure that is similar to a standard scientific report, though your write up will likely be somewhat shorter than a typical journal article. Please follow the structure below:</p>
+<ol style="list-style-type: decimal">
+<li>Title</li>
+<li>Summary: an introduction to the problem you are addressing, brief description of the methods you consider, and summary of the results. Aim for 1 paragraph.</li>
+<li>Data: a brief summary of key features of the dataset. You should define each variable that will be used (to the level that it is possible to do this, given the information provided by your data source). Also include a few plots showing a few key insights about the data set. Note that there will probably not be enough space to present every plot you make during the course of conducting your analysis; you will have to select a small number of the most informative plots to include. These plots should be briefly discussed in the text. At least a few sentences of context and description of the dataset should be included (how were the data collected? What was measured?), and the number of observations in the data set should be stated. Aim for about 1-2 pages. There should be enough detail that the scope of conclusions from your analysis can be assessed.</li>
+<li>Methods: a description of the statistical model used in your analysis. Describe any transformations or other special things you had to do. Aim for a page or less.</li>
+<li>Results: a presentation of your results. This should include a paragraph or two stating the results of the analysis with minimal interpretation. Aim for less than a page.</li>
+<li>Discussion: summarize your work, its limitations, and possible future steps/improvements. Address the answers to the problem you outlined in your summary and the scope of your conclusions. This can be a page or two.</li>
+<li>References: cite all sources in a standard format.</li>
+</ol>
+<p>Items one through 6 above will probably require between 5 and 10 pages, including figures and tables. Please do not go over 10 pages. If your report is looking like it will be less than 5 pages please run it by me and make sure you’re discussing everything in enough detail. You should not change the font size or margins from the defaults for R markdown documents.</p>
+</div>
+<div id="group-dynamic-report" class="section level3">
+<h3>Group Dynamic Report</h3>
+<p>Ideally, all group members would be equally involved and able and committed to the project. In reality, it doesn’t always work that way. I’d like to reward people fairly for their efforts in this group endeavor, because it’s inevitable that there will be variation in how high a priority people put on this class and how much effort they put into this project.</p>
+<p>To this end I will ask each of you (individually) to describe how well (or how poorly!) your project group worked together and shared the load. Also give some specific comments describing each member’s overall effort. Were there certain group members who really put out exceptional effort and deserve special recognition? Conversely, were there group members who really weren’t carrying their own weight? And then, at the end of your assessment, estimate the percentage of the total amount of work/effort done by each member. (Be sure your percentages sum to 100%!)</p>
+<p>For example, suppose you have 3 group members: X, Y and Z. In the (unlikely) event that each member contributed equally, you could assign:</p>
+<ul>
+<li>33.3% for member X,</li>
+<li>33.3% for member Y, and</li>
+<li>33.3% for member Z</li>
+</ul>
+<p>Or in case person Z did twice as much work as each other member, you could assign:</p>
+<ul>
+<li>25% for member X,</li>
+<li>25% for member Y, and</li>
+<li>50% for member Z</li>
+</ul>
+<p>Or if member Y didn’t really do much at all, you could assign:</p>
+<ul>
+<li>45% for member X,</li>
+<li>10% for member Y, and</li>
+<li>45% for member Z</li>
+</ul>
+<p>I’ll find a fair way to synthesize the (possibly conflicting) assessments within each group. And eventually I’ll find a way to fairly incorporate this assessment of effort and cooperation in each individual’s overall grade. Don’t pressure one another to give everyone glowing reports unless it’s warranted, and don’t feel pressured to share your reports with one another. Just be fair to yourselves and to one another. Let me know if you have any questions or if you run into any problems.</p>
+<p><strong>Because I will be accounting for relative effort of the group members, it is critical that you communicate with each other about expectations and give each other a chance to contribute!</strong> If you are highly motivated, resist the urge to do the whole project yourself; ask your group members to contribute in specific ways. On the other hand, if you are busy, don’t just step back and let others do the work – be in touch with your group members about specific ways you would like to contribute and your time line. Communicate with each other early and often.</p>
+</div>
+<div id="grading-and-assessment-criteria" class="section level3">
+<h3>Grading and Assessment Criteria</h3>
+<p>The project grade makes up 10% of the final grade for the class. Here are some things I’ll be considering:</p>
+<ul>
+<li><p>Technical Mastery: Do you demonstrate that you understand the methods you are using? Does the submitted R code work correctly? Can I knit the submitted R markdown files to generate the submitted pdf files?</p></li>
+<li><p>Writing: How effectively does the written report communicate the goals, procedures, and results of the study? Are the claims adequately discussed and supported? How well is the report structured and organized (this should not be a problem if you follow the structure I laid out!)? Are all of the figures and tables numbered and appropriately referenced? Does the writing style enhance what the group is trying to communicate? How well is the report edited?</p></li>
+<li><p>Design: Are the variables chosen appropriately and defined clearly, and is it clear how they were measured/observed? Is there sufficient data to make meaningful conclusions?</p></li>
+<li><p>Statisical Analysis: Are the chosen analyses appropriate for the variables/relationships under investigation, and are the assumptions underlying these analyses met? Do the analyses involve fitting and interpreting a multiple regression model? Are the analyses carried out correctly? Was the appropriateness of the model assessed using diagnostic plots? Is there an effective mix of graphical, numerical, and inferential analyses?</p></li>
+<li><p>Conclusions: Are the stated conclusions supported and justified by the analysis? Can the effects of lurking variables be controlled for (if not, is that discussed as a limitation of the analysis)? Is the scope of conclusions properly addressed?</p></li>
+</ul>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

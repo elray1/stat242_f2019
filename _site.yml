@@ -17,3 +17,5 @@ navbar:
       href: resources.html
     - text: "Quizzes/Exams"
       href: exams.html
+    - text: "Project"
+      href: project.html

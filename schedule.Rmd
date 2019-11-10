@@ -310,16 +310,19 @@ make_week_box("week10", TRUE, "Week 10: Nov 04 -- Nov 08", "
 make_week_box("week11", TRUE, "Week 11: Nov 11 -- Nov 15", "
 #### Mon, Nov 11
  * **In class**, we will work on:
+    * Overview of Lab 12 solutions
     * Quiz
-    * Diagnostics outliers and high leverage observations
-    * Start on multiple regression: pairs plots, added variable plots
+    * Diagnostics for outliers and high leverage observations: [pdf](materials/20191111_regression_diagnostics/20191111_residual_diagnostics.pdf)
+    * Start on multiple regression: [pdf](materials/20191111_regression_diagnostics/20191111_mult_reg.pdf)
+    * If time, worksheet on multiple regression and diagnostics? [pdf](materials/20191111_regression_diagnostics/worksheet_multiple_reg.pdf)
+    * Overview of projects
  * **After class**, please:
 
 
 #### Wed, Nov 13
  * **In class**, we will work on:
     * Quiz
-    * Multiple Regression
+    * Multiple Regression, added variable plots
  * **After class**, please:
 
 
@@ -340,7 +343,7 @@ make_week_box("week12", TRUE, "Week 12: Nov 18 -- Nov 22", "
 
 #### Wed, Nov 20
  * **In class**, we will work on:
-    * Midterm 2?
+    * Finish multiple regression?  Bootstrap Inference?  Or logistic regression?
  * **After class**, please:
 
 
@@ -355,7 +358,7 @@ make_week_box("week12", TRUE, "Week 12: Nov 18 -- Nov 22", "
 make_week_box("week13", TRUE, "Week 13: Nov 25 -- Nov 29", "
 #### Mon, Nov 25
  * **In class**, we will work on:
-    * Bootstrap Inference?  Or logistic regression?
+    * Midterm 2
  * **After class**, please:
 
 
