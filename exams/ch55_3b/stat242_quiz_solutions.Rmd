@@ -78,6 +78,6 @@ exp(-4.14)
 exp(3.55)
 ```
 
-We are 95% confident that the median time until loss of insulating properties in the "population" when exposed to 26 kV of electricity is between 0.016 and 34.813 times the median when exposed to 28 kV of electricity
+We are 95% confident that the median time until loss of insulating properties in the "population" when exposed to 28 kV of electricity is between 0.016 and 34.813 times the median when exposed to 26 kV of electricity
 
 For 95% of samples, a confidence interval calculated using this procedure would include the ratio of the medians for these groups.
