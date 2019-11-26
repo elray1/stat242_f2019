@@ -1,0 +1,92 @@
+---
+title: "Logistic Regression"
+subtitle: "Nov 21, 2019"
+output:
+  pdf_document:
+    highlight: zenburn
+    keep_tex: true
+geometry: margin=1.5cm
+header-includes:
+   - \usepackage{booktabs}
+   - \usepackage{multicol}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, cache = TRUE)
+```
+
+## Example: Birthweight and bronchopulmonary dysplasia
+
+Can we estimate probability of bronchopulmonary dysplasia (BPD, a lung disease that affects newborns) as a function of the baby's birth weight?  (Note: our source says the unit of measurement is a `gramme', but the numbers seem impossibly small.  Possibly all babies in our sample are premature?  Or maybe there is something weird about the measurements.)
+
+Data from Pagano, M. and Gauvreau, K. (1993). *Principles of Biostatistics*. Duxbury Press.
+
+\begin{align*}
+Y_i &= \begin{cases} 1 & \text{ if baby number $i$ has BPD} \\ 0 & \text{ otherwise} \end{cases} \\
+X_i &= \text{ birth weight for baby number $i$}
+\end{align*}
+
+```{r, message = FALSE, warning=FALSE, echo = FALSE}
+library(tidyverse)
+bpd <- read_table2("http://www.stat.cmu.edu/~larry/all-of-nonpar/=data/bpd.dat")
+```
+
+```{r, eval = TRUE}
+head(bpd)
+```
+
+Here's a plot of the data:
+
+```{r, echo = FALSE, fig.height = 1.75}
+ggplot(data = bpd, mapping = aes(x = birthweight, y = BPD)) +
+  geom_point()
+```
+
+\newpage
+
+#### Fitting model to data
+
+```{r, echo = TRUE}
+logistic_fit <- glm(BPD ~ birthweight, data = bpd, family = binomial)
+summary(logistic_fit)
+exp(-0.0042291)
+```
+
+Here's a plot of the data and model fit
+
+ * The curve represents the estimated probability that a baby has BPD, as a function of birth weight.
+
+```{r, echo = TRUE, fig.height = 1.75}
+ggplot(data = bpd, mapping = aes(x = birthweight, y = BPD)) +
+  geom_point() +
+  geom_smooth(method = "glm", method.args = list(family = "binomial"), se = FALSE)
+```
+
+\newpage
+
+### 1. Based on this model, how could you calculate the estimated probability that a baby whose birth weight is 750 grams has BPD?
+
+\vspace{6cm}
+
+```{r}
+exp(4.0342913 - 0.0042291 * 750) / (1 + exp(4.0342913 - 0.0042291 * 750))
+```
+
+...or...
+
+```{r}
+predict_data <- data.frame(
+  birthweight = 750
+)
+predict(logistic_fit, newdata = predict_data, type = "response")
+```
+
+### 2. What is the interpretation of $\hat{\beta}_1$ in terms of odds?
+
+\newpage
+
+### 3. What is the estimated relationship between the odds that a baby with birth weight 1000 grams has BPD vs that a baby with birth weight 2000 grams has BPD?
+
+```{r}
+exp(-0.0042291 * 1000)
+```

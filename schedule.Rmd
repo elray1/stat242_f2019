@@ -322,13 +322,16 @@ make_week_box("week11", TRUE, "Week 11: Nov 11 -- Nov 15", "
 #### Wed, Nov 13
  * **In class**, we will work on:
     * Quiz
-    * Multiple Regression, added variable plots
+    * Multiple Regression, added variable plots:
+        * [pdf](materials/20191113_multicollinearity_added_variables/20191115_multicollinearity_added_variables.pdf)
  * **After class**, please:
 
 
 #### Fri, Nov 15
  * **In class**, we will work on:
     * Multiple Regression
+        * [pdf](materials/20191113_multicollinearity_added_variables/20191115_variable_selection.pdf)
+        * The original article in case you're curious: [pdf](materials/20191113_multicollinearity_added_variables/Ericksen.pdf)
  * **After class**, please:
 ")
 ```
@@ -338,18 +341,22 @@ make_week_box("week12", TRUE, "Week 12: Nov 18 -- Nov 22", "
 #### Mon, Nov 18
  * **In class**, we will work on:
     * Multiple Regression
+        * worksheet: [pdf](materials/20191118_var_selection/worksheet_multiple_reg_var_selection.pdf)
+        * See also lab on variable selection
  * **After class**, please:
 
 
 #### Wed, Nov 20
  * **In class**, we will work on:
-    * Finish multiple regression?  Bootstrap Inference?  Or logistic regression?
+    * Review
  * **After class**, please:
 
 
 #### Fri, Nov 22
  * **In class**, we will work on:
-    * Bootstrap Inference?  Or logistic regression?
+    * Logistic Regression
+        * lecture notes: [pdf](materials/20191122_logistic/lecture_notes.pdf)
+        * hand out: [pdf](materials/20191122_logistic/20191122_logistic_reg.pdf)
  * **After class**, please:
 ")
 ```
@@ -375,7 +382,7 @@ make_week_box("week13", TRUE, "Week 13: Nov 25 -- Nov 29", "
 make_week_box("week14", TRUE, "Week 14: Dec 02 -- Dec 06", "
 #### Mon, Dec 02
  * **In class**, we will work on:
-    * Bootstrap Inference?  Or logistic regression?
+    * Logistic regression
  * **After class**, please:
 
 
@@ -400,8 +407,6 @@ make_week_box("week15", TRUE, "Week 15: Dec 09 -- Dec 13", "
  * **In class**, we will work on:
     * Something?
  * **After class**, please:
-
-
 ")
 ```
 

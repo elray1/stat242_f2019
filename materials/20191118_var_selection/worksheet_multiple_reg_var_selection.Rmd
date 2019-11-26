@@ -1,0 +1,142 @@
+---
+title: "Worksheet: Multiple Regression and Variable Selection"
+output:
+  pdf_document:
+    fig_height: 2.8
+    fig_width: 6
+  html_document:
+    fig_height: 3
+    fig_width: 5
+  word_document:
+    fig_height: 3
+    fig_width: 5
+header-includes:
+  - \usepackage{booktabs}
+  - \usepackage{vwcol}
+geometry: margin=0.5in
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(cache = FALSE)
+library(ggplot2)
+library(readr)
+library(dplyr)
+library(gridExtra)
+library(car)
+options(width = 100)
+```
+
+## Part 1: What Not To Do.  Party in power and economic performance.
+
+Go to https://projects.fivethirtyeight.com/p-hacking/
+
+#### (a) Suppose you are a Democratic data analyst with an agenda: You want to show that the economy performs better when Democrats are in power.
+
+ * Choose "Democrats" for the political party.  The horizontal axis of the plot now measures the amount of power held by Democrats, and the vertical axis the performance of the economy.  Your goal is to find statistically significant evidence of an association between these variables (p-value as small as you can make it), with a positive slope
+ * By changing the settings for which politicians are included, how economic performance is measured, and the options for weighting politicians by how powerful they are and whether or not recessions are excluded, manipulate the variables used until you have found statistically significant evidence of a positive association between these variables.
+
+You win!  Case proved, write it up and get published.
+
+#### (b) Suppose you are a Republican data analyst with an agenda: You want to show that the economy performs better when Democrats are in power.
+
+ * Choose "Republicans" for the political party.  The horizontal axis of the plot now measures the amount of power held by Republicans, and the vertical axis the performance of the economy.  Your goal is to find statistically significant evidence of an association between these variables (p-value as small as you can make it), with a positive slope
+ * By changing the settings for which politicians are included, how economic performance is measured, and the options for weighting politicians by how powerful they are and whether or not recessions are excluded, manipulate the variables used until you have found statistically significant evidence of a positive association between these variables.
+
+You win!  Case proved, write it up and get published.
+
+#### What's the point?
+
+ * You can find "statistically significant" evidence of anything if that is your goal and you are flexible enough in your data analysis.  That doesn't mean your conclusions are correct.
+ * Formally, a p-value only measures the strength of evidence against the null hypothesis of the test *if the analysis was pre-specified* before looking at the data.  If the test or the model you fit was dependent on the data in any way, the p-value is unreliable as an indicator of strength of evidence.
+ * Our goal is not to find statistically significant results.  Our goal is to present an honest discussion of what the data can and cannot tell us about the world, complete with limitations of our analysis.  A result is only convincing if it shows up in a variety of reasonable analyses of the data.
+ * We *must* present results from all reasonable models for the data based on a variety of reasonable decisions about what variables are included in the model and how those variables are defined.
+ * Any time someone has a really complicated data set and they present only a few findings from a single model, you should be very suspicious.
+
+
+
+\newpage
+
+## Part 2: What To Do.  Nursing Salaries.
+
+We have data about 52 licensed nursing home facilities in New Mexico, collected by the Department of Health and Social Services of the State of New Mexico.  Let's use these data to estimate the relationship between the salaries of nurses at a given facility (`NurseSalaries`, our response variable) and a variety of other characteristics of the facility.  The variables in the data set are:
+
+ * `Beds`: Number of beds in the nursing home
+ * `InPatientDays`: Annual medical in-patient days (in hundreds)
+ * `AllPatientDays`: Annual total patient days (in hundreds)
+ * `PatientRevenue`: Annual patinet care revenue (in hundreds of dollars)
+ * `Rural`: Either "Rural" or "Non-Rural"
+ * `NurseSalaries`: Annual nursing salaries (in hundreds of dollars)
+
+I have removed three outlying/high leverage observations.  In order to focus on other aspects of the analysis, for today we will ignore these data points (ordinarily, we should check and see whether our conclusions depend on whether those observations are included).
+
+```{r, echo = FALSE, message = FALSE}
+nursing <- read_csv("http://www.evanlray.com/data/stat2/Nursing.csv")
+
+nursing <- nursing %>%
+  select(Beds, InPatientDays, AllPatientDays, PatientRevenue, Rural, NurseSalaries) %>%
+  mutate(
+    Rural = ifelse(Rural, "Rural", "Non-Rural")
+  ) %>%
+  slice(-c(1, 12, 26))
+
+head(nursing)
+```
+
+#### Here is a pairs plot of the data.
+
+```{r, warning=FALSE, message=FALSE, fig.height = 4.5, fig.width=7.5}
+library(GGally)
+ggpairs(nursing)
+```
+
+#### 1. Based on the pairs plot, perform an initial check of the conditions of linearity, equal variance, and no outliers/high leverage observations.  Also check and see whether there are any indications of potential problems with multicollinearity.
+
+\vspace{6cm}
+
+#### 2. Based on the pairs plot, which of the explanatory variables appear to have the strongest association with nursing salaries?
+
+
+\newpage
+
+#### Here is a model that has NurseSalaries as the response, all other variables in the data set as explanatory variables, and does not include any interaction terms.  Also shown are the variance inflation factors (VIF) for the coefficient estimates in this model.
+
+```{r}
+lm_fit <- lm(NurseSalaries ~ Beds + InPatientDays + AllPatientDays + PatientRevenue + Rural, data = nursing)
+summary(lm_fit)
+vif(lm_fit)
+```
+
+#### 3. Do the variance inflation factors indicate potential issues with multicollinearity?  What does the VIF for Beds mean for the size of a confidence interval for $\beta_1$ in the model?
+
+
+\newpage
+
+#### 4. Below are results from an all subsets regression.  Based on these results, which models have roughly equivalent performance?
+
+```{r, fig.height = 5}
+library(leaps)
+candidate_models <- regsubsets(NurseSalaries ~ Beds + InPatientDays + AllPatientDays + PatientRevenue + Rural, data = nursing)
+summary(candidate_models)
+summary(candidate_models)$bic
+plot(candidate_models)
+```
+
+
+\newpage
+
+#### 5. Here are summaries of the model fits for the three best models in part 4.  Summarize what these models have to say about the associations between the explanatory and response variables in the data set.
+
+```{r}
+fit1 <- lm(NurseSalaries ~ InPatientDays + AllPatientDays, data = nursing)
+summary(fit1)
+```
+
+```{r}
+fit2 <- lm(NurseSalaries ~ Beds + InPatientDays + AllPatientDays, data = nursing)
+summary(fit2)
+```
+
+```{r}
+fit3 <- lm(NurseSalaries ~ Beds + InPatientDays + AllPatientDays + PatientRevenue, data = nursing)
+summary(fit3)
+```
