@@ -42,3 +42,6 @@ Review materials and solutions to quizzes and exams will be posted here.
 | Quiz | Chapter 13 (Two-way ANOVA):                              | Solutions: [pdf](exams/ch13/stat242_quiz_solutions.pdf)       |
 |      | [pdf](exams/ch13/stat242_quizzes.pdf)                    |                                                               |
 +------+----------------------------------------------------------+---------------------------------------------------------------+
+| Quiz | Chapters 9 through 12 (Multiple Regression):             | Solutions: [pdf](exams/ch9_to_12/stat242_quiz_solutions.pdf)  |
+|      | [pdf](exams/ch9_to_12/stat242_quizzes.pdf)               |                                                               |
++------+----------------------------------------------------------+---------------------------------------------------------------+

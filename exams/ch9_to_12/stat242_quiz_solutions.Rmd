@@ -1,0 +1,236 @@
+---
+title: ""
+subtitle: ""
+output:
+  pdf_document:
+    fig_height: 2.8
+    fig_width: 6
+    keep_tex: true
+  html_document:
+    fig_height: 3
+    fig_width: 5
+  word_document:
+    fig_height: 3
+    fig_width: 5
+header-includes:
+  - \usepackage{booktabs}
+geometry: margin=0.6in
+---
+
+## Stat 242 Quiz -- Topics Drawn from Chapters 9 through 12
+
+## What's Your Name? ____________________
+
+```{r, echo = FALSE, message=FALSE}
+library(dplyr)
+library(ggplot2)
+library(GGally)
+library(gridExtra)
+library(car)
+
+mammals <- Sleuth3::case0902 %>%
+  select(
+    Species, Body, Gestation, Litter, Brain
+  )
+```
+
+We have a data set with the following information about different species of mammals:
+
+ * `Species`: The species of mammal
+ * `Body`: Average weight of the body
+ * `Gestation`: Average length of pregnancy
+ * `Litter`: Average litter size
+ * `Brain`: Average weight of the brain
+
+We will use brain size as the response variable and the other variables as explanatory variables.  Here is a look at the first few rows of the data, as well as the species in the data set. Note that there appear to be some closely related species in the data set; for example, there are three species of Porcupine, and four species of Deer mouse.
+
+```{r}
+head(mammals)
+mammals$Species
+```
+
+### Initial Set Up
+
+```{r, fig.height = 3.5}
+ggpairs(mammals %>% select(-Species))
+```
+
+```{r, fig.height = 3.5}
+mammals_transformed <- mammals %>%
+  mutate(
+    Body = -1/(Body^0.1),
+    Gestation = -1/(Gestation^0.1),
+    Litter = -1/(Litter^0.1),
+    Brain = -1/(Brain^0.1)
+  )
+
+ggpairs(mammals_transformed %>% select(-Species))
+```
+
+\newpage
+
+### Model 1: All Observations
+
+```{r}
+lm_fit <- lm(Brain ~ Body + Gestation + Litter, data = mammals_transformed)
+summary(lm_fit)
+confint(lm_fit)
+```
+
+#### Examining Residuals
+
+Let's look at the residuals plots.  Recalling that there were three species of Porcupines in the data set, I have used a different color for the residuals for those species.
+
+```{r, fig.height = 3.5}
+mammals_transformed <- mammals_transformed %>%
+  mutate(
+    is_Porcupine = Species %in% c("Porcupine I", "Porcupine II", "Porcupine III"),
+    residual = residuals(lm_fit)
+  )
+
+p1 <- ggplot(data = mammals_transformed, mapping = aes(x = Body, y = residual, color = is_Porcupine)) +
+  geom_point()
+p2 <- ggplot(data = mammals_transformed, mapping = aes(x = Gestation, y = residual, color = is_Porcupine)) +
+  geom_point()
+p3 <- ggplot(data = mammals_transformed, mapping = aes(x = Litter, y = residual, color = is_Porcupine)) +
+  geom_point()
+p4 <- ggplot(data = mammals_transformed, mapping = aes(x = residual)) +
+  geom_density()
+
+grid.arrange(p1, p2, p3, p4, nrow = 2, ncol = 2)
+```
+
+Here are the residuals for the three species of porcupines in the data set:
+
+```{r}
+mammals_transformed %>%
+  filter(is_Porcupine) %>%
+  pull(residual)
+```
+
+#### Variance Inflation Factor and added variable plot
+
+```{r, fig.height = 3.5}
+vif(lm_fit)
+avPlots(lm_fit)
+```
+
+\newpage
+
+### Model 2: Setting aside some observations
+
+```{r, fig.height = 3.5}
+mammals_transformed <- mammals_transformed %>%
+  mutate(
+    obs_index = row_number(),
+    h = hatvalues(lm_fit),
+    studres = rstudent(lm_fit),
+    D = cooks.distance(lm_fit)
+  )
+
+p1 <- ggplot(data = mammals_transformed, mapping = aes(x = obs_index, y = h)) +
+  geom_hline(yintercept = 2*4/nrow(mammals_transformed))+
+  geom_point()
+
+p2 <- ggplot(data = mammals_transformed, mapping = aes(x = obs_index, y = studres)) +
+  geom_point()
+
+p3 <- ggplot(data = mammals_transformed, mapping = aes(x = obs_index, y = D)) +
+  geom_point()
+
+grid.arrange(p1, p2, p3, ncol = 1)
+```
+
+```{r}
+obs_to_investigate <- c(28, 38, 53, 64, 72)
+
+mammals_transformed <- mammals_transformed %>%
+  mutate(
+    suspicious = row_number() %in% obs_to_investigate
+  )
+mammals_no_suspicious <- mammals_transformed %>% filter(!suspicious)
+```
+
+\newpage
+
+```{r}
+lm_fit_no_suspicious <- lm(Brain ~ Body + Gestation + Litter, data = mammals_no_suspicious)
+summary(lm_fit_no_suspicious)
+```
+
+\newpage
+
+## Problems
+
+#### (a) Explain why a transformation was necessary.
+
+Before the transformations, the associations between explanatory and response variables were non-linear, the stanadard deviation of the response varied over the range of the explanatory variables, and there were outliers.  All of these problems were addressed after the transformation.
+
+#### (b) Check all model conditions based on the model fit using the transformed data. For any conditions that are not met, suggest a step to take to address the problem.
+
+Linearity: The linearity condition looks ok, based on the scatter plot of the transformed response vs. transformed explanatory variables, and based on scatter plots of residuals vs. transformed explanatory variables.
+
+Independence: Observations would not be satisfied if knowing the brain size for a particular species was above or below its predicted mean gave you information about whether the brain size for a different species was above or below ist predicted mean.  In our data set there are multiple groups of similar species, such as the three species of Porcupines.  We saw above that the residuals for those three species of porcupines were all similar and negative, indicating that those observations are not independent.  We could either take a single species of porcupine for our data set, or use a different model that accounts for dependence.
+
+Normally distributed errors: This condition is met, based on the density plot of residuals.
+
+Equal standard deviation residuals: This condition is met, based on the scatter plot of transformed response vs. transformed explanatory variables and scatter plots of residuals vs. transformed explanatory variables.
+
+Outliers: Using the plots of leverage and studentized residuals, we identified several observations that were outliers or had high leverage.  We fit the model both with and without these observations and will discuss whether or how our conclusions depend on whether those observations are included.
+
+#### (c) Summarize the findings from this analysis about the strength of evidence of an association between body size, gestation length, litter size, and brain weight.
+
+We found extremely strong evidence of an association between body size and brain weight after accounting for gestation length and litter size.  This finding did not depend on whether or not 5 outlying or high leverage observations were included in the analysis.
+
+When all observations were included, we had strong evidence of an association between gestation length and brain size after accounting for body size and litter size.  However, after 5 outlying observations were removed, there was only weak evidence of this effect.
+
+When all observations were included, we had strong evidence of an association between litter size and brain size after accounting for body size and gestation length.  However, there was only moderately srong evidence of this association after 5 outlying observations were removed.
+
+#### (d) What is the interpretation of the coefficient estimate for the Body variable in the model fit including all observations (Model 1)?
+
+After accounting for transformed litter size and transformed gestation length, we estimate that a 1 unit increase in transformed body size is associated with an increase in mean transformed brain weight of about 0.49 units, in the population of mammal species similar to those in this study.
+
+#### (e) What is the interpretation of the confidence interval for the coefficient of the Body variable in the model fit including all observations (Model 1)?  Include a description of the meaning of the phrase "95% confident".
+
+We are 95% confident that after accounting for transformed litter size and transformed gestation length, a 1 unit increase in transformed body size is associated with an increase in mean transformed brain weight of between 0.44 and 0.54 units, in the population of mammal species similar to those in this study.  For 95% of samples, a confidence interval calculated using this procedure would contain this population parameter.
+
+#### (f) The variance inflation factor for Body is 3.75.  Rounding up to 4 for convenience, what does this value say about the width of a confidence interval for the coefficient of Body in the linear model?
+
+The confidence interval for the coefficient of Body is about 2 times wider than it would be if the Body variable was not correlated with gestation length and litter size.
+
+#### (g) In the added variable plot for the Body variable, what is on the horizontal and vertical axes of the plot?  How does the slope of the line in that plot relate to the coefficient estimate in the linear model?
+
+For each point in that, the horizontal axis coordinate is the residual from a linear regression model where the response variable was Body and the explanatory variables are Gestation time and Litter size.  The vertical axis coordinate is the residual from a linear regression model where the response variable is brain size and the explanatory variables are Gestation time and Litter size.  The slope of the line in the added variables plot is the estimated coefficient for Body in the regression model with all three of Body, Gestation, and Litter as explanatory variables.
+
+#### (h) What is a high leverage observation?  Why can high leverage observations be problematic?
+
+A high leverage observation is an observation that has explanatory variable values that are very different from the explanatory variable values for the other observations in the data set.  This can be problematic because high leverage observations can determine the coefficient estimates of the model.  We don't want our inferences to be determined by a small number of observations.
+
+(You should be able to draw a picture of a simple linear regression setting illustrating why this is a problem.)
+
+Here's an example, Data Set 4 from Anscombe.  The high leverage observation determines where the line falls all by itself.
+
+```{r, echo=FALSE, message = FALSE}
+library(readr)
+anscombe <- read_csv("http://www.evanlray.com/data/base_r/anscombe_quintet.csv")
+anscombe_long <- data.frame(
+  x = c(anscombe$x1, anscombe$x2, anscombe$x3, anscombe$x4, anscombe$x5),
+  y = c(anscombe$y1, anscombe$y2, anscombe$y3, anscombe$y4, anscombe$y5),
+  data_set = rep(paste("Data Set", 1:5), each = nrow(anscombe))
+)
+
+  ggplot(data = anscombe_long %>% filter(data_set == "Data Set 4"), mapping = aes(x = x, y = y)) +
+    geom_point() +
+    geom_smooth(method = "lm", se = FALSE) +
+    theme_bw()
+```
+
+#### (i) What does Cook's distance measure, at an intuitive level?
+
+Cook's distance measures how much the predicted values from the model change when a single observation is deleted from the data set.
+
+#### (j) Define multicollinearity in a sentence or two.  Why can multicollinearity be problematic?
+
+Multicollinearity is the situation when there is a strong linear relationship among the explanatory variables in the data set.
+
+It is a problem because it makes it difficult to distinguish the effects of the related explanatory variables on the response.  This in turns leads to greater uncertainty about the coefficients for these explanatory variables, reflected in wider confidence intervals.
